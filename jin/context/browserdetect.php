@@ -14,6 +14,7 @@ use jin\JinCore;
  * 	@auteur		Loïc Gerard
  * 	@version	0.0.1
  * 	@check		22/04/2014
+ *	@maj		11/06/2014  :	[Loïc Gerard]	ajout de la méthode isCrawler()
  */
 class BrowserDetect {
 
@@ -215,6 +216,18 @@ class BrowserDetect {
 	}
 
 	return self::$browserData->RenderingEngine_Version;
+    }
+    
+    
+    /**
+     * Permet de savoir si il s'agit d'un robot
+     * @return boolean TRUE si il s'agit d'un robot
+     */
+    public static function isCrawler(){
+	if ( preg_match('/(bot|spider|yahoo)/i', $_SERVER[ "HTTP_USER_AGENT" ] )){
+	    return true;
+	}
+	return false;
     }
 
     
