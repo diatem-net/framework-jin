@@ -1,5 +1,8 @@
 <?php
-
+/**
+ * Jin Framework
+ * Diatem
+ */
 namespace jin\query;
 
 use \Exception AS Exception;
@@ -17,12 +20,8 @@ use sylab\framework\lang\TimeTools;
 /** Gestion d'une requête SQL
  *
  * 	@auteur		Loïc Gerard
- * 	@version	alpha
+ * 	@version	0.0.1
  * 	@check
- * 	@maj		11/04/2013	:	[Loïc gerard]	Création initiale de la classe
- * 	@maj		14/05/2013	:	[Loïc gerard]	Ajout de la méthode getSql()
- * 	@maj		17/07/2013	:	[Loïc Gerard]	Ajout de la méthode getResultsCount()
- *	@maj		28/11/2013	:	[Loïc Gerard]	Ajout de la méthode addToRequest()
  */
 class Query {
 

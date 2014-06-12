@@ -12,7 +12,8 @@ use jin\lang\StringTools;
  *
  * 	@auteur		Loïc Gerard
  * 	@version	0.0.1
- * 	@check		
+ * 	@check
+ *	@maj		12/06/2014  :	[Loïc Gerard]	Ajout des méthodes isKeyExists(), merge() et length()		
  */
 class ArrayTools {
 
@@ -39,10 +40,45 @@ class ArrayTools {
 	return $output;
     }
     
+    
+    /**
+     * Ajoute une valeur au tableau en fin de tableau
+     * @param array $array  Tableau à modifier
+     * @param mixed $value  Valeur à ajouter
+     * @return	array
+     */
     public static function append($array, $value){
 	$array[] = $value;
+	return $array;
     }
     
+    
+    /**
+     * Retourne la taille du tableau
+     * @param array $array  Tableau source
+     * @return int
+     */
+    public static function length($array){
+	return count($array);
+    }
+    
+    
+    /**
+     * Fusionne deux tableaux en un seul
+     * @param array $array1 Premier tableau à fusionner
+     * @param array $array2 Second tableau à fusionner
+     * @return array
+     */
+    public static function merge($array1, $array2){
+	return array_merge($array1, $array2);
+    }
+    
+    
+    /**
+     * Effectue la moyenne des valeurs du tableau
+     * @param array $array  Tableau source
+     * @return float
+     */
     public static function avg($array){
 	$t = 0;
 	foreach($array AS $v){
@@ -53,6 +89,14 @@ class ArrayTools {
 	return $t/count($array);
     }
     
+    
+    /**
+     * Supprime une clé du tableau
+     * @param array $array  Tableau source
+     * @param int $index    Index à supprimer
+     * @return array
+     * @throws \Exception
+     */
     public static function deleteAt($array, $index){
 	if(count($array) < $index){
 	    throw new \Exception('Index non valide : ce tableau a '.count($array).' élément(s)');
@@ -63,10 +107,15 @@ class ArrayTools {
 	return $array;
     }
     
-    public static function mergeArrays($array1, $array2){
-	return array_merge($array1, $array2);
-    }
     
+    /**
+     * Insère un élément dans le tableau à une position spécifiée
+     * @param array $array  Tableau source
+     * @param int $index    Index
+     * @param mixed $value  Valeur à ajouter
+     * @return array
+     * @throws \Exception
+     */
     public static function insertAt($array, $index, $value){
 	if(count($array) < $index){
 	    throw new \Exception('Index non valide : ce tableau a '.count($array).' élément(s)');
@@ -83,6 +132,12 @@ class ArrayTools {
 	return $tabOut;
     }
     
+    
+    /**
+     * Détermine la valeur max d'un tableau
+     * @param array $array  Tableau source
+     * @return float
+     */
     public static function max($array){
 	$m = 0;
 	foreach($array AS $v){
@@ -93,6 +148,12 @@ class ArrayTools {
 	return $m;
     }
     
+    
+     /**
+     * Détermine la valeur min d'un tableau
+     * @param array $array  Tableau source
+     * @return float
+     */
     public static function min($array){
 	$m = null;
 	foreach($array AS $v){
@@ -103,16 +164,34 @@ class ArrayTools {
 	return $m;
     }
     
+    
+    /**
+     * Ajoute un élément au début du tableau
+     * @param array $array  Tableau source
+     * @param mixed $value  Valeur à ajouter
+     * @return array
+     */
     public static function prepend($array, $value){
 	return self::insertAt($array, 0, $value);
     }
     
+    
+    /**
+     * Trier un tableau non associatif par ses valeurs numériques croissantes
+     * @param array $array  Tableau source
+     * @return array
+     */
     public static function sortNumeric($array){
 	sort($array, SORT_NUMERIC);
 	return $array;
     }
     
     
+    /**
+     * Effectue la somme des valeurs du tableau
+     * @param array $array  Tableau source
+     * @return float
+     */
     public static function sum($array){
 	$t = 0;
 	foreach($array AS $v){
@@ -123,41 +202,111 @@ class ArrayTools {
 	return $t;
     }
     
+    
+    /**
+     * Convertit un tableau en liste de valeurs
+     * @param array $array  Tableau source
+     * @param string $separateur    Séprateur
+     * @return string
+     */
     public static function toList($array, $separateur = ','){
 	return StringTools::implode($array, $separateur);
     }
     
+    
+    /**
+     * Mélange les valeurs d'un tableau
+     * @param array $array  Tableau source
+     * @return array
+     */
     public static function shuffle($array){
 	shuffle($array);
 	return $array;
     }
     
+    /**
+     * Retourne un tableau des valeurs d'un tableau (excluant les clés)
+     * @param array $array  Tableau source
+     * @return array
+     */
     public static function getAllValues($array){
 	return array_values($array);
     }
     
+    
+    /**
+     * Supprime les doublons d'un tableau
+     * @param array $array  Tableau source
+     * @return array
+     */
     public static function deleteDoublons($array){
 	return array_unique($array);
     }
     
+    
+    /**
+     * Permet de récupérer une portion de tableau
+     * @param array $array  Tableau source
+     * @param int $index    Index de début
+     * @param int $length   Longueur de la portion à récupérer
+     * @return array
+     */
     public static function getArrayPart($array, $index, $length){
 	return array_slice($array, $index, $length);
     }
     
+    
+    /**
+     * Inverse l'ordre d'un tableau
+     * @param array $array  Tableau source
+     * @return array
+     */
     public static function reverse($array){
 	return array_reverse($array);
     }
     
+    
+    /**
+     * Obtient une ou plusieurs valeurs ou au hasard du tableau
+     * @param array $array  Tableau source
+     * @param int $num
+     * @returnarray
+     */
     public static function getRandomValue($array, $num = 1){
 	return array_rand($array, $num);
     }
     
+    
+    /**
+     * Retourne la position d'un élément dans le tableau
+     * @param array $array  Tableau source
+     * @param mixed $value  Valeur recherchée
+     * @return boolean|int	FALSE si rien n'est trouvé, l'index en cas de réussite.
+     */
     public static function find($array, $value){
 	return array_search($value, $array);
     }
     
+    
+    /**
+     * Retourne la position d'un élément dans le tableau (sans tenir compte de la casse)
+     * @param array $array  Tableau source
+     * @param mixed $value  Valeur recherchée
+     * @return boolean|int	FALSE si rien n'est trouvé, l'index en cas de réussite.
+     */
     public static function findNoCase($array, $value){
 	return array_search(strtolower($value), array_map('strtolower', $array));
+    }
+    
+    
+    /**
+     * Recherche si une clé est définie dans le tableau
+     * @param array $array  Tableau source
+     * @param string $key   Clé
+     * @return boolean
+     */
+    public static function isKeyExists($array, $key){
+	return array_key_exists($key, $array);
     }
 
 }

@@ -1,5 +1,8 @@
 <?php
-
+/**
+ * Jin Framework
+ * Diatem
+ */
 
 namespace jin;
 
@@ -80,6 +83,15 @@ class JinCore {
      */
     public static function getRelativePathAssets(){
 	return '_assets/';
+    }
+    
+    
+    /**	Retourne le chemin relatif des fichiers de langue
+     * 
+     * @return string	Chemin relatif
+     */
+    public static function getRelativePathLanguage(){
+	return '_languages/';
     }
 
 }
