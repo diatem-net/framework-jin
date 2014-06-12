@@ -1,21 +1,51 @@
 <?php
-
+/**
+ * Jin Framework
+ * Diatem
+ */
 namespace jin\dataformat;
 
+
+/** Gestion de chaînes JSon
+ *
+ * 	@auteur	    Loïc Gerard
+ * 	@check
+ */
 class Json {
 
+    /**
+     * Encode un tableau au format JSON
+     * @param array $data   Données à encoder
+     * @return string
+     */
     public static function encode($data) {
 	return json_encode($data);
     }
 
+    
+    /**
+     * Décode des données JSon en un tableau
+     * @param string $data  Données JSon
+     * @return array	NULL si une erreur survient
+     */
     public static function decode($data) {
 	return json_decode($data, true);
     }
 
+    
+    /**
+     * Retourne le dernier code d'erreur retourné
+     * @return int
+     */
     public static function getLastErrorCode() {
 	return json_last_error();
     }
 
+    
+    /**
+     * Retourne le dernier message d'erreur retourné (verbose)
+     * @return string
+     */
     public static function getLastErrorVerbose() {
 	switch (json_last_error()) {
 	    case JSON_ERROR_NONE:

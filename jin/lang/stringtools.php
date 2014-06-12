@@ -11,6 +11,7 @@ namespace jin\lang;
  * 	@auteur		Loïc Gerard
  * 	@version	0.0.1
  * 	@check		24/04/2014
+ *	@maj		12/06/2014 : [Loïc Gerard] Correction de la méthode firstCarToUpperCase()
  */
 class StringTools {
     //----------------------------------------------------------------------------------------------------
@@ -328,7 +329,7 @@ class StringTools {
      * 	@return	string						Chaîne avec le premier caractère en majuscule
      */
     public static function firstCarToUpperCase($chaine) {
-	return lcfirst($chaine);
+	return ucfirst($chaine);
     }
 
     
