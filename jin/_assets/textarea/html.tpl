@@ -1,1 +1,1 @@
-%label%<textarea name="%name%">%value%</textarea>%error%
+<label for="%name%">%label%</label><textarea name="%name%">%value%</textarea>%error%
