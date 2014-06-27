@@ -98,7 +98,7 @@ class FormComponent extends GlobalComponent{
      * @param string $value Valeur actuelle
      */
     public function setDefaultValue($value){
-	$this->value = $value;
+	$this->defaultvalue = $value;
     }
     
     
@@ -107,7 +107,7 @@ class FormComponent extends GlobalComponent{
      * @return string
      */
     public function getDefaultValue(){
-	return $this->value;
+	return $this->defaultvalue;
     }
     
     
