@@ -195,8 +195,8 @@ class DForm{
 	    throw new \Exception('Le champ '.$fieldName.' n\'existe pas ou n\'est pas lié à un composant');
 	    return;
 	}
-	
 	$this->fields[$fieldName]['component']->setValue($this->fields[$fieldName]['value']);
+	$this->fields[$fieldName]['component']->setDefaultValue($this->fields[$fieldName]['defaultValue']);
 	$this->fields[$fieldName]['component']->setError($this->getFieldError($fieldName, $globalErrorFormat, $itemErrorFormat));
 	
 	return $this->fields[$fieldName]['component']->render();
