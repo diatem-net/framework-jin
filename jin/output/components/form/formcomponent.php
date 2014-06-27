@@ -29,6 +29,12 @@ class FormComponent extends GlobalComponent{
     
     /**
      *
+     * @var string  Valeur par défaut
+     */
+    private $defaultvalue = '';
+    
+    /**
+     *
      * @var string  Label affiché
      */
     private $label = '';
@@ -87,6 +93,24 @@ class FormComponent extends GlobalComponent{
     }
     
     
+     /**
+     * Définit la valeur par défaut
+     * @param string $value Valeur actuelle
+     */
+    public function setDefaultValue($value){
+	$this->value = $value;
+    }
+    
+    
+    /**
+     * Retourne la valeur  par défaut
+     * @return string
+     */
+    public function getDefaultValue(){
+	return $this->value;
+    }
+    
+    
     /**
      * Définit la valeur du label
      * @param string $label Valeur du label
@@ -130,6 +154,8 @@ class FormComponent extends GlobalComponent{
 	$html = parent::render();
 	$html = StringTools::replaceAll($html, '%label%', $this->getLabel());
 	$html = StringTools::replaceAll($html, '%value%', $this->getValue());
+	$html = StringTools::replaceAll($html, '%value%', $this->getValue());
+	$html = StringTools::replaceAll($html, '%defaultvalue%', $this->getDefaultValue());
 	$html = StringTools::replaceAll($html, '%error%', $this->getError());
 	$html = StringTools::replaceAll($html, '%style%', $this->getStyleCSS());
 	
