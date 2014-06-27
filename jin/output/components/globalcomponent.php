@@ -46,7 +46,7 @@ class GlobalComponent{
      * @return string
      */
     protected function getAsset(){
-	$af = new AssetFile('inputtext/html.tpl');
+	$af = new AssetFile($this->componentName.'/html.tpl');
 	return $af->getContent();
     }
     
