@@ -63,7 +63,7 @@ class DForm{
 	}
 	
 	//Finalisation
-	$newline = array('defaultValue'=>$defaultValue, 'dataSourceColumn'=>$dataSourceColumn, 'validateurs'=>$validat, 'errors'=>array(), 'value' => $defaultValue);
+	$newline = array('defaultValue'=>$defaultValue, 'dataSourceColumn'=>$dataSourceColumn, 'validateurs'=>$validat, 'errors'=>array(), 'value' => '');
 	if(!is_string($field)){
 	    $newline['component'] = $field;
 	}
