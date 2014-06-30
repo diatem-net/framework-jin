@@ -86,6 +86,15 @@ class JinCore {
     }
     
     
+    /**	Retourne le chemin relatif des librairies externes
+     * 
+     * @return string	Chemin relatif
+     */
+    public static function getRelativeExtLibs(){
+	return '_extlibs/';
+    }
+    
+    
     /**	Retourne le chemin relatif des fichiers de langue
      * 
      * @return string	Chemin relatif
