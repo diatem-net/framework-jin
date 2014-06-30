@@ -31,6 +31,8 @@ class AssetFile {
      * @var string
      */
     private $url;
+    
+    
 
     
     /**	Constructeur
@@ -44,11 +46,11 @@ class AssetFile {
 	if(JinCore::getConfigValue('surcharge') && file_exists($surcharge)){
 	    //Surcharge du fichier
 	     $this->file = new File($surcharge);
-	     $this->url = '';
+	     $this->url = 'http://'.$_SERVER['HTTP_HOST'].'/surcharge/_assets/';
 	}else{
 	    //Fichier natif
 	    $this->file = new File(JinCore::getRoot() . JinCore::getRelativePathAssets() . $relativePath);
-	    $this->url = '';
+	    $this->url = 'http://'.$_SERVER['HTTP_HOST'].'/_assets/';
 	}
     }
 
@@ -58,7 +60,10 @@ class AssetFile {
      * @return string
      */
     public function getContent() {
-	return StringTools::replaceAll($this->file->getContent(), '%asseturl%', $this->url);
+	$content = $this->file->getContent();
+	$content = StringTools::replaceAll($content, '%asseturl%', $this->url);
+	$content = StringTools::replaceAll($content, '%url%', 'http://'.$_SERVER['HTTP_HOST']);
+	return $content;
     }
 
 }

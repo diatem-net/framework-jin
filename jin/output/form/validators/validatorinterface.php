@@ -16,4 +16,5 @@ Interface ValidatorInterface{
     public function __construct($args);
     public function isValid($valeur);
     public function isPrior();
+    public function getType();
 }

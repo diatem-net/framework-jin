@@ -90,7 +90,7 @@ class ListTools{
      * @return boolean
      */
     public static function containsNoCase($list, $value, $delimiter = ','){
-	if(ArrayTools::findNoCase(self::toArray($list, $delimiter), $value)){
+	if(is_numeric(ArrayTools::findNoCase(self::toArray($list, $delimiter), $value))){
 	    return true;
 	}
 	return false;

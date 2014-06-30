@@ -80,4 +80,13 @@ class GlobalValidator{
     public function getErrors(){
 	return $this->errors;
     }
+    
+    
+    /**
+     * Retourne le type de validateur
+     * @return string
+     */
+    public function getType(){
+	return 'validator';
+    }
 }
