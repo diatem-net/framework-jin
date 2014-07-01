@@ -5,11 +5,8 @@
  */
 namespace jin\cache;
 
-use sylab\system\common\core\Config;
-use sylab\system\frontend\cache\DatabaseCache;
-use sylab\system\frontend\cache\MemcacheCache;
 use \Exception;
-use sylab\framework\log\Debug;
+use jin\JinCore;
 
 /** Classe principale de gestion du cache. (Se charge d'initialiser les classes spécifiques de gestion du cache
  * 	En fonction de la configuration de l'environnement.
@@ -117,22 +114,17 @@ class Cache {
      * 	@throws Exception
      */
     private static function initialize() {
-	if (is_null(self::$cm) && Config::isConfigLoaded()) {
-	    if (Config::get('useCache') == 1) {
-		$cmode = Config::get('cacheMode');
 
-		if ($cmode == 'database') {
-		    self::$cm = new DatabaseCache();
-		} elseif ($cmode == 'memcache') {
-		    self::$cm = new MemcacheCache();
-		} elseif ($cmode == 'file') {
-		    self::$cm = new FileCache();
-		} else {
-		    throw new Exception('Le système de gestion de cache ' . $cmode . ' n\'est pas supporté par le système');
-		}
-	    }
+	$cmode = JinCore::getConfigValue('cacheMode');
+
+	if ($cmode == 'database') {
+	    self::$cm = new DatabaseCache();
+	} elseif ($cmode == 'memcache') {
+	    self::$cm = new MemcacheCache();
+	} elseif ($cmode == 'file') {
+	    self::$cm = new FileCache();
+	} else {
+	    throw new Exception('Le système de gestion de cache ' . $cmode . ' n\'est pas supporté par le système');
 	}
     }
-
-
 }

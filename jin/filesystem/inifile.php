@@ -41,6 +41,21 @@ class IniFile{
     }
     
     
+    /**
+     * Surcharge un fichier INI avec le contenu d'un autre fichier INI
+     * @param type $path   Chemin absolu ou relatif du fichier
+     * @throws \Exception
+     */
+    public function surcharge($path){
+	$ndata = parse_ini_file($path);
+	
+	if(is_null($ndata) || !$ndata){
+	    throw new \Exception('La lecture du fichier '.$path.' a échouée.');
+	}
+	$this->values = array_merge($this->values, $ndata);
+    }
+    
+    
     /** Lit une valeur
      * 
      * @param string $cle	Clé

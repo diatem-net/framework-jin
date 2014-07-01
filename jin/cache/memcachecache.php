@@ -5,19 +5,17 @@
  * Diatem
  */
 
-namespace sylab\system\frontend\cache;
+namespace jin\cache;
 
 use \DateTime;
 use sylab\system\common\core\Config;
-use sylab\system\interfaces\CacheInterface;
+use jin\cache\CacheInterface;
 use \Memcache;
+use jin\JinCore;
 
 /** Gestion du cache via memCache. (Nécessite que le serveur soit configuré et fonctionne nominativement.)
  *
  * 	@auteur		Loïc Gerard
- * 	@version	0.0.1
- * 	@check
- * 	@maj		04/06/2013	:	[Loïc gerard]	Création initiale de la classe
  */
 class MemcacheCache implements CacheInterface {
 
@@ -26,15 +24,17 @@ class MemcacheCache implements CacheInterface {
      */
     private $memcache = NULL;
 
+    
     /**
      * 	Constructeur
      * 	@return void
      */
     public function __construct() {
 	$this->memcache = new Memcache();
-	$this->memcache->addServer(Config::get('memcacheHost'), Config::get('memcachePort'));
+	$this->memcache->addServer(JinCore::getConfigValue('cacheMemCacheHost'), JinCore::getConfigValue('cacheMemCachePort'));
     }
 
+    
     /**
      * 	Permet de savoir si une clé donnée est définie dans le cache
      * 	@param 	String	$key		Clé à rechercher
@@ -65,6 +65,7 @@ class MemcacheCache implements CacheInterface {
 	}
     }
 
+    
     /**
      * 	Supprime une valeur du cache
      * 	@param 	String	$key		Clé à supprimer
@@ -74,9 +75,10 @@ class MemcacheCache implements CacheInterface {
 	$this->memcache->delete($this->buildMKey($key));
     }
 
+    
     /**
      * 	Sauvegarde une valeur dans le cache
-     * 	@param	String	$key		Clé à sauvegarder
+     * 	@param	String	$key	Clé à sauvegarder
      * 	@param 	mixed	$value	Valeur à sauvegarder
      * 	@return	void
      */
@@ -86,6 +88,7 @@ class MemcacheCache implements CacheInterface {
 	$this->memcache->set($this->buildMKey($key), serialize($value));
     }
 
+    
     /**
      * 	Supprime tout le contenu du cache
      * 	@return	void
@@ -94,13 +97,14 @@ class MemcacheCache implements CacheInterface {
 	$this->memcache->flush();
     }
 
+    
     /**
      * 	Retourne une clé MemCache Unique à partir d'une clé standard
      * 	@param	String 	$key		Clé à rendre unique
      * 	@return string			Clé unique
      */
     private function buildMKey($key) {
-	return Config::get('envName') . '_' . $key;
+	return JinCore::getRoot() . '_' . $key;
     }
 
 }

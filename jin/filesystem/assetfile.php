@@ -50,7 +50,7 @@ class AssetFile {
 	}else{
 	    //Fichier natif
 	    $this->file = new File(JinCore::getRoot() . JinCore::getRelativePathAssets() . $relativePath);
-	    $this->url = 'http://'.$_SERVER['HTTP_HOST'].'/_assets/';
+	    $this->url = 'http://'.$_SERVER['HTTP_HOST'].'/jin/_assets/';
 	}
     }
 
