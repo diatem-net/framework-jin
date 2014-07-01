@@ -27,14 +27,12 @@ class DForm {
      * @var array   Champs contenus dans le formulaire 
      */
     private $fields = array();
-    
-    
+
     /**
      *
      * @var array   Champs pièce jointe contenus dans le formulaire 
      */
     private $attachementFields = array();
-    
 
     /**
      * Ajout d'un champ
@@ -63,7 +61,7 @@ class DForm {
 
 	//Ajout des validateurs
 	$validat = array();
-	if($validateurs){
+	if ($validateurs) {
 	    $jsonV = Json::decode($validateurs);
 	    if (!is_null($validateurs) && is_null($jsonV)) {
 		throw new \Exception('Le format JSon fourni pour les validateurs n\'est pas conforme : ' . Json::getLastErrorVerbose());
@@ -86,8 +84,7 @@ class DForm {
 
 	return true;
     }
-    
-    
+
     /**
      * Ajout d'un champ de type AttachementFile
      * @param \jin\output\components\form\AttachementFile $fileComponent    Composant AttachementFile
@@ -96,17 +93,17 @@ class DForm {
      * @return boolean
      * @throws \Exception
      */
-    public function addAttachementField(AttachementFile $fileComponent, $uploadFolder, $validateurs = null){
+    public function addAttachementField(AttachementFile $fileComponent, $uploadFolder, $validateurs = null) {
 	$fieldName = $fileComponent->getName();
-	
+
 	//Teste si le champ n'existe pas déjà
 	if (ArrayTools::isKeyExists($this->attachementFields, $fieldName)) {
 	    throw new \Exception('Impossible d\'ajouter la pièce jointe ' . $fieldName . ' : celle ci est déjà définie dans le DForm');
 	    return false;
 	}
-	
+
 	$validat = array();
-	if($validateurs){
+	if ($validateurs) {
 	    $jsonV = Json::decode($validateurs);
 	    if (!is_null($validateurs) && is_null($jsonV)) {
 		throw new \Exception('Le format JSon fourni pour les validateurs n\'est pas conforme : ' . Json::getLastErrorVerbose());
@@ -118,19 +115,18 @@ class DForm {
 		$validat[] = $c;
 	    }
 	}
-	
+
 	//Finalisation
 	$newline = array('outputfile' => '', 'component' => $fileComponent, 'validateurs' => $validat, 'errors' => array(), 'uploadfolder' => $uploadFolder);
 	$this->attachementFields[$fieldName] = $newline;
     }
-    
-    
+
     /**
      * Supprime les fichiers attachés transférés sur le serveur
      */
-    public function deleteAttachementFiles(){
-	foreach($this->attachementFields as $fieldName => $v){
-	    if($v['outputfile'] != '' && file_exists($v['outputfile'])){
+    public function deleteAttachementFiles() {
+	foreach ($this->attachementFields as $fieldName => $v) {
+	    if ($v['outputfile'] != '' && file_exists($v['outputfile'])) {
 		$f = new File($v['outputfile']);
 		$f->delete();
 	    }
@@ -139,14 +135,14 @@ class DForm {
 
     /**
      * Permet de tester la validité des valeurs du formulaire
-     * @return boolean	TRUE si le formulaire est valide, NULL si le formulaire n'est pas soumis
+     * @return boolean	TRUE si le formulaire est valide
      */
     public function isValid() {
 	$valide = true;
 
 	//On passe dans les champs de type FIELD
 	foreach ($this->fields as $fieldName => $v) {
-	    
+
 	    //Champs standard
 	    if (isset($_POST[$fieldName])) {
 		//On réinitialise les erreurs
@@ -183,53 +179,54 @@ class DForm {
 		$valide = null;
 	    }
 	}
-	
+
 	//ON PASSE DANS LES PIECES JOINTES
-	foreach ($this->attachementFields as $fieldName => $v){
-	    if(isset($_FILES[$fieldName])){
-		//On réinitialise les erreurs
-		$this->attachementFields[$fieldName]['errors'] = array();
-		
-		//erreurs de niveau 2
-		$errors = array();
-		//Erreurs de niveau 1
-		$priorErrors = array();
+	foreach ($this->attachementFields as $fieldName => $v) {
+	    $val = '';
+	    if (isset($_FILES[$fieldName])) {
+		$val = $_FILES[$fieldName];
+	    }
+	    //On réinitialise les erreurs
+	    $this->attachementFields[$fieldName]['errors'] = array();
 
-		//On passe par tous les validateurs pour checker la valeur
-		foreach ($v['validateurs'] as $v) {
+	    //erreurs de niveau 2
+	    $errors = array();
+	    //Erreurs de niveau 1
+	    $priorErrors = array();
 
-		    $vv = $v->isValid($_FILES[$fieldName]);
-		    if (!$vv) {
-			$valide = false;
-			if ($v->isPrior()) {
-			    $priorErrors = ArrayTools::merge($priorErrors, $v->getErrors());
-			} else {
-			    $errors = ArrayTools::merge($errors, $v->getErrors());
-			}
+	    //On passe par tous les validateurs pour checker la valeur
+	    foreach ($v['validateurs'] as $v) {
+
+		$vv = $v->isValid($val);
+		if (!$vv) {
+		    $valide = false;
+		    if ($v->isPrior()) {
+			$priorErrors = ArrayTools::merge($priorErrors, $v->getErrors());
+		    } else {
+			$errors = ArrayTools::merge($errors, $v->getErrors());
 		    }
-		}
-
-		//On prend en considération les erreurs de niveau 1 ou 2 en fonction
-		if (ArrayTools::length($priorErrors) > 0) {
-		    $this->attachementFields[$fieldName]['errors'] = $priorErrors;
-		} else {
-		    $this->attachementFields[$fieldName]['errors'] = $errors;
 		}
 	    }
+
+	    //On prend en considération les erreurs de niveau 1 ou 2 en fonction
+	    if (ArrayTools::length($priorErrors) > 0) {
+		$this->attachementFields[$fieldName]['errors'] = $priorErrors;
+	    } else {
+		$this->attachementFields[$fieldName]['errors'] = $errors;
+	    }
 	}
-	
+
 	//SI tout est valide : enregistrer les pièces jointes
-	if($valide){
-	    foreach ($this->attachementFields as $fieldName => $v){
-		if(isset($_FILES[$fieldName])){
+	if ($valide) {
+	    foreach ($this->attachementFields as $fieldName => $v) {
+		if (isset($_FILES[$fieldName])) {
 		    $uploadfile = $v['uploadfolder'] . basename($_FILES[$fieldName]['name']);
-		    
+
 		    if (!move_uploaded_file($_FILES[$fieldName]['tmp_name'], $uploadfile)) {
-			throw new \Exception('Erreur de transfert du fichier joint '.$fieldName);
-		    }else{
+			throw new \Exception('Erreur de transfert du fichier joint ' . $fieldName);
+		    } else {
 			$this->attachementFields[$fieldName]['outputfile'] = $uploadfile;
 		    }
-		    
 		}
 	    }
 	}
@@ -269,7 +266,7 @@ class DForm {
 		}
 		return StringTools::replaceFirst($globalFormat, '%texte%', $toadd);
 	    }
-	}else if(isset($this->attachementFields[$fieldName])){
+	} else if (isset($this->attachementFields[$fieldName])) {
 	    if (ArrayTools::length($this->attachementFields[$fieldName]['errors']) > 0) {
 		$toadd = '';
 		foreach ($this->attachementFields[$fieldName]['errors'] as $err) {
@@ -289,7 +286,7 @@ class DForm {
     public function getFieldErrorInArray($fieldName) {
 	if (isset($this->fields[$fieldName])) {
 	    return $this->fields[$fieldName]['errors'];
-	}else if(isset($this->attachementFields[$fieldName])){
+	} else if (isset($this->attachementFields[$fieldName])) {
 	    return $this->attachementFields[$fieldName]['errors'];
 	}
 	return array();
@@ -320,12 +317,12 @@ class DForm {
 	    $this->fields[$fieldName]['component']->setError($this->getFieldError($fieldName, $globalErrorFormat, $itemErrorFormat));
 
 	    return $this->fields[$fieldName]['component']->render();
-	}else if(isset($this->attachementFields[$fieldName]['component'])){
+	} else if (isset($this->attachementFields[$fieldName]['component'])) {
 	    //Champ de type attachementField
 	    $this->attachementFields[$fieldName]['component']->setError($this->getFieldError($fieldName, $globalErrorFormat, $itemErrorFormat));
 
 	    return $this->attachementFields[$fieldName]['component']->render();
-	}else{
+	} else {
 	    throw new \Exception('Le champ ' . $fieldName . ' n\'existe pas ou n\'est pas lié à un composant');
 	    return;
 	}
@@ -339,12 +336,12 @@ class DForm {
      */
     public function getDataInArray($withStandardFields = true, $withAttachementsFields = true) {
 	$data = array();
-	if ($withStandardFields){
+	if ($withStandardFields) {
 	    foreach ($this->fields as $fieldName => $v) {
 		$data[$fieldName] = $v['value'];
 	    }
 	}
-	if($withAttachementsFields){
+	if ($withAttachementsFields) {
 	    foreach ($this->attachementFields as $fieldName => $v) {
 		$data[$fieldName] = $v['outputfile'];
 	    }
