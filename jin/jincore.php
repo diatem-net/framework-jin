@@ -7,6 +7,7 @@
 namespace jin;
 
 use jin\filesystem\IniFile;
+use jin\log\Debug;
 
 /** Méthodes de bas niveau du framework
  * 	@auteur		Loïc Gerard
@@ -71,6 +72,10 @@ class JinCore {
     public static function getConfigValue($configParam){
 	if(is_null(self::$config)){
 	    self::$config = new IniFile(self::getRoot() . 'config.ini');
+	    $spath = self::getProjectRoot() . self::getConfigValue('surchargeAbsolutePath') . '/config.ini';
+	    if(file_exists($spath) && self::$config->get('surcharge') == 1){
+		self::$config->surcharge($spath);
+	    }
 	}
 	
 	return self::$config->get($configParam);
