@@ -25,6 +25,13 @@ class GlobalComponent{
     
     /**
      *
+     * @var string Personnalisation de la balise style
+     */
+    private $stylecss = '';
+    
+    
+    /**
+     *
      * @var string  Nom du type de composant (Ex. InputText)
      */
     protected $componentName;
@@ -61,12 +68,30 @@ class GlobalComponent{
     
     
     /**
+     * Définit ce qui sera affiché dans la balise style du composant
+     * @param string $style Déclaration CSS
+     */
+    public function setStyleCSS($style){
+	$this->stylecss = $style;
+    }
+    
+    
+    /**
+     * Retourne ce qui est affiché dans la balise style du composant
+     */
+    public function getStyleCSS(){
+	return $this->stylecss;
+    }
+    
+    
+    /**
      * Rendu par défaut d'un composant(prise en compte de %name%)
      * @return	string
      */
     protected function render(){
 	$html = $this->getAsset();
 	$html = StringTools::replaceAll($html, '%name%', $this->getName());
+	$html = StringTools::replaceAll($html, '%style%', $this->getStyleCSS());
 	
 	return $html;
     }

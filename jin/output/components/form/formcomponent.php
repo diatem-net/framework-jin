@@ -130,23 +130,6 @@ class FormComponent extends GlobalComponent{
     
     
     /**
-     * Définit ce qui sera affiché dans la balise style du composant
-     * @param string $style Déclaration CSS
-     */
-    public function setStyleCSS($style){
-	$this->stylecss = $style;
-    }
-    
-    
-    /**
-     * Retourne ce qui est affiché dans la balise style du composant
-     */
-    public function getStyleCSS(){
-	return $this->stylecss;
-    }
-    
-    
-    /**
      * Rendu par défaut du composant de type FORM (prise en compte de %label% %value% %error% %style%)
      * @return	string
      */
@@ -154,10 +137,9 @@ class FormComponent extends GlobalComponent{
 	$html = parent::render();
 	$html = StringTools::replaceAll($html, '%label%', $this->getLabel());
 	$html = StringTools::replaceAll($html, '%value%', $this->getValue());
-	$html = StringTools::replaceAll($html, '%value%', $this->getValue());
 	$html = StringTools::replaceAll($html, '%defaultvalue%', $this->getDefaultValue());
 	$html = StringTools::replaceAll($html, '%error%', $this->getError());
-	$html = StringTools::replaceAll($html, '%style%', $this->getStyleCSS());
+	
 	
 	return $html;
     }
