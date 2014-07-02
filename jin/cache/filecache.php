@@ -11,6 +11,7 @@ use \DateTime;
 use jin\cache\CacheInterface;
 use jin\lang\StringTools;
 use jin\JinCore;
+use jin\filesystem\Folder;
 
 /** Gestion du cache via le système de fichiers
  *
@@ -32,7 +33,9 @@ class FileCache implements CacheInterface {
      * 	@return boolean			TRUE si définie dans le cache
      */
     public function isInCache($key) {
+	$key = $this->getEncodedKey($key);
 	$cachePath = JinCore::getProjectRoot() . JinCore::getConfigValue('cacheFileFolder') . $key;
+	
 	if (file_exists($cachePath)) {
 	    return true;
 	} else {
@@ -88,12 +91,16 @@ class FileCache implements CacheInterface {
      * 	@return	void
      */
     public function clearCache() {
-	$files = glob(JinCore::getProjectRoot() . JinCore::getConfigValue('cacheFileFolder'));
-	foreach ($files as $file) {
-	    if (is_file($file)) {
-		unlink($file);
+	$cacheFolder = JinCore::getProjectRoot() . JinCore::getConfigValue('cacheFileFolder');
+	$folder = new Folder($cacheFolder);
+	foreach($folder as $f){
+	    $fullPath = $cacheFolder.$f;
+	    if(is_file($fullPath)){
+		unlink($fullPath);
 	    }
 	}
+	
+	
     }
 
     /**
