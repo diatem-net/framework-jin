@@ -273,7 +273,7 @@ class ArrayTools {
      * @returnarray
      */
     public static function getRandomValue($array, $num = 1){
-	return array_rand($array, $num);
+	return $array[array_rand($array, $num)];
     }
     
     
