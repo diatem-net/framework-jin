@@ -267,13 +267,12 @@ class ArrayTools {
     
     
     /**
-     * Obtient une ou plusieurs valeurs ou au hasard du tableau
+     * Obtient une valeur au hasard du tableau
      * @param array $array  Tableau source
-     * @param int $num
-     * @returnarray
+     * @return mixed
      */
-    public static function getRandomValue($array, $num = 1){
-	return array_rand($array, $num);
+    public static function getRandomValue($array){
+	return $array[array_rand($array, 1)];
     }
     
     

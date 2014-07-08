@@ -102,7 +102,7 @@ class SherlockResult{
     public function getQueryResult(){
 	$tempData = $this->data['hits']['hits'];
 	for($i = 0; $i < count($tempData); $i++){
-	    $tempData[$i] = ArrayTools::mergeArrays($tempData[$i], $tempData[$i]['_source']);
+	    $tempData[$i] = ArrayTools::merge($tempData[$i], $tempData[$i]['_source']);
 	    unset($tempData[$i]['_source']);
 	}
 	

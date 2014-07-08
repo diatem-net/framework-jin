@@ -52,10 +52,6 @@ class SherlockConfig extends SherlockCore {
     public function initializeApplication($xmlConfigFilePath) {
 	//Suppression des données existantes
 	$retour = parent::callMethod($this->sherlock->getAppzCode() . '/', null, 'DELETE');
-	if(!isset($retour['acknowledged']) || !$retour['acknowledged']){
-	    parent::throwError('Impossible de supprimer les données existantes : '.parent::getLastError());
-	    return false;
-	}
 	
 	//Lecture du fichier XML
 	$file = new File($xmlConfigFilePath);
@@ -128,8 +124,9 @@ class SherlockConfig extends SherlockCore {
 	$jsonContent = Json::encode($mapping);
 	
 	$retour = parent::callMethod($this->sherlock->getAppzCode() . '' , $jsonContent);
+
 	if(!isset($retour['acknowledged']) || !$retour['acknowledged']){
-	    parent::throwError('Impossible de supprimer les données existantes : '.parent::getLastError());
+	    parent::throwError('Impossible d\'initialiser l\'application : '.$this->sherlock->getLastError());
 	    return false;
 	}
 	
