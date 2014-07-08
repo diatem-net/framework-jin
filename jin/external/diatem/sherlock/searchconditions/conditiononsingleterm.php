@@ -51,7 +51,7 @@ class ConditionOnSingleTerm implements SearchItemInterface{
 	    $condArray['term'][$field] = $this->values;
 	    $outArray[] = $condArray;
 	}
-	
+
 	return $outArray;
     }
 }

@@ -38,7 +38,7 @@ class SherlockIndexer extends SherlockCore {
      * 
      * @param string $documentType  Type de document. Tel que défini dans le XML de configuration.
      * @param int|string $documentId	Identifiant unique du document. Peut être numérique ou alphanumérique.
-     * @param array $documentContent Tableau de données à indexer, sous la forme : array('fieldName1' => 'value1', 'fieldName2' => 'value2')
+     * @param array[array|int|string] $documentContent Tableau de données à indexer, sous la forme : array('fieldName1' => 'value1', 'fieldName2' => 'value2')
      * @return int|boolean  Retourne 1 si le document a été ajouté au référentiel, 2 si il a été mis à jour, FALSE en cas d'erreur.
      */
     public function addDocument($documentType, $documentId, $documentContent) {

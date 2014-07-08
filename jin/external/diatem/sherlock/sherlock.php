@@ -54,6 +54,23 @@ class Sherlock extends SherlockCore{
      */
     private $serverInfo;
     
+    /**
+     *
+     * @var string Dernière réponse du serveur ElasticSearch
+     */
+    public $lastResponse;
+    
+    
+    public $lastCall;
+    
+    /**
+     *
+     * @var string Dernière erreur rencontrée
+     */
+    public $lastError;
+    
+    
+    
     
     /**	Instancie un objet Sherlock. Permet de débuter un travail sur Sherlock avec des classes annexes. (SherlockConfig, SherlockIndexer, SherlockResult, SherlockSearch et SherlockUtils)
      * 
@@ -169,6 +186,30 @@ class Sherlock extends SherlockCore{
 	}
 	return $this->serverInfo['name'];
     }
+    
+     /**	Retourne la dernière erreur rencontrée
+     * 
+     * @return string	Dernière erreur rencontrée
+     */
+    public function getLastError(){
+	return $this->lastError;
+    }
+    
+    
+    /**	Retourne la dernière réponse apportée par le serveur ElasticSearch
+     * 
+     * @return string	Dernière réponse
+     */
+    public function getLastServerResponse(){
+	return $this->lastResponse;
+    }
+    
+    
+    public function getLastServerCall(){
+	return $this->lastCall;
+    }
+    
+    
     
     
     //--------------------------------------------------------------------------

@@ -24,17 +24,7 @@ class SherlockCore{
      */
     private $sherlock;
     
-    /**
-     *
-     * @var string Dernière réponse du serveur ElasticSearch
-     */
-    private $lastResponse;
     
-    /**
-     *
-     * @var string Dernière erreur rencontrée
-     */
-    private $lastError;
     
     
     /**
@@ -46,22 +36,7 @@ class SherlockCore{
     }
     
     
-    /**	Retourne la dernière erreur rencontrée
-     * 
-     * @return string	Dernière erreur rencontrée
-     */
-    public function getLastError(){
-	return $this->lastError;
-    }
-    
-    
-    /**	Retourne la dernière réponse apportée par le serveur ElasticSearch
-     * 
-     * @return string	Dernière réponse
-     */
-    public function getLastServerResponse(){
-	return $this->lastResponse;
-    }
+   
     
     
     /**	Permet d'appeler une méthode sur ElasticSearch (Sera appelé via l'API REST de ElasticSearch)
@@ -74,14 +49,17 @@ class SherlockCore{
     protected function callMethod($method, $args = null, $customRequest = null){
 	$d = Curl::call($this->sherlock->getCnxString().$method, $args, false, $customRequest);
 
+	//On log la dernière réponse
+	$this->sherlock->lastResponse = $d;
+	
+	//On log la dernière requete
+	$this->sherlock->lastCall = $args;
+	
 	if(!$d){
 	    $this->throwError('Appel de l\'url '.$this->sherlock->getCnxString().$method.' impossible : '.Curl::getLastErrorVerbose());
 	    return false; 
 	}
-	
-	//On log la dernière réponse
-	$this->lastResponse = $d;
-	
+
 	//On essaie de décoder le JSON
 	$df = Json::decode($d);
 	
@@ -104,9 +82,9 @@ class SherlockCore{
      * @throws \Exception
      */
     protected function throwError($erreur){
-	$this->lastError = $erreur;
+	$this->sherlock->lastError = $erreur;
 	if($this->sherlock->getThrowError()){
-	    throw new \Exception($this->lastError);
+	    throw new \Exception($this->sherlock->getLastError());
 	}
     }
 }
