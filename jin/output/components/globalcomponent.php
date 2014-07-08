@@ -8,7 +8,7 @@ namespace jin\output\components;
 
 use jin\filesystem\AssetFile;
 use jin\lang\StringTools;
-
+use jin\lang\ArrayTools;
 /** Classe parent de tout composant
  *
  * 	@auteur		Loïc Gerard
@@ -28,6 +28,13 @@ class GlobalComponent{
      * @var string Personnalisation de la balise style
      */
     private $stylecss = '';
+    
+    
+    /**
+     *
+     * @var array Classes appliquées
+     */
+    private $classes = array();
     
     
     /**
@@ -85,14 +92,62 @@ class GlobalComponent{
     
     
     /**
-     * Rendu par défaut d'un composant(prise en compte de %name%)
+     * Applique une nouvelle classe CSS
+     * @param string $className	Nom de la classe à appliquer
+     * @return boolean	Retourne FALSE si cette classe était déjà appliquée
+     */
+    public function addClass($className){
+        if(!is_numeric(ArrayTools::find($this->classes, $className))){
+	    $this->classes[] = $className;
+	    return true;
+	}
+	return false;
+    }
+    
+    
+    /**
+     * Supprime une classe CSS appliquée
+     * @param string $className	Nom de la classe à supprimer
+     * @return boolean	Retourne FALSE si cette classe n'était pas appliquée
+     */
+    public function removeClass($className){
+	$pos = ArrayTools::find($this->classes, $className);
+	if(is_numeric($pos)){
+	    $this->classes = ArrayTools::deleteAt($this->classes, $pos);
+	    return true;
+	}
+	return false;
+    }
+    
+    
+    /**
+     * Retourne un tableau des classes CSS appliquées
+     * @return array
+     */
+    public function getClasses(){
+        return $this->classes;
+        return $this->class;
+    }
+    
+    
+    /**
+     * Rendu par défaut d'un composant(prise en compte de %name%, %style% et %class%)
      * @return	string
      */
     protected function render(){
-	$html = $this->getAsset();
+	return $this->replaceMagicFields($this->getAsset());
+    }
+    
+    
+    /**
+     * Remplace les champs magiques des assets - concernant uniquement les champs magiques des composants globaux
+     * @param string $html  HTML à inspeter
+     * @return string
+     */
+    protected function replaceMagicFields($html){
 	$html = StringTools::replaceAll($html, '%name%', $this->getName());
 	$html = StringTools::replaceAll($html, '%style%', $this->getStyleCSS());
-	
+	$html = StringTools::replaceAll($html, '%class%', ArrayTools::toList($this->classes, ' '));
 	return $html;
     }
 }
