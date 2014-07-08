@@ -10,6 +10,8 @@ use jin\output\form\validators\ValidatorInterface;
 use jin\output\form\validators\GlobalValidator;
 use jin\language\Trad;
 use jin\JinCore;
+use jin\filesystem\IniFile;
+
 
 /** Validateur : teste si une valeur issue d'un composant SimpleCaptcha est valide
  *
@@ -34,7 +36,14 @@ class Simplecaptchavalidator extends GlobalValidator implements ValidatorInterfa
      */
     public function isValid($valeur){
 	include_once JinCore::getRoot().JinCore::getRelativeExtLibs() . 'securimage/securimage.php';
-	$securimage = new \Securimage();
+	
+	$config = new IniFile(JinCore::getRoot().JinCore::getRelativePathAssets().'simplecaptcha/config.ini');
+	$sfile = JinCore::getProjectRoot().'surcharge/'.JinCore::getRelativePathAssets().'simplecaptcha/config.ini';
+	if(is_file($sfile)){
+	    $config->surcharge($sfile);
+	}
+	
+	$securimage = new \Securimage(array('session_name' => $config->get('session_name')));
 	
 	if($valeur == ''){
 	    parent::addError(Trad::trad('simplecaptcha_required'));

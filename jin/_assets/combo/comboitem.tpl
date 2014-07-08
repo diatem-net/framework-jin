@@ -1,0 +1,1 @@
+<span><input class="%class%" type="checkbox" %item_selected% name="%name%" value="%item_value%"><span>%item_label%</span></span>

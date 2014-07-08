@@ -48,7 +48,7 @@ class ListTools{
      * @param string $list  Liste source
      * @param string $value Valeur à rechercher
      * @param string $delimiter	Séparateur
-     * @return int  Position dans la liste
+     * @return int|boolean  Position dans la liste
      */
     public static function find($list, $value, $delimiter = ','){
 	return ArrayTools::find(self::toArray($list, $delimiter), $value);
@@ -60,7 +60,7 @@ class ListTools{
      * @param string $list  Liste source
      * @param string $value Valeur à rechercher
      * @param string $delimiter	Séparateur
-     * @return int  Position dans la liste
+     * @return int|boolean  Position dans la liste
      */
     public static function findNoCase($list, $value, $delimiter = ','){
 	return ArrayTools::findNoCase(self::toArray($list, $delimiter), $value);
@@ -75,7 +75,7 @@ class ListTools{
      * @return boolean
      */
     public static function contains($list, $value, $delimiter = ','){
-	if(ArrayTools::find(self::toArray($list, $delimiter), $value)){
+	if(is_numeric(ArrayTools::find(self::toArray($list, $delimiter), $value))){
 	    return true;
 	}
 	return false;

@@ -35,9 +35,15 @@ class DForm {
     private $attachementFields = array();
 
     /**
+     *
+     * @var string  Classe erreur appliquée aux composants ayant généré une erreur de validation
+     */
+    private $errorClassName = 'error';
+
+    /**
      * Ajout d'un champ
      * @param mixed $field   Accepte soit une chaîne de caractères définissant l'identifiant du champ, soit un composant de type FormComponent
-     * @param mixed $defaultValue   Valeur par défaut
+     * @param string|array $defaultValue   Valeur par défaut. Tableau de données pour les composants pouvant supporter plusieurs valeurs. (Ex. COMBO)
      * @param string $dataSourceColumn	Si le DForm est lié à une dataSource, précise dans quel champ rechercher les données
      * @param string $validateurs   Structure JSON définissant les validateurs à utiliser. Ex : {"notnull":"","numrange":{"minValue":0,"maxValue":100}}
      * @return boolean	Succès ou echec
@@ -75,7 +81,7 @@ class DForm {
 	}
 
 	//Finalisation
-	$newline = array('defaultValue' => $defaultValue, 'dataSourceColumn' => $dataSourceColumn, 'validateurs' => $validat, 'errors' => array(), 'value' => '');
+	$newline = array('defaultValue' => $defaultValue, 'dataSourceColumn' => $dataSourceColumn, 'validateurs' => $validat, 'errors' => array(), 'value' => null);
 	if (!is_string($field)) {
 	    $newline['component'] = $field;
 	}
@@ -144,39 +150,40 @@ class DForm {
 	foreach ($this->fields as $fieldName => $v) {
 
 	    //Champs standard
-	    if (isset($_POST[$fieldName])) {
-		//On réinitialise les erreurs
-		$this->fields[$fieldName]['errors'] = array();
+	    //On réinitialise les erreurs
+	    $this->fields[$fieldName]['errors'] = array();
 
-		//On détermine la nouvelle valeur
+	    //On détermine la nouvelle valeur
+	    if(isset($_POST[$fieldName])){
 		$this->fields[$fieldName]['value'] = $_POST[$fieldName];
+	    }else{
+		$this->fields[$fieldName]['value'] = '';
+	    }
+	    
 
-		//erreurs de niveau 2
-		$errors = array();
-		//Erreurs de niveau 1
-		$priorErrors = array();
+	    //erreurs de niveau 2
+	    $errors = array();
+	    //Erreurs de niveau 1
+	    $priorErrors = array();
 
-		//On passe par tous les validateurs pour checker la valeur
-		foreach ($v['validateurs'] as $v) {
-		    $vv = $v->isValid($_POST[$fieldName]);
-		    if (!$vv) {
-			$valide = false;
-			if ($v->isPrior()) {
-			    $priorErrors = ArrayTools::merge($priorErrors, $v->getErrors());
-			} else {
-			    $errors = ArrayTools::merge($errors, $v->getErrors());
-			}
+	    //On passe par tous les validateurs pour checker la valeur
+	    foreach ($v['validateurs'] as $v) {
+		$vv = $v->isValid($this->fields[$fieldName]['value']);
+		if (!$vv) {
+		    $valide = false;
+		    if ($v->isPrior()) {
+			$priorErrors = ArrayTools::merge($priorErrors, $v->getErrors());
+		    } else {
+			$errors = ArrayTools::merge($errors, $v->getErrors());
 		    }
 		}
+	    }
 
-		//On prend en considération les erreurs de niveau 1 ou 2 en fonction
-		if (ArrayTools::length($priorErrors) > 0) {
-		    $this->fields[$fieldName]['errors'] = $priorErrors;
-		} else {
-		    $this->fields[$fieldName]['errors'] = $errors;
-		}
+	    //On prend en considération les erreurs de niveau 1 ou 2 en fonction
+	    if (ArrayTools::length($priorErrors) > 0) {
+		$this->fields[$fieldName]['errors'] = $priorErrors;
 	    } else {
-		$valide = null;
+		$this->fields[$fieldName]['errors'] = $errors;
 	    }
 	}
 
@@ -251,7 +258,7 @@ class DForm {
     }
 
     /**
-     * Retourne l'erreur formattée d'un champ
+     * Retourne l'erreur formattée d'un champ (nécessite l'appel à isValid au préalable)
      * @param string $fieldName	Identifiant du champ ou du composant
      * @param string $globalFormat  Template d'affichage autour des erreurs. %texte% est le mot clé permettant de spécifier où positionner les items générés
      * @param string $itemFormat	Template d'affichage de chaque erreur. %texte% est le mot clé permettant de spécifier ou positionner le texte de l'erreur
@@ -276,6 +283,29 @@ class DForm {
 	    }
 	}
 	return '';
+    }
+
+    /**
+     * Retourne si un champ est en erreur ou non (nécessite l'appel à isValid au préalable)
+     * @param string $fieldName Identifiant du champ
+     * @return boolean|null TRUE si la validation du champ a rencontré une erreur
+     */
+    public function isFieldError($fieldName) {
+	if (isset($this->fields[$fieldName])) {
+	    if (ArrayTools::length($this->fields[$fieldName]['errors']) > 0) {
+		return true;
+	    } else {
+		return false;
+	    }
+	} else if (isset($this->attachementFields[$fieldName])) {
+	    if (ArrayTools::length($this->attachementFields[$fieldName]['errors']) > 0) {
+		return true;
+	    } else {
+		return false;
+	    }
+	} else {
+	    return null;
+	}
     }
 
     /**
@@ -315,11 +345,21 @@ class DForm {
 	    $this->fields[$fieldName]['component']->setValue($this->fields[$fieldName]['value']);
 	    $this->fields[$fieldName]['component']->setDefaultValue($this->fields[$fieldName]['defaultValue']);
 	    $this->fields[$fieldName]['component']->setError($this->getFieldError($fieldName, $globalErrorFormat, $itemErrorFormat));
+	    if ($this->isFieldError($fieldName)) {
+		$this->fields[$fieldName]['component']->addClass($this->errorClassName);
+	    } else {
+		$this->fields[$fieldName]['component']->removeClass($this->errorClassName);
+	    }
 
 	    return $this->fields[$fieldName]['component']->render();
 	} else if (isset($this->attachementFields[$fieldName]['component'])) {
 	    //Champ de type attachementField
 	    $this->attachementFields[$fieldName]['component']->setError($this->getFieldError($fieldName, $globalErrorFormat, $itemErrorFormat));
+	    if ($this->isFieldError($fieldName)) {
+		$this->attachementFields[$fieldName]['component']->addClass($this->errorClassName);
+	    } else {
+		$this->attachementFields[$fieldName]['component']->removeClass($this->errorClassName);
+	    }
 
 	    return $this->attachementFields[$fieldName]['component']->render();
 	} else {
@@ -347,6 +387,24 @@ class DForm {
 	    }
 	}
 	return $data;
+    }
+
+    
+    /**
+     * Redéfinit la classe CSS appliquée aux composants pour lesquels une erreur de validation a été relevée
+     * @param string $className	Nom de la classe à appliquer
+     */
+    public function setErrorClassName($className) {
+	$this->errorClassName = $className;
+    }
+
+    
+    /**
+     * Retourne la classe CSS actuellement appliquable aux composants pour lesquels une erreur de validation a été relevée
+     * @return type
+     */
+    public function getErrorClassName() {
+	return $this->errorClassName;
     }
 
 }

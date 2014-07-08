@@ -7,7 +7,6 @@ namespace jin\output\components\form;
 
 use jin\output\components\GlobalComponent;
 use jin\lang\StringTools;
-
 /** Classe parent de tout composant de type FORM (destinés à être utilisés avec des balises FORM)
  *
  * 	@auteur		Loïc Gerard
@@ -23,15 +22,21 @@ class FormComponent extends GlobalComponent{
     
     /**
      *
-     * @var string  Valeur actuelle
+     * @var string classe d'erreur affiché
      */
-    private $value = '';
+    private $errorclass = 'error';  
     
     /**
      *
-     * @var string  Valeur par défaut
+     * @var string|array  Valeur actuelle. Tableau de données pour les composants pouvant supporter plusieurs valeurs. (Ex. COMBO)
      */
-    private $defaultvalue = '';
+    private $value = null;
+    
+    /**
+     *
+     * @var string|array  Valeur par défaut. Tableau de données pour les composants pouvant supporter plusieurs valeurs. (Ex. COMBO)
+     */
+    private $defaultvalue = null;
     
     /**
      *
@@ -44,6 +49,8 @@ class FormComponent extends GlobalComponent{
      * @var string Personnalisation de la balise style
      */
     private $stylecss = '';
+    
+    
     
     
     /**
@@ -64,6 +71,15 @@ class FormComponent extends GlobalComponent{
     public function setError($error){
 	$this->error = $error;
     }
+
+    /**
+     * Définit l'erreur affichée
+     * @param string $errorclass class de l'erreur
+     */
+    public function setErrorClass($errorclass){
+	$this->errorclass = $errorclass;
+    }  
+    
     
     
     /**
@@ -74,6 +90,13 @@ class FormComponent extends GlobalComponent{
 	return $this->error;
     }
     
+     /**
+     * Retourne la classe d'erreur  affichée
+     * @return string
+     */
+    public function getErrorClass(){
+	return $this->errorclass;
+    }   
     
     /**
      * Définit la valeur actuelle
@@ -135,12 +158,25 @@ class FormComponent extends GlobalComponent{
      */
     protected function render(){
 	$html = parent::render();
+	return $this->replaceMagicFields($html);
+    }
+    
+    
+    /**
+     * Remplace les champs magiques des assets - concernant uniquement les champs magiques des composants de type FORM
+     * @param string $html  HTML à inspeter
+     * @return string
+     */
+    protected function replaceMagicFields($html){
+	$html = parent::replaceMagicFields($html);
 	$html = StringTools::replaceAll($html, '%label%', $this->getLabel());
-	$html = StringTools::replaceAll($html, '%value%', $this->getValue());
-	$html = StringTools::replaceAll($html, '%defaultvalue%', $this->getDefaultValue());
+	if(!is_array($this->getValue())){
+	    $html = StringTools::replaceAll($html, '%value%', $this->getValue());
+	}
+	if(!is_array($this->getDefaultValue())){
+	    $html = StringTools::replaceAll($html, '%defaultvalue%', $this->getDefaultValue());
+	}
 	$html = StringTools::replaceAll($html, '%error%', $this->getError());
-	
-	
 	return $html;
     }
 }
