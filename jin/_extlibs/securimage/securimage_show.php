@@ -49,7 +49,16 @@
 
 require_once dirname(__FILE__) . '/securimage.php';
 
-$img = new Securimage();
+include '../../launcher.php';
+use jin\filesystem\IniFile;
+use jin\JinCore;
+$config = new IniFile(JinCore::getRoot().JinCore::getRelativePathAssets().'simplecaptcha/config.ini');
+$sfile = JinCore::getProjectRoot() . 'surcharge/' . JinCore::getRelativePathAssets() . 'simplecaptcha/config.ini';
+if (is_file($sfile)) {
+    $config->surcharge($sfile);
+}
+
+$img = new Securimage(array('session_name' => $config->get('session_name')));
 
 // You can customize the image by making changes below, some examples are included - remove the "//" to uncomment
 
