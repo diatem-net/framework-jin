@@ -21,13 +21,11 @@ class SMS {
      * 	@param		string	 	$numero			Numéro de téléphone
      * 	@param		string	 	$message		Contenu du sms
      *	@param 		string		$codeSociete		Société émettrice
-     *  @param		string		$serveurSMS		[optionel] Serveur d'envoi de sms (par défaut le serveur d'envoi défini dans le fichier de configuration Jin)
+     *  @param		string		$serveurSMS		Serveur d'envoi de sms
      * 	@throws		Exception
      * 	@return		boolean					TRUE si le sms a bien été envoyé
      */
-    public static function send($numero, $message, $codeSociete, $serveurSMS = null) {
-	// Si serveurSMS n'est pas défini on prend le lien par défaut de l'environnement
-	$serveurSMS = ($serveurSMS == null) ? JinCore::getConfigValue('smsServer') : $serveurSMS;
+    public static function send($numero, $message, $codeSociete, $serveurSMS) {
 	//On appelle le webservice qui s'occupe d'envoyer le SMS
 	$client = new WSClient($serveurSMS);
 	$client->setWSDLCacheEnabled(false);
