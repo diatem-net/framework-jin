@@ -82,6 +82,14 @@ class SherlockConfig extends SherlockCore {
 	$mapping['settings']['analysis']['analyzer']['whitespace_analyzer']['tokenizer'] = 'whitespace';
 	$mapping['settings']['analysis']['analyzer']['whitespace_analyzer']['filter'] = array('lowercase', 'asciifolding');
 	
+	//Analyzer pour les recherches sur des données destinées à des facets
+	$mapping['settings']['analysis']['analyzer']['facetanalyzer'] = array();
+	$mapping['settings']['analysis']['analyzer']['facetanalyzer']['type'] = 'custom';
+	$mapping['settings']['analysis']['analyzer']['facetanalyzer']['tokenizer'] = 'keyword';
+	$mapping['settings']['analysis']['analyzer']['facetanalyzer']['filter'] = array('lowercase');
+
+	
+	
 	//Création du mapping
 	$mapping['mappings'] = array();
 	for ($i = 0; $i < count($xml->documentType); $i++) {
