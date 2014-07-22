@@ -199,6 +199,7 @@ class Debug {
 	$dump .= '</div>';
 
 	//Affichage du contenu
+
 	if ($type == 'string') {
 	    $dump .= '<div class="dump_item_content">' . htmlspecialchars($var) . '</div>';
 	} else if ($type == 'boolean') {
@@ -209,6 +210,8 @@ class Debug {
 		$dump .= 'FALSE';
 	    }
 	    $dump .= '</div>';
+	} else if ($type == 'object') {
+	    $dump .= '';
 	} else {
 	    $dump .= '<div class="dump_item_content">' . $var . '</div>';
 	}
