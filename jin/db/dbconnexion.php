@@ -6,6 +6,7 @@
 namespace jin\db;
 
 use jin\db\PostgreSql;
+use jin\db\MySql;
 use \Exception;
 
 /** Gestion de la connexion aux bases de données
@@ -37,6 +38,21 @@ class DbConnexion {
      */
     public static function connectWithPostgreSql($host, $user, $pass, $port, $dbname) {
 	self::$cnxHandler = new PostgreSql($host, $user, $pass, $port, $dbname);
+	return self::$cnxHandler->connect();
+    }
+    
+    
+    /**	Initialise la connexion sur une Base de données MySql
+     * 
+     * @param string $host  Url du serveur MySql
+     * @param string $user  Utilisateur de base de données
+     * @param string $pass  Password de l'utilisateur
+     * @param integer $port Port utilisé
+     * @param string $dbname	Nom de la base de données
+     * @return boolean	Succès ou echec de connexion
+     */
+    public static function connectWithMySql($host, $user, $pass, $port, $dbname) {
+	self::$cnxHandler = new MySql($host, $user, $pass, $port, $dbname);
 	return self::$cnxHandler->connect();
     }
 
