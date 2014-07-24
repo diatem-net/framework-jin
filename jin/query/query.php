@@ -193,7 +193,7 @@ class Query {
 		throw new Exception('L\'argument n\'est pas de type SQL_NUMERIC (valeur : '.$valeur.')');
 	    }
 	} elseif ($type == self::$SQL_STRING) {
-	    if (!is_string($valeur) || !is_numeric($valeur)) {
+	    if (!is_string($valeur) && !is_numeric($valeur)) {
 		throw new Exception('L\'argument n\'est pas de type SQL_STRING (valeur : '.$valeur.')');
 	    }
 	} else {
