@@ -10,12 +10,9 @@ use jin\db\DbConnexion;
 use jin\lang\StringTools;
 use \Pdo;
 use jin\query\QueryResult;
-use sylab\framework\query\QueryResult;
-use sylab\system\frontend\cache\Cache;
-use sylab\system\common\core\Buffer;
-use sylab\system\common\exception\CustomException;
-use sylab\system\common\analyse\GlobalPerfAnalyser;
-use sylab\framework\lang\TimeTools;
+use jin\lang\TimeTools;
+use jin\cache\Cache;
+
 
 /** Gestion d'une requête SQL
  *
@@ -25,78 +22,83 @@ use sylab\framework\lang\TimeTools;
  */
 class Query {
 
-    /** 	Liste des arguments
-     * 	@var array
+    /** 	
+     * 	@var array  Liste des arguments
      */
     private $arguments = array();
 
-    /** 	Type SQL chaîne de caractères
-     * 	@var integer
+    
+    /** 	
+     * 	@var integer	Type SQL chaîne de caractères
      */
     public static $SQL_STRING = 1;
 
-    /** 	Type SQL numérique
-     * 	@var integer
+    
+    /** 	
+     * 	@var integer	Type SQL numérique
      */
     public static $SQL_NUMERIC = 2;
 
-    /** 	Type SQL booleen
-     * 	@var boolean
+    
+    /**
+     * 	@var boolean	 Type SQL booleen
      */
     public static $SQL_BOOL = 3;
 
-    /** 	Query préparée
-     * 	@var [PDO]
+    
+    /** 
+     * 	@var PDO  Query préparée
      */
     private $query = NULL;
 
-    /** 	Requête SQL
-     * 	@var string
+    
+    /** 
+     * 	@var string Requête SQL
      */
     private $sql = NULL;
 
-    /** 	Résultats de la requête
-     * 	@var array[]
+    
+    /** 
+     * 	@var array[]	Résultats de la requête
      */
     private $resultat = NULL;
 
-    /** 	Constructeur
+    
+    /** Constructeur
      * 	@return	void
      */
     public function __construct() {
-	
     }
 
-    /** 	définit la requête à executer
-     * 	@param	string 		sql		Requête SQL<br><i><b>NB :</b> On pourra utiliser le mot-clé <envname> pour faire référence au schéma de l'environnement courant.
+    
+    /** définit la requête à executer
+     * 	@param	string 		$sql		Requête SQL
      * 	@return	void
      */
     public function setRequest($sql) {
-	$this->sql = StringTools::replaceAll($sql, '<envname>', 'global_' . Config::get('envName'));
 	$this->query = DbConnexion::$cnxHandler->cnx->prepare($this->sql);
     }
 
-    /** 	Ajoute une ligne à la requête à exécuter
-     * @param string		sql	Nouvelle ligne à executer.<br><i><b>NB :</b> On pourra utiliser le mot-clé <envname> pour faire référence au schéma de l'environnement courant.
+    
+    /** Ajoute une ligne à la requête à exécuter
+     * @param string		$sql	Nouvelle ligne à executer.
      * @return	void
      */
     public function addToRequest($sql) {
-	$this->sql .= ' '.StringTools::replaceAll($sql, '<envname>', 'global_' . Config::get('envName'));
 	$this->query = DbConnexion::$cnxHandler->cnx->prepare($this->sql);
     }
 
-    /** 	Execute la requête
+    /** Execute la requête
      * 	@return	void
      */
     public function execute($cacheEnabled = false) {
 
 	//Gestion du cache
-	if (GlobalPerfAnalyser::$enabled) {
-	    $time = TimeTools::getTimestampInMs();
-	}
+	$time = TimeTools::getTimestampInMs();
+	
 	$mustRequest = true;
 	$cacheKey = '';
-	if ($cacheEnabled && Config::get('useCache') == 1 && Config::get('useCacheQuery') == 1) {
+	if ($cacheEnabled) {
 	    $psql = $this->getSql();
 
 	    $cacheKey = 'sql_' . StringTools::hashCode($psql);
@@ -115,23 +117,20 @@ class Query {
 		$res = $this->query->execute($this->arguments);
 		$this->resultat = $this->query->fetchAll();
 	    } catch (\Exception $e) {
-		throw new CustomException($e->getMessage(), $e->getCode(), $e->getPrevious(), array(array('name' => 'Requête SQL', 'content' => $this->getSql())));
+		throw new \Exception($e->getMessage());
 	    }
 
 	    //Mise en cache
-	    if ($cacheEnabled && Config::get('useCache') == 1 && Config::get('useCacheQuery') == 1) {
+	    if ($cacheEnabled) {
 		Cache::saveInCache($cacheKey, $this->resultat);
 	    }
 	}
-	if (GlobalPerfAnalyser::$enabled) {
-	    $elapsed = TimeTools::getTimestampInMs() - $time;
-	    GlobalPerfAnalyser::addQuery($this->getSql(), $elapsed, !$mustRequest);
-	}
-
+	
 	return $res;
     }
 
-    /** 	Retourne la requête SQL
+    
+    /** Retourne la requête SQL
      * 	@return string	Requête SQL
      */
     public function getSql() {
@@ -145,18 +144,23 @@ class Query {
     }
     
     
+    /**
+     * Retourne le ResultSet
+     * @return ResultSet    résultats de la reaquête PDO
+     */
     public function getRs(){
 	return $this->resultat;
     }
     
 
-    /** 	Retourne un objet QueryResult permettant de travailler avec les résultats de la requête
-     * 	@return [QueryResult]	Objet \sylab\common\sgbd\QueryResult
+    /** Retourne un objet QueryResult permettant de travailler avec les résultats de la requête
+     * 	@return QueryResult Instance de jin/query/QueryResult
      */
     public function getQueryResults() {
 	return new QueryResult($this->resultat);
     }
 
+    
     /** Retourne le nombre de lignes retournées par la requête
      * 	@return	integer	Nombre de lignes
      */
@@ -164,12 +168,13 @@ class Query {
 	return count($this->resultat);
     }
 
-    /** 	Permet de préparer une valeur dans une requête. (Equivalent de <cfqueryparam> en coldfusion)
-     * 	@param 	mixed 	valeur		Valeur à intégrer dans la requête
-     * 	@param 	integer	type		Type de valeur attendue (ex. Query::SQL_STRING)
-     * 	@see	sylab.common.sgbd.Query#SQL_STRING
-     * 	@see	sylab.common.sgbd.Query#SQL_NUMERIC
-     * 	@see	sylab.common.sgbd.Query#SQL_BOOL
+    
+    /** Permet de préparer une valeur dans une requête. (Equivalent de <cfqueryparam> en coldfusion)
+     * 	@param 	mixed 	$valeur		Valeur à intégrer dans la requête
+     * 	@param 	integer	$type		Type de valeur attendue (ex. Query::SQL_STRING)
+     * 	@see	Query#SQL_STRING
+     * 	@see	Query#SQL_NUMERIC
+     * 	@see	Query#SQL_BOOL
      * 	@throws Exception
      * 	@return string	Caractère de remplacement
      */
