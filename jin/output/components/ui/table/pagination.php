@@ -402,7 +402,7 @@ class Pagination extends UIComponent implements ComponentInterface{
 	}
 	$first = new AssetFile($this->componentName.'/first.tpl');
 	$first_content = $first->getContent();
-	$first_content = StringTools::replaceAll($first_content, '%class%', $this->first_classes);
+	$first_content = StringTools::replaceAll($first_content, '%class%', ListTools::changeDelims($this->first_classes, ',', ' '));
 	$first_content = StringTools::replaceAll($first_content, '%getargument%', $this->getArgument);
 	$this->first_template = $first_content;
 	return $this->first_template;
@@ -419,7 +419,7 @@ class Pagination extends UIComponent implements ComponentInterface{
 	}
 	$last = new AssetFile($this->componentName.'/last.tpl');
 	$last_content = $last->getContent();
-	$last_content = StringTools::replaceAll($last_content, '%class%', $this->last_classes);
+	$last_content = StringTools::replaceAll($last_content, '%class%', ListTools::changeDelims($this->last_classes, ',', ' '));
 	$last_content = StringTools::replaceAll($last_content, '%getargument%', $this->getArgument);
 	$this->last_template = $last_content;
 	return $this->last_template;
@@ -436,7 +436,7 @@ class Pagination extends UIComponent implements ComponentInterface{
 	}
 	$page = new AssetFile($this->componentName.'/page.tpl');
 	$page_content = $page->getContent();
-	$page_content = StringTools::replaceAll($page_content, '%class%', $this->page_classes);
+	$page_content = StringTools::replaceAll($page_content, '%class%', ListTools::changeDelims($this->page_classes, ',', ' '));
 	$page_content = StringTools::replaceAll($page_content, '%getargument%', $this->getArgument);
 	$this->page_template = $page_content;
 	return $this->page_template;
@@ -453,7 +453,7 @@ class Pagination extends UIComponent implements ComponentInterface{
 	}
 	$spage = new AssetFile($this->componentName.'/selectedpage.tpl');
 	$spage_content = $spage->getContent();
-	$spage_content = StringTools::replaceAll($spage_content, '%class%', $this->selectedpage_classes);
+	$spage_content = StringTools::replaceAll($spage_content, '%class%', ListTools::changeDelims($this->selectedpage_classes, ',', ' '));
 	$spage_content = StringTools::replaceAll($spage_content, '%getargument%', $this->getArgument);
 	$this->selectedpage_template = $spage_content;
 	return $this->selectedpage_template;
@@ -470,7 +470,7 @@ class Pagination extends UIComponent implements ComponentInterface{
 	}
 	$next = new AssetFile($this->componentName.'/next.tpl');
 	$next_content = $next->getContent();
-	$next_content = StringTools::replaceAll($next_content, '%class%', $this->next_classes);
+	$next_content = StringTools::replaceAll($next_content, '%class%', ListTools::changeDelims($this->next_classes, ',', ' '));
 	$next_content = StringTools::replaceAll($next_content, '%getargument%', $this->getArgument);
 	$this->next_template = $next_content;
 	return $this->next_template;
@@ -487,7 +487,7 @@ class Pagination extends UIComponent implements ComponentInterface{
 	}
 	$previous = new AssetFile($this->componentName.'/previous.tpl');
 	$previous_content = $previous->getContent();
-	$previous_content = StringTools::replaceAll($previous_content, '%class%', $this->previous_classes);
+	$previous_content = StringTools::replaceAll($previous_content, '%class%', ListTools::changeDelims($this->previous_classes, ',', ' '));
 	$previous_content = StringTools::replaceAll($previous_content, '%getargument%', $this->getArgument);
 	$this->previous_template = $previous_content;
 	return $this->previous_template;
