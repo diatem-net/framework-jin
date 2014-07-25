@@ -122,7 +122,9 @@ class QueryResult implements Iterator {
     public function getHeaders(){
 	$cols = array();
 	foreach($this->resultat[0] as $c => $v){
-	    $cols[] = $c;
+	    if(!is_numeric($c)){
+		$cols[] = $c;
+	    }
 	}
 	
 	return $cols;
