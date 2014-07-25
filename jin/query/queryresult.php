@@ -52,7 +52,7 @@ class QueryResult implements Iterator {
 	}
 
 	$l = NULL;
-	if ($to > 0) {
+	if ($to >= 0) {
 	    $l = $to - $from + 1;
 	}
 	$this->resultat = array_slice($this->resultat, $from, $l);

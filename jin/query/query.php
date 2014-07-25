@@ -12,7 +12,7 @@ use \Pdo;
 use jin\query\QueryResult;
 use jin\lang\TimeTools;
 use jin\cache\Cache;
-
+use jin\log\Debug;
 
 /** Gestion d'une requête SQL
  *
@@ -76,7 +76,8 @@ class Query {
      * 	@return	void
      */
     public function setRequest($sql) {
-	$this->query = DbConnexion::$cnxHandler->cnx->prepare($this->sql);
+	$this->sql = $sql;
+	$this->query = DbConnexion::$cnxHandler->cnx->prepare($sql);
     }
 
     
@@ -85,7 +86,8 @@ class Query {
      * @return	void
      */
     public function addToRequest($sql) {
-	$this->query = DbConnexion::$cnxHandler->cnx->prepare($this->sql);
+	$this->sql = $sql;
+	$this->query = DbConnexion::$cnxHandler->cnx->prepare($sql);
     }
 
     /** Execute la requête
@@ -115,7 +117,7 @@ class Query {
 	    try {
 		$this->query->setFetchMode(PDO::FETCH_BOTH);
 		$res = $this->query->execute($this->arguments);
-		$this->resultat = $this->query->fetchAll();
+		try{	$this->resultat = $this->query->fetchAll(); }catch(\Exception $e2){ }
 	    } catch (\Exception $e) {
 		throw new \Exception($e->getMessage());
 	    }
@@ -128,6 +130,7 @@ class Query {
 	
 	return $res;
     }
+    
 
     
     /** Retourne la requête SQL
