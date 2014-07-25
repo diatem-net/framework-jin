@@ -114,6 +114,20 @@ class QueryResult implements Iterator {
 	    return $this->resultat;
 	}
     }
+    
+    
+    /** Retourne les en-tête de colonne
+     * @return	array
+     */
+    public function getHeaders(){
+	$cols = array();
+	foreach($this->resultat[0] as $c => $v){
+	    $cols[] = $c;
+	}
+	
+	return $cols;
+    }
+    
 
     //Fonctions d'itération
     
