@@ -423,7 +423,7 @@ class Table extends UIComponent implements ComponentInterface{
 	}
 	$th = new AssetFile($this->componentName.'/th.tpl');
 	$th_content = $th->getContent();
-	$th_content = StringTools::replaceAll($th_content, '%class%', $this->th_classes);
+	$th_content = StringTools::replaceAll($th_content, '%class%', ListTools::changeDelims($this->th_classes, ',', ' '));
 	$this->th_template = $th_content;
 	return $this->th_template;
     }
@@ -440,7 +440,7 @@ class Table extends UIComponent implements ComponentInterface{
 	    }
 	    $td = new AssetFile($this->componentName.'/td.tpl');
 	    $td_content = $td->getContent();
-	    $allClasses = ArrayTools::toList(ArrayTools::merge(ListTools::toArray($this->td_classes),ListTools::toArray($this->td_alternate_classes)));
+	    $allClasses = ArrayTools::toList(ArrayTools::merge(ListTools::toArray($this->td_classes),ListTools::toArray($this->td_alternate_classes)), ' ');
 	    $td_content = StringTools::replaceAll($td_content, '%class%', $allClasses);
 	    $this->td_alternate_template = $td_content;
 	    return $this->td_alternate_template;
@@ -450,7 +450,7 @@ class Table extends UIComponent implements ComponentInterface{
 	    }
 	    $td = new AssetFile($this->componentName.'/td.tpl');
 	    $td_content = $td->getContent();
-	    $td_content = StringTools::replaceAll($td_content, '%class%', $this->td_classes);
+	    $td_content = StringTools::replaceAll($td_content, '%class%', ListTools::changeDelims($this->td_classes, ',', ' '));
 	    $this->td_template = $td_content;
 	    return $this->td_template;
 	}
@@ -467,7 +467,7 @@ class Table extends UIComponent implements ComponentInterface{
 	}
 	$tr = new AssetFile($this->componentName.'/tr.tpl');
 	$tr_content = $tr->getContent();
-	$tr_content = StringTools::replaceAll($tr_content, '%class%', $this->tr_classes);
+	$tr_content = StringTools::replaceAll($tr_content, '%class%', ListTools::changeDelims($this->tr_classes, ',', ' '));
 	$this->tr_template = $tr_content;
 	return $this->tr_template;
     }
@@ -483,7 +483,7 @@ class Table extends UIComponent implements ComponentInterface{
 	}
 	$thead = new AssetFile($this->componentName.'/thead.tpl');
 	$thead_content = $thead->getContent();
-	$thead_content = StringTools::replaceAll($thead_content, '%class%', $this->thead_classes);
+	$thead_content = StringTools::replaceAll($thead_content, '%class%', ListTools::changeDelims($this->thead_classes, ',', ' '));
 	$this->thead_template = $thead_content;
 	return $this->thead_template;
     }
@@ -499,7 +499,7 @@ class Table extends UIComponent implements ComponentInterface{
 	}
 	$tbody = new AssetFile($this->componentName.'/tbody.tpl');
 	$tbody_content = $tbody->getContent();
-	$tbody_content = StringTools::replaceAll($tbody_content, '%class%', $this->tbody_classes);
+	$tbody_content = StringTools::replaceAll($tbody_content, '%class%', ListTools::changeDelims($this->tbody_classes, ',', ' '));
 	$this->tbody_template = $tbody_content;
 	return $this->tbody_template;
     }
