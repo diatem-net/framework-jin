@@ -52,7 +52,7 @@ class QueryResult implements Iterator {
 	}
 
 	$l = NULL;
-	if ($to > 0) {
+	if ($to >= 0) {
 	    $l = $to - $from + 1;
 	}
 	$this->resultat = array_slice($this->resultat, $from, $l);
@@ -114,6 +114,22 @@ class QueryResult implements Iterator {
 	    return $this->resultat;
 	}
     }
+    
+    
+    /** Retourne les en-tête de colonne
+     * @return	array
+     */
+    public function getHeaders(){
+	$cols = array();
+	foreach($this->resultat[0] as $c => $v){
+	    if(!is_numeric($c)){
+		$cols[] = $c;
+	    }
+	}
+	
+	return $cols;
+    }
+    
 
     //Fonctions d'itération
     

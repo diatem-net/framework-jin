@@ -44,14 +44,6 @@ class FormComponent extends GlobalComponent{
      */
     private $label = '';
     
-    /**
-     *
-     * @var string Personnalisation de la balise style
-     */
-    private $stylecss = '';
-    
-    
-    
     
     /**
      * Constructeur
