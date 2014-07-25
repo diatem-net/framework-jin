@@ -8,6 +8,7 @@ namespace jin\db;
 use jin\db\PostgreSql;
 use jin\db\MySql;
 use \Exception;
+use jin\JinCore;
 
 /** Gestion de la connexion aux bases de données
  *
