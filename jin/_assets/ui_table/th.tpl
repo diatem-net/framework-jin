@@ -1,1 +1,1 @@
-<td class="%class%" id="%id%">%value%</td>
+<th class="%class%" id="%id%">%value%</th>
