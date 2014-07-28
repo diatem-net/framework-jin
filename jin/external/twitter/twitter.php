@@ -83,4 +83,18 @@ class Twitter{
 	$results = $this->toa->get('search/tweets', $query);
 	return $results;
     }
+    
+   
+    /**
+     * Retourne les userId des followers
+     * @return array
+     */
+    public function getFollowersUserIds(){
+
+	$query = array(
+	);
+
+	$results = $this->toa->get('followers/ids', $query);
+	return $results;
+    }
 }
