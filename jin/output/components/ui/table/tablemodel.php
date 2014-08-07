@@ -5,9 +5,6 @@
  */
 namespace jin\output\components\ui\table;
 
-use jin\output\components\ui\Boolean;
-use jin\output\components\ui\Date;
-use jin\output\components\ui\DateTime;
 
 
 /** Composant permettant de définir un modèle d'affichage à utiliser sur un composant de type UI Table
