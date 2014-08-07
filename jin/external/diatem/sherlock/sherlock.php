@@ -222,7 +222,7 @@ class Sherlock extends SherlockCore{
      */
     public function testConnexion(){
 	//On appelle l'url du serveur
-	$d = Curl::call($this->cnxString, null, false);
+	$d = Curl::call($this->cnxString, null);
 	if(!$d){
 	    $this->throwError('Connexion avec Sherlock impossible : '.Curl::getLastErrorVerbose());
 	    return false;
@@ -262,7 +262,7 @@ class Sherlock extends SherlockCore{
      */
     private function getServerInfo(){
 	//On appelle l'url du serveur
-	$d = Curl::call($this->cnxString, null, false);
+	$d = Curl::call($this->cnxString, null);
 	if(!$d){
 	    $this->throwError('Connexion avec Sherlock impossible : '.Curl::getLastErrorVerbose());
 	    return false;

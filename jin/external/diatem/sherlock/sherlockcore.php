@@ -47,7 +47,7 @@ class SherlockCore{
      * @return array|boolean		Retourne un tableau issu du JSon retourné par ElasticSearch. Retourne FALSE en cas d'échec de l'appel.
      */
     protected function callMethod($method, $args = null, $customRequest = null){
-	$d = Curl::call($this->sherlock->getCnxString().$method, $args, false, $customRequest);
+	$d = Curl::call($this->sherlock->getCnxString().$method, $args, $customRequest, false);
 
 	//On log la dernière réponse
 	$this->sherlock->lastResponse = $d;
