@@ -445,6 +445,18 @@ class StringTools {
     public static function hashCode($chaine, $algo = 'md5') {
 	return hash($algo, $chaine);
     }
+    
+    
+    /**
+     * Génère une valeur de hashage avec une clé utilisée pour générer la variance HMAC de l'empreinte numérique. 
+     * @param string $chaine	Châine de caractères à hasher
+     * @param string $key	Clé de variance
+     * @param string $algo	[optionel]  Algorithme à utiliser. (md5 par défaut)
+     * @return string
+     */
+    public static function hmac($chaine, $key, $algo = 'md5') {
+	return hash_hmac($algo, $chaine, $key);
+    }
 
     
     /** Supprime toutes les balises HTML
