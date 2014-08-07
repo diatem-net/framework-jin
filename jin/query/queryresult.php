@@ -71,6 +71,14 @@ class QueryResult implements Iterator {
 	    $this->resultat[$i][$columnName] = $defaultValue;
 	}
     }
+    
+    
+    public function duplicateColumn($columnName, $newColumnName){
+	$nb = count($this->resultat);
+	for ($i = 0; $i < $nb; $i++) {
+	    $this->resultat[$i][$newColumnName] = $this->resultat[$i][$columnName];
+	}
+    }
 
     
     /**
