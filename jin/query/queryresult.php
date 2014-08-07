@@ -7,6 +7,7 @@ namespace jin\query;
 
 use \Exception;
 use \Iterator;
+use jin\lang\ArrayTools;
 
 
 /** Gestion d'un résultat Query. Peut être parcouru : foreach($objet as $ligne){ echo $ligne['columnName']; }
@@ -121,9 +122,11 @@ class QueryResult implements Iterator {
      */
     public function getHeaders(){
 	$cols = array();
-	foreach($this->resultat[0] as $c => $v){
-	    if(!is_numeric($c)){
-		$cols[] = $c;
+	if(ArrayTools::length($this->resultat) > 0){
+	    foreach($this->resultat[0] as $c => $v){
+		if(!is_numeric($c)){
+		    $cols[] = $c;
+		}
 	    }
 	}
 	

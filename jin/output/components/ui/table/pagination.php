@@ -247,7 +247,7 @@ class Pagination extends UIComponent implements ComponentInterface{
 	}
 	
 	//Affichage last
-	if($this->currentPage != $this->nbPages){
+	if($this->currentPage != $this->nbPages && $this->nbPages > 0){
 	    $last = $this->getLastTemplate();
 	    $last = StringTools::replaceAll($last, '%page%', $this->nbPages);
 	    $items .= $last;

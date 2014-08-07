@@ -309,6 +309,9 @@ class Table extends UIComponent implements ComponentInterface{
 	$headersUsed;
 	if($this->headers){
 	    $hc = ArrayTools::length($this->datasource->getHeaders());
+	    if($hc==0){
+		$hc = ArrayTools::length($this->headers);
+	    }
 	    if($hc != ArrayTools::length($this->headers)){
 		throw new \Exception('Le nombre d\'en-tête de colonne transmis dans les headers ne correspond pas aux données');
 	    }
@@ -395,7 +398,7 @@ class Table extends UIComponent implements ComponentInterface{
 	    $hc = $td_content;
 	    $hc = StringTools::replaceAll($hc, '%id%', $this->name.$this->header_td_idPrefix.$colI.'_'.$lineNum);
 	    
-	    $headName;
+	    $headName = '';
 	    if(isset($this->headers[$colI])){
 		$headName = $this->headers[$colI];
 	    }
