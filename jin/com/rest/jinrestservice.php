@@ -5,7 +5,7 @@
  * Author : Arun Kumar Sekar
  */
 
-namespace jin\com;
+namespace jin\com\rest;
 
 use jin\dataformat\Json;
 use jin\lang\StringTools;

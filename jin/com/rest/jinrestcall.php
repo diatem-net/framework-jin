@@ -1,6 +1,6 @@
 <?php
 
-namespace jin\com;
+namespace jin\com\rest;
 
 use jin\com\Curl;
 use jin\lang\StringTools;
