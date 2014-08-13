@@ -86,8 +86,8 @@ class Query {
      * @return	void
      */
     public function addToRequest($sql) {
-	$this->sql = $sql;
-	$this->query = DbConnexion::$cnxHandler->cnx->prepare($sql);
+	$this->sql .= $sql;
+	$this->query = DbConnexion::$cnxHandler->cnx->prepare($this->sql);
     }
 
     /** Execute la requête
