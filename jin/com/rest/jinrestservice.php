@@ -19,6 +19,10 @@ class JinRestService{
     private $_code = 200;
     private $securedRest = false;
     private $securedKeys = array();
+    
+    private $requestPublicKey;
+    private $requestSecure;
+    private $requestService;
 
     public function __construct() {
 	$this->inputs();
@@ -92,12 +96,13 @@ class JinRestService{
     
     
     public function processApi() {
+
 	if($this->securedRest){
-	    if(!isset($_REQUEST['secure']) || !isset($_REQUEST['publickey'])){
-		$this->response('Utilisateur non authentifié 1'.$this->get_request_method(), 401);
+	    if(!isset($this->requestSecure) || !isset($this->requestPublicKey)){
+		$this->response('Utilisateur non authentifié', 401);
 	    }
-	    if(!$this->verifyKeys($_REQUEST['publickey'], $_REQUEST['secure'])){
-		$this->response('Utilisateur non authentifié 2'.$this->get_request_method(), 401);
+	    if(!$this->verifyKeys($this->requestPublicKey, $this->requestSecure)){
+		$this->response('Utilisateur non authentifié', 401);
 	    }
 	    
 	}
@@ -108,7 +113,7 @@ class JinRestService{
 	}else{
 	    $this->response('', 404);
 	}
-
+	
     }
     
     private function verifyKeys($publicKey, $secureString){
@@ -116,12 +121,18 @@ class JinRestService{
 	    return false;
 	}
 	
+	$localHmac = StringTools::hmac($this->getToEncodeString($publicKey), $this->securedKeys[$publicKey], 'sha256');
+	
+	return $this->compareHMAC($localHmac, $secureString);
+    }
+    
+    
+    private function getToEncodeString($publicKey){
 	$toEncode = $this->get_request_method();
 	$toEncode .= $publicKey;
 	$toEncode .= Json::encode($this->_request);
-	$localHmac = StringTools::hmac($toEncode, $this->securedKeys[$publicKey], 'sha256');
 	
-	return $this->compareHMAC($localHmac, $secureString);
+	return $toEncode;
     }
     
     
@@ -143,6 +154,17 @@ class JinRestService{
     }
 
     private function inputs() {
+	if  (isset($_GET['publickey']) && isset($_GET['secure'])) {
+	    $this->requestPublicKey = $_GET['publickey'];
+	    $this->requestSecure = $_GET['secure'];
+	    unset($_GET['publickey']);
+	    unset($_GET['secure']);
+	}
+	if (isset($_GET['request'])) {
+	    $this->requestService = $_GET['request'];
+	    unset($_GET['request']);
+	}
+
 	switch ($this->get_request_method()) {
 	    case "POST":
 		$this->_request = $this->cleanInputs($_POST);
@@ -153,7 +175,7 @@ class JinRestService{
 		break;
 	    case "PUT":
 		parse_str(file_get_contents("php://input"), $this->_request);
-		$this->_request = $this->cleanInputs($this->_request);
+		$this->_request = $this->cleanInputs($_GET);
 		break;
 	    default:
 		$this->response('', 406);

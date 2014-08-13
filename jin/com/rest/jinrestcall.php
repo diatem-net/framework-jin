@@ -17,6 +17,15 @@ class JinRestCall{
     
     public function __construct($url, $args = NULL, $method = 'POST') {
 	$this->url = $url;
+	
+	if(!is_null($args)){
+	    foreach($args as $a => $v){
+		if(!is_string($v)){
+		    $args[$a] = (String)$v;
+		}
+	    }
+	}
+	
 	$this->args = $args;
 	$this->method = $method;
     }
@@ -40,6 +49,21 @@ class JinRestCall{
 		$plus = '?secure='.$this->getHMAC().'&publickey='.$this->publicKey;
 	    }
 	    
+	}
+	
+	if($this->method == 'POST'){
+	}else{
+	    if($this->args){
+		foreach($this->args as $arg => $val){
+	
+		    if($plus == '' && !StringTools::contains($this->url, '?')){
+			$plus .= '?'.$arg.'='.$val;
+		    }else{
+			$plus .= '&'.$arg.'='.$val;
+		    }
+		}
+	    }
+	    $this->args = array();
 	}
 	
 	$results = Curl::call($this->url.$plus, $this->args, $this->method, $this->throwError);
@@ -70,6 +94,7 @@ class JinRestCall{
 	} else {
 	    $toEncode .= Json::encode(array());
 	}
+
 
 	return StringTools::hmac($toEncode, $this->privateKey, 'sha256');
     }
