@@ -1,10 +1,10 @@
 <?php
 
-namespace sylab\framework\query;
+namespace jin\query;
 
-use sylab\framework\query\Query;
-use sylab\framework\query\QueryResult;
-use sylab\framework\log\Debug;
+use jin\query\Query;
+use jin\query\QueryResult;
+use jin\log\Debug;
 
 class QueryOfQuery {
     private $query;
@@ -12,7 +12,7 @@ class QueryOfQuery {
     private $fields = '*';
     private $conditions = array();
     private $strCondition = '';
-    private $orderBy = '';
+    private $orderBy;
     private $orderBySens = 'ASC';
     
     public function __construct(Query $query = null, QueryResult $queryResult = null, $fields = '*') {
@@ -59,18 +59,27 @@ class QueryOfQuery {
 	$first = true;
 	$this->strCondition = 'if(1 == 1 ';
 	foreach ($this->conditions as $cond){
-	    $this->strCondition .= '&& ($v[\''.$cond['field'].'\'] '.$cond['operator'].' '.$cond['value'].')';
+	    if(is_string($cond['value'])){
+		$this->strCondition .= '&& ($v[\''.$cond['field'].'\'] '.$cond['operator'].' \''.$cond['value'].'\')';
+	    }else{
+		$this->strCondition .= '&& ($v[\''.$cond['field'].'\'] '.$cond['operator'].' '.$cond['value'].')';
+	    }
+	    
 	}
 	$this->strCondition .= '){ return true; }else{ return false; }';
 	
 	
 	$rs = array_filter($rs, array($this, 'testLine'));
 
-	if($this->orderBySens == 'ASC'){
-	   usort($rs, array($this, 'testOrderASC'));
-	}elseif($this->orderBySens == 'DESC'){
-	   usort($rs, array($this, 'testOrderDESC'));
+	if($this->orderBy){
+	    if($this->orderBySens == 'ASC'){
+	       usort($rs, array($this, 'testOrderASC'));
+	    }elseif($this->orderBySens == 'DESC'){
+	       usort($rs, array($this, 'testOrderDESC'));
+	    }
 	}
+	
+	$rs = array_values($rs);
 	
 	return new QueryResult($rs);
     }
