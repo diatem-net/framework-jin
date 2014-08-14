@@ -95,7 +95,8 @@ class JinRestCall{
     }
     
     private function getHMAC() {
-	$toEncode = $this->method;
+	$toEncode = $this->url;
+	$toEncode .= $this->method;
 	$toEncode .= $this->publicKey;
 	if ($this->args) {
 	    $toEncode .= Json::encode($this->args, true);
