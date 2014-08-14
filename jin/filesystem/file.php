@@ -120,7 +120,7 @@ class File {
     
     public function getBinaryContent(){
 	$ret = fopen($this->path, 'r', true);
-	return stream_get_contents($ret);
+	return base64_encode(stream_get_contents($ret));
     }
 
     
