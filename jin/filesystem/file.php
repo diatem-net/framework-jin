@@ -119,10 +119,8 @@ class File {
     
     
     public function getBinaryContent(){
-	if (is_null($this->fileContent)) {
-	    $this->readContent();
-	}
-	return base64_encode($this->fileContent);
+	$ret = fopen($this->path, 'r', true);
+	return stream_get_contents($ret);
     }
 
     
