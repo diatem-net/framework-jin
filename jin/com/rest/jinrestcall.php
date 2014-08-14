@@ -5,6 +5,7 @@ namespace jin\com\rest;
 use jin\com\Curl;
 use jin\lang\StringTools;
 use jin\dataformat\Json;
+use jin\log\Debug;
 
 class JinRestCall{
     private $secured = false;
@@ -18,10 +19,16 @@ class JinRestCall{
     public function __construct($url, $args = NULL, $method = 'POST') {
 	$this->url = $url;
 	
-	if(!is_null($args)){
+	if(!is_null($args) && $method != 'POST'){
 	    foreach($args as $a => $v){
 		if(!is_string($v)){
 		    $args[$a] = (String)$v;
+		}
+	    }
+	}else if(!is_null($args) && $method == 'POST'){
+	    foreach($args as $key=>$value){
+		if(is_bool($value) ){
+		    $args[$key] = ($value) ? 'true' : 'false';
 		}
 	    }
 	}
@@ -41,6 +48,7 @@ class JinRestCall{
     }
     
     public function call(){
+	
 	$plus = '';
 	if($this->secured){
 	    if(StringTools::contains($this->url, '?')){
@@ -90,11 +98,10 @@ class JinRestCall{
 	$toEncode = $this->method;
 	$toEncode .= $this->publicKey;
 	if ($this->args) {
-	    $toEncode .= Json::encode($this->args);
+	    $toEncode .= Json::encode($this->args, true);
 	} else {
 	    $toEncode .= Json::encode(array());
 	}
-
 
 	return StringTools::hmac($toEncode, $this->privateKey, 'sha256');
     }
