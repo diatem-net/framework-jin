@@ -16,10 +16,16 @@ class Json {
     /**
      * Encode un tableau au format JSON
      * @param array $data   Données à encoder
+     * @param boolean $convertIntoString [optionel] Si TRUE, convertit 
+     * préalablement en chaîne de caractère toutes les valeurs
      * @return string
      */
-    public static function encode($data) {
-	return json_encode($data);
+    public static function encode($data, $convertIntoString = false) {
+	if($convertIntoString){
+	    return self::encodeWithStringConvert($data);
+	}else{
+	    return json_encode($data);
+	}
     }
 
     
@@ -70,6 +76,34 @@ class Json {
 		return json_last_error().' - Erreur inconnue';
 		break;
 	}
+    }
+    
+    
+    /**
+     * Effectue un encodage en Json en transformant toutes les valeurs en 
+     * châines de caractères.
+     * @param array $arr    Données à encoder
+     * @return string
+     */
+    private static function encodeWithStringConvert($arr) {
+	return json_encode(static::convert($arr));
+    }
+    
+    
+    /**
+     * Convertit toutes les valeurs d'un tableau en chaîne (recursif)
+     * @param array $arr    Tableau à convertir
+     * @return array
+     */
+    private static function convert($arr){
+	foreach($arr as $k => $v){
+	    if(!is_array($v)){
+		$arr[$k] = (String)$v;
+	    }else{
+		$arr[$k] = static::convert($v);
+	    }
+	}
+	return $arr;
     }
 
 }
