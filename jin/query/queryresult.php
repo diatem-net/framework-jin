@@ -125,6 +125,26 @@ class QueryResult implements Iterator {
     }
     
     
+    /**
+     * Retourne un tableau des valeurs d'une colonne (dédoublonné) 
+     * @param string $column	Nom de la colonne
+     * @return mixed
+     */
+    public function valueList($column){
+	$data = array();
+	
+	$nb = count($this->resultat);
+	for ($i = 0; $i < $nb; $i++) {
+	    $v = $this->resultat[$i][$column];
+	    if(!is_numeric(ArrayTools::find($data, $v))){
+		$data[] = $v;
+	    }
+	}
+	
+	return $data;
+    }
+    
+    
     /** Retourne les en-tête de colonne
      * @return	array
      */
