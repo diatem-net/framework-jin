@@ -79,5 +79,15 @@ class PerfAnalyser {
 	    echo Debug::getCustomTrace($titre, array(array('name' => 'Points d\'analyse', 'content' => $dump)));
 	}
     }
+    
+    
+    /**
+     * Retourne le temps total d'execution en milisecondes
+     * @return integer
+     */
+    public function getTotalTimeInMS(){
+	$diff = $this->points[count($this->points) - 1]['time'] - $this->points[0]['time'];
+	return $diff;
+    }
 
 }
