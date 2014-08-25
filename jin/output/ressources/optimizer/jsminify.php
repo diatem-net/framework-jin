@@ -47,7 +47,6 @@ namespace jin\output\ressources\optimizer;
  * SOFTWARE.
  * --
  *
- * @package JSMin
  * @author Ryan Grove <ryan@wonko.com> (PHP port)
  * @author Steve Clay <steve@mrclay.org> (modifications + cleanup)
  * @author Andrea Giammarchi <http://www.3site.eu> (spaceBeforeRegExp)
