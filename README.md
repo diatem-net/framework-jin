@@ -47,6 +47,7 @@ Comment installer et utiliser Jin ?
 
 Installez le répertoire jin/ à la racine du dossier de votre programme. 
 Pour utiliser jin, effectuez un include du fichier jin/launcher.php
+
 **Example :**
 `include 'jin/launcher.php`
 
