@@ -109,6 +109,7 @@ configuration standard.
 Documentation
 --------
 
-[documentation](http://tools.diatem.net/documentation/projet/7/documentation/ "Accès à la documentation en ligne")
-[documentationzip](http://tools.diatem.net/documentation/projet/7/documentation.zip "ATélécharger la documentation au format ZIP")
+[Accès à la documentation en ligne](http://tools.diatem.net/documentation/projet/7/documentation/ "Accès à la documentation en ligne")
+
+[Télécharger la documentation au format ZIP](http://tools.diatem.net/documentation/projet/7/documentation.zip "Télécharger la documentation au format ZIP")
 
