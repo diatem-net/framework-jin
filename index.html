@@ -1,79 +1,174 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-
   <head>
-    <meta charset='utf-8' />
-    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
-    <meta name="description" content="Jinframework : Framework PHP JIN" />
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Jinframework by diatem-net</title>
 
-    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
-
-    <title>Jinframework</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
   </head>
-
   <body>
+    <div class="wrapper">
+      <header>
+        <h1>Jinframework</h1>
+        <p>Framework PHP JIN</p>
 
-    <!-- HEADER -->
-    <div id="header_wrap" class="outer">
-        <header class="inner">
-          <a id="forkme_banner" href="https://github.com/diatem-net/jinframework">View on GitHub</a>
+        <p class="view"><a href="https://github.com/diatem-net/jinframework">View the Project on GitHub <small>diatem-net/jinframework</small></a></p>
 
-          <h1 id="project_title">Jinframework</h1>
-          <h2 id="project_tagline">Framework PHP JIN</h2>
 
-            <section id="downloads">
-              <a class="zip_download_link" href="https://github.com/diatem-net/jinframework/zipball/master">Download this project as a .zip file</a>
-              <a class="tar_download_link" href="https://github.com/diatem-net/jinframework/tarball/master">Download this project as a tar.gz file</a>
-            </section>
-        </header>
-    </div>
+        <ul>
+          <li><a href="https://github.com/diatem-net/jinframework/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/diatem-net/jinframework/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/diatem-net/jinframework">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>
+<a name="framework-php-jin" class="anchor" href="#framework-php-jin"><span class="octicon octicon-link"></span></a>Framework PHP JIN</h1>
 
-    <!-- MAIN CONTENT -->
-    <div id="main_content_wrap" class="outer">
-      <section id="main_content" class="inner">
-        <h3>
-<a name="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages"><span class="octicon octicon-link"></span></a>Welcome to GitHub Pages.</h3>
+<h2>
+<a name="quest-ce-que-jin-" class="anchor" href="#quest-ce-que-jin-"><span class="octicon octicon-link"></span></a>Qu'est ce que Jin ?</h2>
 
-<p>This automatic page generator is the easiest way to create beautiful pages for all of your projects. Author your page content here using GitHub Flavored Markdown, select a template crafted by a designer, and publish. After your page is generated, you can check out the new branch:</p>
+<p>Jin est un framework PHP léger construit comme une boite à outils. L'objectif 
+est de répondre à des problématiques de développement spécifiques en offrant des
+solutions intégrables dans des environnements CMS Open source diversifiés.
+L'idée est de limiter la multi-spécialisation en offrant une solution 
+transversale et modulable.</p>
 
-<pre><code>$ cd your_repo_root/repo_name
-$ git fetch origin
-$ git checkout gh-pages
-</code></pre>
+<h2>
+<a name="quelles-sont-les-possibilit%C3%A9s-offertes-" class="anchor" href="#quelles-sont-les-possibilit%C3%A9s-offertes-"><span class="octicon octicon-link"></span></a>Quelles sont les possibilités offertes ?</h2>
 
-<p>If you're using the GitHub for Mac, simply sync your repository and you'll see the new branch.</p>
+<ul>
+<li>Base de données
 
-<h3>
-<a name="designer-templates" class="anchor" href="#designer-templates"><span class="octicon octicon-link"></span></a>Designer Templates</h3>
+<ul>
+<li>Connexion BDD (MySql, PostgreSQL et connecteurs spécifiques CMS) (jin/db/*)</li>
+<li>Requêtage simplifié en bases de données (jin/query/Query)</li>
+<li>Effectuer des requêtes de requêtes (jin/query/QueryOfQuery)</li>
+<li>Faciliter le traitement de résultats de requêtes.  (jin/query/QueryResult)</li>
+</ul>
+</li>
+<li>Communication
 
-<p>We've crafted some handsome templates for you to use. Go ahead and continue to layouts to browse through them. You can easily go back to edit your page before publishing. After publishing your page, you can revisit the page generator and switch to another theme. Your Page content will be preserved if it remained markdown format.</p>
+<ul>
+<li>Déploiement et appel de services REST sécurisés (jin/com/rest/*)</li>
+<li>Déploiement et appel de Webservices (jin/com/webservice/*)</li>
+<li>Travail facilité avec Curl (jin/com/Curl)</li>
+<li>Connexion boite mail IMAP (jin/mail/MailConnector)</li>
+<li>SSO (Authentification unifiée, via l'usage d'un serveur CAS) (jin/external/jasig/*)</li>
+<li>Communication facilitée avec ElasticSearch. (Construction de requêtes de recherche complexes) (jin/external/diatem/sherlock/*)</li>
+</ul>
+</li>
+<li>Optimisation du développement
 
-<h3>
-<a name="rather-drive-stick" class="anchor" href="#rather-drive-stick"><span class="octicon octicon-link"></span></a>Rather Drive Stick?</h3>
+<ul>
+<li>Gestion des logs (jin/log/Log)</li>
+<li>Système de debug avancé (jin/log/Debug)</li>
+<li>Analyse des performances (jin/log/PerfAnalyser)</li>
+</ul>
+</li>
+<li>Etendre PHP
 
-<p>If you prefer to not use the automatic generator, push a branch named <code>gh-pages</code> to your repository to create a page manually. In addition to supporting regular HTML content, GitHub Pages support Jekyll, a simple, blog aware static site generator written by our own Tom Preston-Werner. Jekyll makes it easy to create site-wide headers and footers without having to copy them across every page. It also offers intelligent blog support and other advanced templating features.</p>
+<ul>
+<li>Travail facilité avec le système de fichiers (jin/filesystem/*)</li>
+<li>Classes facilitant le travail avec les listes, les tableaux, les numéraires, les chaînes et les objets temporels (jin/lang/*)</li>
+<li>Travail facilité avec Json (jin/dataformat/JSon)</li>
+</ul>
+</li>
+<li>Accélérer et faciliter les développements front-end
 
-<h3>
-<a name="authors-and-contributors" class="anchor" href="#authors-and-contributors"><span class="octicon octicon-link"></span></a>Authors and Contributors</h3>
+<ul>
+<li>Composants d'affichage (jin/output/components/*)</li>
+<li>Gestion de formulaires (jin/output/form/*)</li>
+<li>Détection du contexte (Navigateur et Device) (jin/context/*)</li>
+<li>Envoi de mails avancés (jin/mail/MailSender)</li>
+<li>Gestion des traductions (jin/language/*)</li>
+<li>Mise en cache de données. (Support du cache fichier et Memcache) (jin/cache/*)</li>
+</ul>
+</li>
+</ul><h2>
+<a name="comment-installer-et-utiliser-jin-" class="anchor" href="#comment-installer-et-utiliser-jin-"><span class="octicon octicon-link"></span></a>Comment installer et utiliser Jin ?</h2>
 
-<p>You can <a href="https://github.com/blog/821" class="user-mention">@mention</a> a GitHub username to generate a link to their profile. The resulting <code>&lt;a&gt;</code> element will link to the contributor's GitHub Profile. For example: In 2007, Chris Wanstrath (<a href="https://github.com/defunkt" class="user-mention">@defunkt</a>), PJ Hyett (<a href="https://github.com/pjhyett" class="user-mention">@pjhyett</a>), and Tom Preston-Werner (<a href="https://github.com/mojombo" class="user-mention">@mojombo</a>) founded GitHub.</p>
+<p>Installez le répertoire jin/ à la racine du dossier de votre programme. 
+Pour utiliser jin, effectuez un include du fichier jin/launcher.php</p>
 
-<h3>
-<a name="support-or-contact" class="anchor" href="#support-or-contact"><span class="octicon octicon-link"></span></a>Support or Contact</h3>
+<p><strong>Example :</strong>
+<code>include 'jin/launcher.php</code></p>
 
-<p>Having trouble with Pages? Check out the documentation at <a href="http://help.github.com/pages">http://help.github.com/pages</a> or contact <a href="mailto:support@github.com">support@github.com</a> and we’ll help you sort it out.</p>
+<h2>
+<a name="syst%C3%A8me-de-surcharge" class="anchor" href="#syst%C3%A8me-de-surcharge"><span class="octicon octicon-link"></span></a>Système de surcharge</h2>
+
+<p>Jin intègre un système efficace pour adapter le fonctionnement du framework
+aux spécificités requises par votre programme. Il est ainsi possible de surcharger
+intégralement la quasi totalité du code source de Jin.
+Pour surcharger un fichier il suffit de créer à la racine de votre projet un
+dossier nommé 'surcharge'.
+Placez dans ce dossier les fichiers que vous souhaitez surcharger, en respectant
+scrupuleusement le chemin natif du fichier originel de Jin.
+pour example, si vous souhaitez modifier le fonctionnement de la classe 
+jin/log/Debug, récupérez au préalable le fichier PHP de la classe, c'est à dire
+le fichier jin/log/debug.php et placez-le dans le dossier surcharge/log/.
+Vous pouvez à présent appliquer les modifications que vous souhaitez, le fichier
+surcharge/log/debug.php sera chargé par Jin à la place du fichier originel.</p>
+
+<p>Il est ainsi possible de surcharger :</p>
+
+<ul>
+<li>Les fichiers de classe</li>
+<li>Le fichier de configuration config.ini</li>
+<li>Les fichiers de langage du répertoire _languages</li>
+<li>Les fichiers d'assets du répertoire _assets</li>
+</ul><h2>
+<a name="syst%C3%A8me-de-composants-et-dassets" class="anchor" href="#syst%C3%A8me-de-composants-et-dassets"><span class="octicon octicon-link"></span></a>Système de composants et d'assets</h2>
+
+<p>Jin offre un système de composants graphiques qui peuvent être employés afin 
+de créer rapidement des interfaces utilisateur. Tous les composants sont basés
+sur des assets, ou fichiers de templates, qui définissent leurs modalités
+graphiques d'affichage. Il est possible de surcharger ces assets selon le
+même principe que les fichiers de classe.</p>
+
+<p><strong>N.B.:</strong>
+Certaines classes faisant appel à des affichages graphiques, comme jin/log/Debug
+ utilisent également des assets dans leur fonctionnement. Ces assets sont
+également surchargeables.</p>
+
+<h2>
+<a name="comment-configurer-jin-" class="anchor" href="#comment-configurer-jin-"><span class="octicon octicon-link"></span></a>Comment configurer Jin ?</h2>
+
+<p>Jin offre quelques possibilités de configuration définies dans le fichier 
+config.ini. Il est possible de surcharger ce fichier pour en modifier la
+configuration standard.</p>
+
+<p><strong>Détail des possibilités de configuration:</strong></p>
+
+<ul>
+<li>surcharge <em>Définit si il est possible de surcharger le framework Jin (0 ou 1)</em>
+</li>
+<li>surchargeAbsolutePath <em>Chemin absolu du dossier contenant les fichiers surchargeant</em>
+</li>
+<li>cacheMode <em>Mode de cache (memcache ou file)</em>
+</li>
+<li>cacheFileFolder <em>Cache de type FILE : dossier de stockage</em>
+</li>
+<li>cacheMemCacheHost <em>si cache Memcache, host du serveur</em>
+</li>
+<li>cacheMemCachePort <em>si cache Memcache, port du serveur</em>
+</li>
+<li>RessourceNavigatorCacheTime <em>Nombre de secondes pendant lequel le navigateur client doit conserver le cache sur les fichiers Js et CSS gérés par JIN</em>
+</li>
+</ul>
       </section>
-    </div>
-
-    <!-- FOOTER  -->
-    <div id="footer_wrap" class="outer">
-      <footer class="inner">
-        <p class="copyright">Jinframework maintained by <a href="https://github.com/diatem-net">diatem-net</a></p>
-        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/diatem-net">diatem-net</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
       </footer>
     </div>
-
+    <script src="javascripts/scale.fix.js"></script>
     
-
   </body>
 </html>
