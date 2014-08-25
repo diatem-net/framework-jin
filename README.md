@@ -104,3 +104,11 @@ configuration standard.
 * cacheMemCacheHost _si cache Memcache, host du serveur_
 * cacheMemCachePort _si cache Memcache, port du serveur_
 * RessourceNavigatorCacheTime _Nombre de secondes pendant lequel le navigateur client doit conserver le cache sur les fichiers Js et CSS gérés par JIN_
+
+
+Documentation
+--------
+
+[documentation](http://tools.diatem.net/documentation/projet/7/documentation/ "Accès à la documentation en ligne")
+[documentationzip](http://tools.diatem.net/documentation/projet/7/documentation.zip "ATélécharger la documentation au format ZIP")
+
