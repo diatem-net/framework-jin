@@ -91,7 +91,12 @@ class JinCore {
 	$basepath = substr( __FILE__, strlen( $_SERVER[ 'DOCUMENT_ROOT' ] ) );
 	$basepath = StringTools::replaceAll($basepath, 'framework-jin/jin/jincore.php', '');
 	$basepath = StringTools::replaceAll($basepath, 'jin/jincore.php', '');
-	$basepath = StringTools::replaceAll($_SERVER['PHP_SELF'], $basepath, '');
+	if($basepath == '' || $basepath == '/'){
+	    $basepath = $_SERVER['PHP_SELF'];
+	}else{
+	    $basepath = StringTools::replaceAll($_SERVER['PHP_SELF'], $basepath, '');
+	}
+	
 	$rootUrl = StringTools::replaceAll(self::getCurrentPageUrl(), $basepath, '');
 	if(StringTools::right($rootUrl, 1) != '/'){
 	    $rootUrl .= '/';
