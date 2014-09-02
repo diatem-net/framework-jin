@@ -109,18 +109,28 @@ class JinCore {
 	if(self::$jinRootUrl){
 	    return self::$jinRootUrl;
 	}
-	$basepath = substr( __FILE__, strlen( $_SERVER[ 'DOCUMENT_ROOT' ] ) );
+	$basepath = substr( __FILE__, strlen( $_SERVER[ 'DOCUMENT_ROOT' ]));
 	$basepath = StringTools::replaceAll($basepath, 'jin/jincore.php', '');
 	$relJinRoot = $basepath;
-	$basepath = StringTools::replaceAll($_SERVER['PHP_SELF'], $basepath, '');
+	if($basepath == '' || $basepath == '/'){
+	    $basepath = $_SERVER['PHP_SELF'];
+	}else{
+	    $basepath = StringTools::replaceAll($_SERVER['PHP_SELF'], $basepath, '');
+	}
+	
 	$rootUrl = StringTools::replaceAll(self::getCurrentPageUrl(), $basepath, '');
 	if(StringTools::right($rootUrl, 1) != '/'){
 	    $rootUrl .= '/';
 	}
-	$rootUrl .= $relJinRoot;
+	if($relJinRoot == '' || $relJinRoot == '/'){
+	}else{
+	    $rootUrl .= $relJinRoot;
+	}
+	
 	if(StringTools::right($rootUrl, 1) != '/'){
 	    $rootUrl .= '/';
 	}
+	
 	$rootUrl .= 'jin/';
 	self::$jinRootUrl = $rootUrl;
 	return $rootUrl;
