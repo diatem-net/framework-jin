@@ -1,3 +1,3 @@
-<img id="%name%" src="%url%/jin/_extlibs/securimage/securimage_show.php" alt="CAPTCHA Image" />
+<img id="%name%" src="%jinurl%_extlibs/securimage/securimage_show.php" alt="CAPTCHA Image" />
 <input class="%class%" type="text" name="%name%" />
-<a href="#" onclick="document.getElementById('%name%').src = '%url%/jin/_extlibs/securimage/securimage_show.php?' + Math.random(); return false">%txtchangecaptcha%</a>%error%
+<a href="#" onclick="document.getElementById('%name%').src = '%jinurl%_extlibs/securimage/securimage_show.php?' + Math.random(); return false">%txtchangecaptcha%</a>%error%

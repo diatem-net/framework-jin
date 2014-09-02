@@ -9,6 +9,7 @@ namespace jin\filesystem;
 use jin\filesystem\File;
 use jin\lang\StringTools;
 use jin\JinCore;
+use jin\log\Debug;
 
 /** Permet d'utiliser des Assets, autrement dit des composants graphiques simples pouvant être rendus n'importe ou.
  * <br>Ils peuvt être soit des composant définis par Jin par défaut, soit des composants ajoutés. (Via le dossier surcharge)
@@ -42,15 +43,15 @@ class AssetFile {
      */
     public function __construct($relativePath, $surchargeAllowed = true) {
 	$surcharge = JinCore::getProjectRoot() . JinCore::getConfigValue('surchargeAbsolutePath') . '/' . JinCore::getRelativePathAssets() . $relativePath;
-
+	
 	if(JinCore::getConfigValue('surcharge') && file_exists($surcharge)){
 	    //Surcharge du fichier
 	     $this->file = new File($surcharge);
-	     $this->url = 'http://'.$_SERVER['HTTP_HOST'].'/surcharge/_assets/';
+	     $this->url = JinCore::getRootUrl().'surcharge/_assets/';
 	}else{
 	    //Fichier natif
 	    $this->file = new File(JinCore::getRoot() . JinCore::getRelativePathAssets() . $relativePath);
-	    $this->url = 'http://'.$_SERVER['HTTP_HOST'].'/jin/_assets/';
+	    $this->url = JinCore::getJinRootUrl().'_assets/';
 	}
     }
 
@@ -62,7 +63,7 @@ class AssetFile {
     public function getContent() {
 	$content = $this->file->getContent();
 	$content = StringTools::replaceAll($content, '%asseturl%', $this->url);
-	$content = StringTools::replaceAll($content, '%url%', 'http://'.$_SERVER['HTTP_HOST']);
+	$content = StringTools::replaceAll($content, '%jinurl%', JinCore::getJinRootUrl());
 	return $content;
     }
 
