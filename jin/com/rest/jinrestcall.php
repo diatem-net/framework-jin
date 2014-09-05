@@ -65,9 +65,9 @@ class JinRestCall{
 		foreach($this->args as $arg => $val){
 	
 		    if($plus == '' && !StringTools::contains($this->url, '?')){
-			$plus .= '?'.$arg.'='.$val;
+			$plus .= '?'.$arg.'='.urlencode($val);
 		    }else{
-			$plus .= '&'.$arg.'='.$val;
+			$plus .= '&'.$arg.'='.urlencode($val);
 		    }
 		}
 	    }
