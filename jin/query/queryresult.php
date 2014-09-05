@@ -8,6 +8,7 @@ namespace jin\query;
 use \Exception;
 use \Iterator;
 use jin\lang\ArrayTools;
+use jin\log\Debug;
 
 
 /** Gestion d'un résultat Query. Peut être parcouru : foreach($objet as $ligne){ echo $ligne['columnName']; }
@@ -160,6 +161,27 @@ class QueryResult implements Iterator {
 	
 	return $cols;
     }
+    
+    
+    /**
+     * Concatène avec les données d'un autr eobjet QueryResult (Nécessite que les deux QueryResult aient la même structure)
+     * @param \jin\query\QueryResult $qr
+     * @throws \Exception
+     */
+    public function concat(QueryResult $qr){
+	$arraysAreEqual = ($qr->getHeaders() === $this->getHeaders());
+	if(!$arraysAreEqual){
+	    throw new \Exception('Concaténation impossible : les deux QueryResult n\'ont pas la même structure');
+	}
+	
+	if($qr->count() == 1){
+	    $this->resultat = ArrayTools::merge($this->resultat, array($qr->getDatasInArray()));
+	}else{
+	    $this->resultat = ArrayTools::merge($this->resultat, $qr->getDatasInArray());
+	}
+	
+    }
+    
     
 
     //Fonctions d'itération
