@@ -183,7 +183,7 @@ class Query {
      */
     public function argument($valeur, $type) {
 	if ($type == self::$SQL_BOOL) {
-	    if (!is_bool($valeur)) {
+	    if (!is_bool($valeur) AND $valeur != 0 AND $valeur != 1) {
 		throw new Exception('L\'argument n\'est pas de type SQL_BOOL (valeur : '.$valeur.')');
 	    }
 	    if ($valeur) {
