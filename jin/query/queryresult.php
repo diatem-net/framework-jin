@@ -170,7 +170,7 @@ class QueryResult implements Iterator {
      */
     public function concat(QueryResult $qr){
 	$arraysAreEqual = ($qr->getHeaders() === $this->getHeaders());
-	if(!$arraysAreEqual){
+	if(!$arraysAreEqual && $qr->count() > 0 && $this->count() > 0){
 	    throw new \Exception('Concaténation impossible : les deux QueryResult n\'ont pas la même structure');
 	}
 	
