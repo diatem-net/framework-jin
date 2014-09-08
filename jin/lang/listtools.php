@@ -207,6 +207,11 @@ class ListTools{
      * @return string
      */
     public static function toArray($list, $delimiter = ','){
-	return StringTools::explode($list, $delimiter);
+	if($list == ''){
+	    return array();
+	}else{
+	    return StringTools::explode($list, $delimiter);
+	}
+	
     }
 }
