@@ -76,7 +76,7 @@ class Query {
      * 	@return	void
      */
     public function setRequest($sql) {
-	$this->sql = $sql;
+	$this->sql = $sql.' ';
 	$this->query = DbConnexion::$cnxHandler->cnx->prepare($sql);
     }
 
@@ -86,7 +86,7 @@ class Query {
      * @return	void
      */
     public function addToRequest($sql) {
-	$this->sql .= $sql;
+	$this->sql .= $sql.' ';
 	$this->query = DbConnexion::$cnxHandler->cnx->prepare($this->sql);
     }
 
