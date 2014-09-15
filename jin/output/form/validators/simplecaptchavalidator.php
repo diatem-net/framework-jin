@@ -17,7 +17,7 @@ use jin\filesystem\IniFile;
  *
  * 	@auteur		Loïc Gerard
  * 	@version	0.0.1
- * 	@check		
+ * 	@check
  */
 class Simplecaptchavalidator extends GlobalValidator implements ValidatorInterface{
     /**
@@ -27,8 +27,8 @@ class Simplecaptchavalidator extends GlobalValidator implements ValidatorInterfa
     public function __construct($args) {
 	parent::__construct($args, array());
     }
-    
-    
+
+
      /**
      * Teste la validité
      * @param mixed $valeur Valeur à tester
@@ -36,29 +36,29 @@ class Simplecaptchavalidator extends GlobalValidator implements ValidatorInterfa
      */
     public function isValid($valeur){
 	include_once JinCore::getRoot().JinCore::getRelativeExtLibs() . 'securimage/securimage.php';
-	
+
 	$config = new IniFile(JinCore::getRoot().JinCore::getRelativePathAssets().'simplecaptcha/config.ini');
-	$sfile = JinCore::getProjectRoot().'surcharge/'.JinCore::getRelativePathAssets().'simplecaptcha/config.ini';
+	$sfile = JinCore::getProjectRoot() . JinCore::getConfigValue('surchargeAbsolutePath') . '/' . JinCore::getRelativePathAssets().'simplecaptcha/config.ini';
 	if(is_file($sfile)){
 	    $config->surcharge($sfile);
 	}
-	
+
 	$securimage = new \Securimage(array('session_name' => $config->get('session_name')));
-	
+
 	if($valeur == ''){
 	    parent::addError(Trad::trad('simplecaptcha_required'));
 	    return false;
 	}
-	
+
 	if ($securimage->check($valeur) == false) {
 	    parent::addError(Trad::trad('simplecaptcha_check'));
 	    return false;
 	}
-	
+
 	return true;
     }
-    
-    
+
+
     /**
      * Priorité NIV1 du validateur
      * @return boolean
