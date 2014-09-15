@@ -25,39 +25,38 @@ class AssetFile {
      * @var jin\filesystem\File
      */
     private $file;
-    
-    
+
+
     /**	Url relative
      *
      * @var string
      */
     private $url;
-    
-    
 
-    
+
+
+
     /**	Constructeur
-     * 
+     *
      * @param string $relativePath	    Chemin relatif
-     * @param boolean $surchargeAllowed	    [optionel] Définit si la surcharge est autorisée (TRUE par défaut)
      */
-    public function __construct($relativePath, $surchargeAllowed = true) {
+    public function __construct($relativePath) {
 	$surcharge = JinCore::getProjectRoot() . JinCore::getConfigValue('surchargeAbsolutePath') . '/' . JinCore::getRelativePathAssets() . $relativePath;
-	
+
 	if(JinCore::getConfigValue('surcharge') && file_exists($surcharge)){
 	    //Surcharge du fichier
-	     $this->file = new File($surcharge);
-	     $this->url = JinCore::getRootUrl().'surcharge/_assets/';
+	    $this->file = new File($surcharge);
+	    $this->url = JinCore::getRootUrl() . JinCore::getConfigValue('surchargeAbsolutePath') . '/' . JinCore::getRelativePathAssets();
 	}else{
 	    //Fichier natif
 	    $this->file = new File(JinCore::getRoot() . JinCore::getRelativePathAssets() . $relativePath);
-	    $this->url = JinCore::getJinRootUrl().'_assets/';
+	    $this->url = JinCore::getJinRootUrl() . JinCore::getRelativePathAssets();
 	}
     }
 
-    
+
     /**	Retourne le contenu HTML généré
-     * 
+     *
      * @return string
      */
     public function getContent() {
