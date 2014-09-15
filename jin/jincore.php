@@ -115,7 +115,7 @@ class JinCore {
 	    return self::$jinRootUrl;
 	}
 	self::$jinRootUrl = self::getRootUrl() . 'framework-jin/jin/';
-	return $rootUrl;
+	return self::$jinRootUrl;
     }
 
 
