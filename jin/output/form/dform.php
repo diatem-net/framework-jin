@@ -407,4 +407,41 @@ class DForm {
 	return $this->errorClassName;
     }
 
+
+    /**
+     * Injecte un tableau de données dans le formulaire
+     * @param array $values Valeurs à injecter
+     * @return boolean Succès/Echec
+     */
+    public function populate($values) {
+    if(!is_array($values)) {
+        return false;
+    }
+    foreach ($this->fields as $fieldName => $v) {
+        if(isset($values[$fieldName])) {
+            $this->fields[$fieldName]['value'] = $values[$fieldName];
+        }
+    }
+    foreach ($this->attachementFields as $fieldName => $v) {
+        if(isset($values[$fieldName])) {
+            $this->attachementFields[$fieldName]['value'] = $values[$fieldName];
+        }
+    }
+    return true;
+    }
+
+
+    /**
+     * Supprime toutes les données du formulaire
+     */
+    public function clear() {
+    $data = array();
+    foreach ($this->fields as $fieldName => $v) {
+        $data[$fieldName] = null;
+    }
+    foreach ($this->attachementFields as $fieldName => $v) {
+        $data[$fieldName] = null;
+    }
+    }
+
 }
