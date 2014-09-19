@@ -44,6 +44,12 @@ class Query {
      * 	@var boolean	 Type SQL booleen
      */
     public static $SQL_BOOL = 3;
+    
+    
+    /**
+     * 	@var boolean	 Type SQL datetime
+     */
+    public static $SQL_DATETIME = 4;
 
     
     /** 
@@ -198,6 +204,17 @@ class Query {
 	} elseif ($type == self::$SQL_STRING) {
 	    if (!is_string($valeur) && !is_numeric($valeur)) {
 		throw new Exception('L\'argument n\'est pas de type SQL_STRING (valeur : '.$valeur.')');
+	    }
+	} elseif ($type == self::$SQL_DATETIME) {
+	    if (!is_a($valeur, 'DateTime')){
+		try{
+		    $convert = new \DateTime($valeur);
+		    $valeur = $convert->format('Y-m-d H:i:s');
+		} catch (Exception $ex) {
+		    throw new Exception('L\'argument n\'est pas de type SQL_DATETIME (Instance de DateTime attendue ou String au format YYYY-mm-dd HH:ii:ss) (valeur : '.$valeur.')');
+		}
+	    } else {
+		$valeur = $valeur->format('Y-m-d H:i:s');
 	    }
 	} else {
 	    throw new Exception('Le type ' . $type . ' n\'est pas reconnu');
