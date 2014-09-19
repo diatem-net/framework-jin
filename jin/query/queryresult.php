@@ -23,7 +23,7 @@ class QueryResult implements Iterator {
      */
     private $resultat = array();
 
-    
+
     /**
      * Constructeur
      * @param type $data    Données à initialiser (tableau d'objets)
@@ -37,7 +37,7 @@ class QueryResult implements Iterator {
 	$this->resultat = $data;
     }
 
-    
+
     /**
      * Limite les résultats de la query
      * @param int $from	Index de début de parsing
@@ -60,7 +60,7 @@ class QueryResult implements Iterator {
 	$this->resultat = array_slice($this->resultat, $from, $l);
     }
 
-    
+
     /**
      * Ajoute une colonne
      * @param string $columnName    Nom de la colonne
@@ -69,11 +69,20 @@ class QueryResult implements Iterator {
     public function addColumn($columnName, $defaultValue = '') {
 	$nb = count($this->resultat);
 	for ($i = 0; $i < $nb; $i++) {
-	    $this->resultat[$i][$columnName] = $defaultValue;
+        if(is_callable($defaultValue)) {
+            $this->resultat[$i][$columnName] = $defaultValue($this->resultat[$i]);
+        } else {
+    	    $this->resultat[$i][$columnName] = $defaultValue;
+        }
 	}
     }
-    
-    
+
+
+    /**
+     * Duplique une colonne
+     * @param string $columnName    Nom de la colonne à dupliquer
+     * @param string $newColumnName Nom de la nouvelle colonne
+     */
     public function duplicateColumn($columnName, $newColumnName){
 	$nb = count($this->resultat);
 	for ($i = 0; $i < $nb; $i++) {
@@ -81,7 +90,19 @@ class QueryResult implements Iterator {
 	}
     }
 
-    
+
+    /**
+     * Supprime une colonne
+     * @param string $columnName    Nom de la colonne à supprimer
+     */
+    public function removeColumn($columnName) {
+    $nb = count($this->resultat);
+    for ($i = 0; $i < $nb; $i++) {
+        unset($this->resultat[$i][$columnName]);
+    }
+    }
+
+
     /**
      * Redéfinit la valeur d'une cellule
      * @param string $value Valeur
@@ -92,7 +113,7 @@ class QueryResult implements Iterator {
 	$this->resultat[$row][$column] = $value;
     }
 
-    
+
     /**
      * Retourne le nombre de lignes
      * @return int
@@ -101,7 +122,7 @@ class QueryResult implements Iterator {
 	return count($this->resultat);
     }
 
-    
+
     /**
      * Retourne la valeur d'une cellule
      * @param string $column	Nom de la colonne
@@ -112,7 +133,7 @@ class QueryResult implements Iterator {
 	return $this->resultat[$row][$column];
     }
 
-    
+
     /**
      * Retourne les données en un tableau
      * @return array
@@ -124,16 +145,16 @@ class QueryResult implements Iterator {
 	    return $this->resultat;
 	}
     }
-    
-    
+
+
     /**
-     * Retourne un tableau des valeurs d'une colonne (dédoublonné) 
+     * Retourne un tableau des valeurs d'une colonne (dédoublonné)
      * @param string $column	Nom de la colonne
      * @return mixed
      */
     public function valueList($column){
 	$data = array();
-	
+
 	$nb = count($this->resultat);
 	for ($i = 0; $i < $nb; $i++) {
 	    $v = $this->resultat[$i][$column];
@@ -141,11 +162,11 @@ class QueryResult implements Iterator {
 		$data[] = $v;
 	    }
 	}
-	
+
 	return $data;
     }
-    
-    
+
+
     /** Retourne les en-tête de colonne
      * @return	array
      */
@@ -158,11 +179,11 @@ class QueryResult implements Iterator {
 		}
 	    }
 	}
-	
+
 	return $cols;
     }
-    
-    
+
+
     /**
      * Concatène avec les données d'un autr eobjet QueryResult (Nécessite que les deux QueryResult aient la même structure)
      * @param \jin\query\QueryResult $qr
@@ -173,19 +194,19 @@ class QueryResult implements Iterator {
 	if(!$arraysAreEqual && $qr->count() > 0 && $this->count() > 0){
 	    throw new \Exception('Concaténation impossible : les deux QueryResult n\'ont pas la même structure');
 	}
-	
+
 	if($qr->count() == 1){
 	    $this->resultat = ArrayTools::merge($this->resultat, array($qr->getDatasInArray()));
 	}else{
 	    $this->resultat = ArrayTools::merge($this->resultat, $qr->getDatasInArray());
 	}
-	
+
     }
-    
-    
+
+
 
     //Fonctions d'itération
-    
+
     /**
      * Itération : current
      * @return mixed
@@ -194,7 +215,7 @@ class QueryResult implements Iterator {
 	return current($this->resultat);
     }
 
-    
+
     /**
      * Itération : key
      * @return string
@@ -203,7 +224,7 @@ class QueryResult implements Iterator {
 	return key($this->resultat);
     }
 
-    
+
     /**
      * Itération : rewind
      * @return \jin\query\QueryResult
@@ -213,7 +234,7 @@ class QueryResult implements Iterator {
 	return $this;
     }
 
-    
+
     /**
      * Itération : next
      */
@@ -221,7 +242,7 @@ class QueryResult implements Iterator {
 	next($this->resultat);
     }
 
-    
+
     /**
      * Itération valid
      * @return boolean
