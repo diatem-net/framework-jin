@@ -1,1 +1,1 @@
-<label for="%name%">%label%</label><input class="%class%" placeholder="%defaultvalue%" type="text" name="%name%" value="%value%">%error%
+<option value="%value%" %selected%>%label%</option>
