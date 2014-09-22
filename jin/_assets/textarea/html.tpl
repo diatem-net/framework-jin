@@ -1,1 +1,1 @@
-<label for="%name%">%label%</label><textarea class="%class%" placeholder="%defaultvalue%" name="%name%">%value%</textarea>%error%
+<label for="%name%">%label%</label><textarea class="%class%" placeholder="%defaultvalue%" name="%name%" %attributes%>%value%</textarea>%error%
