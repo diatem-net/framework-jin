@@ -53,7 +53,7 @@ include '../../launcher.php';
 use jin\filesystem\IniFile;
 use jin\JinCore;
 $config = new IniFile(JinCore::getRoot().JinCore::getRelativePathAssets().'simplecaptcha/config.ini');
-$sfile = JinCore::getProjectRoot() . 'surcharge/' . JinCore::getRelativePathAssets() . 'simplecaptcha/config.ini';
+$sfile = JinCore::getProjectRoot() . JinCore::getConfigValue('surchargeAbsolutePath') . '/' . JinCore::getRelativePathAssets() . 'simplecaptcha/config.ini';
 if (is_file($sfile)) {
     $config->surcharge($sfile);
 }

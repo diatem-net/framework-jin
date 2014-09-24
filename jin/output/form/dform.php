@@ -18,19 +18,19 @@ use jin\filesystem\File;
  *
  * 	@auteur		Loïc Gerard
  * 	@version	0.0.1
- * 	@check		
+ * 	@check
  */
 class DForm {
 
     /**
      *
-     * @var array   Champs contenus dans le formulaire 
+     * @var array   Champs contenus dans le formulaire
      */
     private $fields = array();
 
     /**
      *
-     * @var array   Champs pièce jointe contenus dans le formulaire 
+     * @var array   Champs pièce jointe contenus dans le formulaire
      */
     private $attachementFields = array();
 
@@ -159,7 +159,7 @@ class DForm {
 	    }else{
 		$this->fields[$fieldName]['value'] = '';
 	    }
-	    
+
 
 	    //erreurs de niveau 2
 	    $errors = array();
@@ -247,14 +247,14 @@ class DForm {
      * @return string
      */
     public function getFieldValue($fieldName) {
-	if (isset($_POST[$fieldName])) {
-	    return $this->fields[$fieldName]['value'];
-	} else if (isset($_FILES[$fieldName])) {
-	    return $this->fields[$fieldName]['value'];
-	} else if (isset($this->fields[$fieldName])) {
-	    return $this->fields[$fieldName]['defaultValue'];
-	}
-	return '';
+    if(isset($this->fields[$fieldName])) {
+        if(isset($this->fields[$fieldName]['value']) && !empty($this->fields[$fieldName]['value'])) {
+            return $this->fields[$fieldName]['value'];
+        } else {
+            return $this->fields[$fieldName]['defaultValue'];
+        }
+    }
+    return '';
     }
 
     /**
@@ -389,7 +389,7 @@ class DForm {
 	return $data;
     }
 
-    
+
     /**
      * Redéfinit la classe CSS appliquée aux composants pour lesquels une erreur de validation a été relevée
      * @param string $className	Nom de la classe à appliquer
@@ -398,13 +398,50 @@ class DForm {
 	$this->errorClassName = $className;
     }
 
-    
+
     /**
      * Retourne la classe CSS actuellement appliquable aux composants pour lesquels une erreur de validation a été relevée
      * @return type
      */
     public function getErrorClassName() {
 	return $this->errorClassName;
+    }
+
+
+    /**
+     * Injecte un tableau de données dans le formulaire
+     * @param array $values Valeurs à injecter
+     * @return boolean Succès/Echec
+     */
+    public function populate($values) {
+    if(!is_array($values)) {
+        return false;
+    }
+    foreach ($this->fields as $fieldName => $v) {
+        if(isset($values[$fieldName])) {
+            $this->fields[$fieldName]['value'] = $values[$fieldName];
+        }
+    }
+    foreach ($this->attachementFields as $fieldName => $v) {
+        if(isset($values[$fieldName])) {
+            $this->attachementFields[$fieldName]['value'] = $values[$fieldName];
+        }
+    }
+    return true;
+    }
+
+
+    /**
+     * Supprime toutes les données du formulaire
+     */
+    public function clear() {
+    $data = array();
+    foreach ($this->fields as $fieldName => $v) {
+        $data[$fieldName] = null;
+    }
+    foreach ($this->attachementFields as $fieldName => $v) {
+        $data[$fieldName] = null;
+    }
     }
 
 }
