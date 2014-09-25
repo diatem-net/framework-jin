@@ -1,1 +1,1 @@
-<label for="%name%">%label%</label><input class="%class%" placeholder="%defaultvalue%" type="text" name="%name%" value="%value%">%error%
+<label for="%name%">%label%</label><input class="%class%" placeholder="%defaultvalue%" type="text" name="%name%" value="%value%" %attributes%>%error%

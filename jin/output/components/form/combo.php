@@ -16,7 +16,7 @@ use jin\lang\ArrayTools;
  *
  * 	@auteur		Loïc Gerard
  * 	@version	0.0.1
- * 	@check		
+ * 	@check
  */
 class Combo extends FormComponent implements ComponentInterface{
     /**
@@ -24,8 +24,8 @@ class Combo extends FormComponent implements ComponentInterface{
      * @var array   Valeurs des cases. (Tableau associatif de la forme array(array('label'=>'','value'=>''),...) )
      */
     private $values = array();
-    
-    
+
+
     /**
      * Constructeur
      * @param string $name  Nom du composant
@@ -33,8 +33,8 @@ class Combo extends FormComponent implements ComponentInterface{
     public function __construct($name) {
 	parent::__construct($name, 'combo');
     }
-    
-    
+
+
     /**
      * Rendu du composant
      * @return type
@@ -43,15 +43,16 @@ class Combo extends FormComponent implements ComponentInterface{
 	//Rendu de chaque ligne
 	$ci = new AssetFile($this->componentName.'/comboitem.tpl');
 	$ci_content = $ci->getContent();
-	
+
 	$addContent = '';
 	foreach($this->values as $v){
 	    $ac = $ci_content;
 	    $ac = StringTools::replaceAll($ac, '%name%', $this->getName().'[]');
 	    $ac = StringTools::replaceAll($ac, '%item_label%', $v['label']);
 	    $ac = StringTools::replaceAll($ac, '%item_value%', $v['value']);
+        $ac = StringTools::replaceAll($ac, '%uid%', uniqid());
 	    $selected = '';
-	    
+
 	    $val= $this->getDefaultValue();
 	    if(!is_null($this->getValue())){
 		$val = $this->getValue();
@@ -69,15 +70,15 @@ class Combo extends FormComponent implements ComponentInterface{
 	    $addContent .= $ac;
 	}
 	$addContent = parent::replaceMagicFields($addContent);
-	
+
 	$html = parent::render();
-	
+
 	$html = StringTools::replaceAll($html, '%items%', $addContent);
-	
+
 	return $html;
     }
-    
-    
+
+
     /**
      * Ajoute une case à cocher
      * @param string $value Valeur du choix
@@ -89,11 +90,11 @@ class Combo extends FormComponent implements ComponentInterface{
 	}
 	$this->values[] = array('value' => $value, 'label' => $label);
     }
-    
-    
+
+
     /**
      * Définit l'ensemble des données des cases à cocher
-     * @param array $values  Tableau associatif de la forme array(array('label'=>'','value'=>''),...) 
+     * @param array $values  Tableau associatif de la forme array(array('label'=>'','value'=>''),...)
      * @throws \Exception
      */
     public function setValues($values){
