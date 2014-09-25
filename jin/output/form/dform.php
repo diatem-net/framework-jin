@@ -253,7 +253,7 @@ class DForm {
 	    } else if (isset($_FILES[$fieldName])) {
 		//Cas particulier AttachementFile
 		return $this->fields[$fieldName]['value'];
-	    } else if(isset($this->fields[$fieldName]['value']) && !empty($_POST)) {
+	    } else if(!isset($this->fields[$fieldName]['value']) && !empty($_POST)) {
 		//cas particulier checkbox
 		return array();
 	    } else {
