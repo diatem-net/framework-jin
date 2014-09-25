@@ -255,7 +255,7 @@ class DForm {
 		return $this->fields[$fieldName]['value'];
 	    } else if(isset($this->fields[$fieldName]['value']) && !empty($_POST)) {
 		//cas particulier checkbox
-		return '';
+		return array();
 	    } else {
 		return $this->fields[$fieldName]['defaultValue'];
 	    }
