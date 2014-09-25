@@ -251,10 +251,10 @@ class DForm {
 	    if(isset($this->fields[$fieldName]['value']) && !empty($this->fields[$fieldName]['value'])) {
 		return $this->fields[$fieldName]['value'];
 	    } else if (isset($_FILES[$fieldName])) {
-		//Cas particulier AttachementFile 
+		//Cas particulier AttachementFile
 		return $this->fields[$fieldName]['value'];
-	    } else if(isset($this->fields[$fieldName]['value']) && !empty($_POST)){
-		//Cas particulier checkbox (aucune case cochée)
+	    } else if(isset($this->fields[$fieldName]['value']) && !empty($_POST)) {
+		//cas particulier checkbox
 		return '';
 	    } else {
 		return $this->fields[$fieldName]['defaultValue'];
