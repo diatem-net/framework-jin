@@ -248,14 +248,14 @@ class DForm {
      */
     public function getFieldValue($fieldName) {
 	if(isset($this->fields[$fieldName])) {
-	    if(isset($this->fields[$fieldName]['value']) && !empty($this->fields[$fieldName]['value'])) {
-		return $this->fields[$fieldName]['value'];
-	    } else if (isset($_FILES[$fieldName])) {
+	    if (isset($_FILES[$fieldName])) {
 		//Cas particulier AttachementFile
 		return $this->fields[$fieldName]['value'];
 	    } else if(!isset($this->fields[$fieldName]['value']) && !empty($_POST)) {
 		//cas particulier checkbox
 		return array();
+	    }else if(isset($this->fields[$fieldName]['value'])) {
+		return $this->fields[$fieldName]['value'];
 	    } else {
 		return $this->fields[$fieldName]['defaultValue'];
 	    }
