@@ -339,6 +339,23 @@ class DForm {
 	}
 	return array();
     }
+    
+    
+    /**
+     * Force une erreur dans un composant du formulaire
+     * @param string $fieldName	Nom du champ
+     * @param string $errorTxt	Erreur à forcer
+     * @throws \Exception
+     */
+    public function setFieldError($fieldName, $errorTxt){
+	if (isset($this->fields[$fieldName])) {
+	    $this->fields[$fieldName]['errors'][] = $errorTxt;
+	} else if (isset($this->attachementFields[$fieldName])) {
+	    $this->attachementFields[$fieldName]['errors'][] = $errorTxt;
+	}else{
+	    throw new \Exception('Le champ '.$fieldName.' n\'existe pas');
+	}
+    }
 
     /**
      * Force la valeur d'un champ
