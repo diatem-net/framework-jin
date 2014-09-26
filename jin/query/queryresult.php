@@ -208,9 +208,9 @@ class QueryResult implements Iterator {
     /**
      * Ajoute une ligne de données
      * @param array $data Tableau associatif contenant les données à ajouter array('colname'=>'valeur','colname2'=>'valeur')
-     * @param boolean $first si TRUE : ligne ajoutée en premier
      */
-    public function addLine($data, $first = false){
+    public function addLine($data){
+	$addData = array();
 	if(empty($this->resultat)){
 	    $p = 0;
 	    foreach($data as $k => $v){
@@ -233,11 +233,9 @@ class QueryResult implements Iterator {
 	    }
 	}
 
-	if ($first) {
-	    $this->resultat = ArrayTools::prepend($this->resultat, $addData);
-	} else {
-	    $this->resultat[] = $addData;
-	}
+	
+	$this->resultat[] = $addData;
+	
     }
 
     //Fonctions d'itération
