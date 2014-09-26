@@ -226,7 +226,8 @@ class DForm {
 	//SI tout est valide : enregistrer les pièces jointes
 	if ($valide) {
 	    foreach ($this->attachementFields as $fieldName => $v) {
-		if (isset($_FILES[$fieldName])) {
+		
+		if (isset($_FILES[$fieldName]) && !empty($_FILES[$fieldName]['name'])) {
 		    if(StringTools::right($v['uploadfolder'], 1) != '/'){
 			//Nom de fichier forcé
 			$uploadfile = $v['uploadfolder'];
