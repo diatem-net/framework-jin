@@ -9,6 +9,7 @@ use \Exception;
 use \Iterator;
 use jin\lang\ArrayTools;
 use jin\log\Debug;
+use jin\lang\NumberTools;
 
 
 /** Gestion d'un résultat Query. Peut être parcouru : foreach($objet as $ligne){ echo $ligne['columnName']; }
@@ -202,8 +203,42 @@ class QueryResult implements Iterator {
 	}
 
     }
+    
+    
+    /**
+     * Ajoute une ligne de données
+     * @param array $data Tableau associatif contenant les données à ajouter array('colname'=>'valeur','colname2'=>'valeur')
+     * @param boolean $first si TRUE : ligne ajoutée en premier
+     */
+    public function addLine($data, $first = false){
+	if(empty($this->resultat)){
+	    $p = 0;
+	    foreach($data as $k => $v){
+		$addData[$p] = $v;
+		$addData[$k] = $v;
+	    }
+	} else {
+	    $addData = $this->resultat[0];
+	    $p = 0;
+	    foreach ($addData as $k => $v) {
+		if (!is_numeric($k)) {
+		    if (isset($data[$k])) {
+			$addData[$k] = $data[$k];
+			$addData[$p] = $data[$k];
+		    } else {
+			$addData[$p] = '';
+		    }
+		    $p++;
+		}
+	    }
+	}
 
-
+	if ($first) {
+	    $this->resultat = ArrayTools::prepend($this->resultat, $addData);
+	} else {
+	    $this->resultat[] = $addData;
+	}
+    }
 
     //Fonctions d'itération
 
