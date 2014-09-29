@@ -137,16 +137,46 @@ class QueryResult implements Iterator {
 
     /**
      * Retourne les données en un tableau
-     * @return array
+     * @param boolean $getOnlyHeaders	[Defaut : TRUE] Retourne uniquement les colonnes avec headers
+     * @param type $allwaysReturnArrayOfArray	[Defaut : FALSE] : Retourne toujours un tableau de tableaux, même si il n'y a qu'un résultat
+     * @return type
      */
-    public function getDatasInArray() {
-	if ($this->count() == 1) {
+    public function getDatasInArray($getOnlyHeaders = true, $allwaysReturnArrayOfArray = false) {
+	if ($this->count() == 1 && !$allwaysReturnArrayOfArray) {
 	    return $this->resultat[0];
 	} else {
-	    return $this->resultat;
+	    if($getOnlyHeaders){
+		return $this->getDatasInArrayWithoutNumericHeaders();
+	    }else{
+		return $this->resultat;
+	    }
+	    
 	}
     }
+    
+    
+    /**
+     * Retourne les données sans les colonnes avec header numérique
+     * @return array
+     */
+    private function getDatasInArrayWithoutNumericHeaders() {
+	$tempData = $this->resultat;
 
+	$keys = array();
+	foreach ($this->resultat[0] AS $k => $v) {
+	    if (is_numeric($k)) {
+		$keys[] = $k;
+	    }
+	}
+
+	$size = ArrayTools::length($tempData);
+	for ($i = 0; $i < $size; $i++) {
+	    foreach ($keys AS $k) {
+		unset($tempData[$i][$k]);
+	    }
+	}
+	return $tempData;
+    }
 
     /**
      * Retourne un tableau des valeurs d'une colonne (dédoublonné)
