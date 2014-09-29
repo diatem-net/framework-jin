@@ -94,7 +94,7 @@ class DForm {
     /**
      * Ajout d'un champ de type AttachementFile
      * @param \jin\output\components\form\AttachementFile $fileComponent    Composant AttachementFile
-     * @param type $uploadFolder    Dossier de destination (chemin absolu)
+     * @param type $uploadFolder    Dossier de destination (chemin absolu) ou nom forcé de fichier
      * @param type $validateurs	    Structure JSON définissant les validateurs de type FILE à utiliser. Ex : {"notnull":"","minsize":{"minsize":2000}}
      * @return boolean
      * @throws \Exception
@@ -226,9 +226,20 @@ class DForm {
 	//SI tout est valide : enregistrer les pièces jointes
 	if ($valide) {
 	    foreach ($this->attachementFields as $fieldName => $v) {
-		if (isset($_FILES[$fieldName])) {
-		    $uploadfile = $v['uploadfolder'] . basename($_FILES[$fieldName]['name']);
-
+		
+		if (isset($_FILES[$fieldName]) && !empty($_FILES[$fieldName]['name'])) {
+		    if(StringTools::right($v['uploadfolder'], 1) != '/'){
+			//Nom de fichier forcé
+			$uploadfile = $v['uploadfolder'];
+		    }else{
+			//On conserve le nom du fichier originel
+			$uploadfile = $v['uploadfolder'] . basename($_FILES[$fieldName]['name']);
+		    }
+		    $this->attachementFields[$fieldName]['value'] = array(
+			'filename' => $_FILES[$fieldName]['name'],
+			'path' => $uploadfile
+		    );
+		    
 		    if (!move_uploaded_file($_FILES[$fieldName]['tmp_name'], $uploadfile)) {
 			throw new \Exception('Erreur de transfert du fichier joint ' . $fieldName);
 		    } else {
@@ -247,14 +258,22 @@ class DForm {
      * @return string
      */
     public function getFieldValue($fieldName) {
-    if(isset($this->fields[$fieldName])) {
-        if(isset($this->fields[$fieldName]['value']) && !empty($this->fields[$fieldName]['value'])) {
-            return $this->fields[$fieldName]['value'];
-        } else {
-            return $this->fields[$fieldName]['defaultValue'];
-        }
-    }
-    return '';
+	if(isset($this->fields[$fieldName])) {
+	    if (isset($_FILES[$fieldName])) {
+		//Cas particulier AttachementFile
+		return $this->fields[$fieldName]['value'];
+	    } else if(!isset($this->fields[$fieldName]['value']) && !empty($_POST)) {
+		//cas particulier checkbox
+		return array();
+	    }else if(isset($this->fields[$fieldName]['value'])) {
+		return $this->fields[$fieldName]['value'];
+	    } else {
+		return $this->fields[$fieldName]['defaultValue'];
+	    }
+	}else if(isset($this->attachementFields[$fieldName])){
+	    return $this->attachementFields[$fieldName]['value'];
+	}
+	return '';
     }
 
     /**
@@ -320,6 +339,23 @@ class DForm {
 	    return $this->attachementFields[$fieldName]['errors'];
 	}
 	return array();
+    }
+    
+    
+    /**
+     * Force une erreur dans un composant du formulaire
+     * @param string $fieldName	Nom du champ
+     * @param string $errorTxt	Erreur à forcer
+     * @throws \Exception
+     */
+    public function setFieldError($fieldName, $errorTxt){
+	if (isset($this->fields[$fieldName])) {
+	    $this->fields[$fieldName]['errors'][] = $errorTxt;
+	} else if (isset($this->attachementFields[$fieldName])) {
+	    $this->attachementFields[$fieldName]['errors'][] = $errorTxt;
+	}else{
+	    throw new \Exception('Le champ '.$fieldName.' n\'existe pas');
+	}
     }
 
     /**
@@ -445,3 +481,5 @@ class DForm {
     }
 
 }
+
+
