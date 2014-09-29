@@ -9,6 +9,7 @@ use \Exception;
 use \Iterator;
 use jin\lang\ArrayTools;
 use jin\log\Debug;
+use jin\lang\NumberTools;
 
 
 /** Gestion d'un résultat Query. Peut être parcouru : foreach($objet as $ligne){ echo $ligne['columnName']; }
@@ -136,16 +137,46 @@ class QueryResult implements Iterator {
 
     /**
      * Retourne les données en un tableau
-     * @return array
+     * @param boolean $getOnlyHeaders	[Defaut : TRUE] Retourne uniquement les colonnes avec headers
+     * @param type $allwaysReturnArrayOfArray	[Defaut : FALSE] : Retourne toujours un tableau de tableaux, même si il n'y a qu'un résultat
+     * @return type
      */
-    public function getDatasInArray() {
-	if ($this->count() == 1) {
+    public function getDatasInArray($getOnlyHeaders = true, $allwaysReturnArrayOfArray = false) {
+	if ($this->count() == 1 && !$allwaysReturnArrayOfArray) {
 	    return $this->resultat[0];
 	} else {
-	    return $this->resultat;
+	    if($getOnlyHeaders){
+		return $this->getDatasInArrayWithoutNumericHeaders();
+	    }else{
+		return $this->resultat;
+	    }
+	    
 	}
     }
+    
+    
+    /**
+     * Retourne les données sans les colonnes avec header numérique
+     * @return array
+     */
+    private function getDatasInArrayWithoutNumericHeaders() {
+	$tempData = $this->resultat;
 
+	$keys = array();
+	foreach ($this->resultat[0] AS $k => $v) {
+	    if (is_numeric($k)) {
+		$keys[] = $k;
+	    }
+	}
+
+	$size = ArrayTools::length($tempData);
+	for ($i = 0; $i < $size; $i++) {
+	    foreach ($keys AS $k) {
+		unset($tempData[$i][$k]);
+	    }
+	}
+	return $tempData;
+    }
 
     /**
      * Retourne un tableau des valeurs d'une colonne (dédoublonné)
@@ -202,8 +233,40 @@ class QueryResult implements Iterator {
 	}
 
     }
+    
+    
+    /**
+     * Ajoute une ligne de données
+     * @param array $data Tableau associatif contenant les données à ajouter array('colname'=>'valeur','colname2'=>'valeur')
+     */
+    public function addLine($data){
+	$addData = array();
+	if(empty($this->resultat)){
+	    $p = 0;
+	    foreach($data as $k => $v){
+		$addData[$p] = $v;
+		$addData[$k] = $v;
+	    }
+	} else {
+	    $addData = $this->resultat[0];
+	    $p = 0;
+	    foreach ($addData as $k => $v) {
+		if (!is_numeric($k)) {
+		    if (isset($data[$k])) {
+			$addData[$k] = $data[$k];
+			$addData[$p] = $data[$k];
+		    } else {
+			$addData[$p] = '';
+		    }
+		    $p++;
+		}
+	    }
+	}
 
-
+	
+	$this->resultat[] = $addData;
+	
+    }
 
     //Fonctions d'itération
 

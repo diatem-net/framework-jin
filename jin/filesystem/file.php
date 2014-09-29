@@ -8,6 +8,7 @@
 namespace jin\filesystem;
 
 use jin\lang\StringTools;
+use jin\lang\ArrayTools;
 use jin\log\Debug;
 
 /** Lecture écriture d'un fichier
@@ -232,6 +233,25 @@ class File {
      */
     public function delete() {
 	return unlink($this->path);
+    }
+    
+    
+    /**
+     * Retourne le nom du fichier
+     * @return string
+     */
+    public function getFileName(){
+	$d = StringTools::explode($this->path, '/');
+	return $d[ArrayTools::length($d)-1];
+    }
+    
+    
+    /**
+     * Déplace le fichier dans un autre répertoire
+     * @param string $path  Dossier de destination (absolu ou relatif)
+     */
+    public function move($path) {
+	rename($this->path , $path.$this->getFileName());
     }
 
     

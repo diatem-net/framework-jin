@@ -129,7 +129,13 @@ class ListTools{
      */
     public static function last($list, $delimiter = ','){
 	$arr = self::toArray($list, $delimiter);
-	return $arr[count($arr)-1];
+	
+	if(isset($arr[count($arr)-1])){
+	    return $arr[count($arr)-1];
+	}else{
+	    return null;
+	}
+	
     }
     
     
