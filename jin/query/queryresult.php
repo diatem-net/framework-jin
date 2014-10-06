@@ -104,6 +104,36 @@ class QueryResult implements Iterator {
     }
 
     /**
+     * Ordonne les colonnes
+     * @param array $columnNames  Noms des colonnes fourni dans le nouvel ordre
+     * @throws \Exception
+     */
+    public function orderColumns($columnNames){
+        if(!is_array($columnNames) || empty($columnNames)){
+            throw new \Exception('Impossible d\'ordonner le QueryResult : le tableau de noms de colonnes fourni est invalide');
+        }
+        if(count($this->resultat) > 0) {
+            $orderedResult = array();
+            $nb = count($this->resultat);
+            foreach ($columnNames as $columnName) {
+                if(isset($this->resultat[0][$columnName])) {
+                    for ($i = 0; $i < $nb; $i++) {
+                        $orderedResult[$i][$columnName] = $this->resultat[$i][$columnName];
+                        unset($this->resultat[$i][$columnName]);
+                    }
+                }
+            }
+            $remainingKeys = array_keys($this->resultat[0]);
+            foreach ($remainingKeys as $remainingKey) {
+                for ($i = 0; $i < $nb; $i++) {
+                    $orderedResult[$i][$remainingKey] = $this->resultat[$i][$remainingKey];
+                }
+            }
+            $this->resultat = $orderedResult;
+        }
+    }
+
+    /**
      * Redéfinit la valeur d'une cellule
      * @param string $value Valeur
      * @param string $column    Nom de la colonne
