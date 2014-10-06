@@ -14,8 +14,8 @@ use jin\lang\NumberTools;
 
 /** Gestion d'un résultat Query. Peut être parcouru : foreach($objet as $ligne){ echo $ligne['columnName']; }
  *
- * 	@auteur	    Loïc Gerard
- * 	@check
+ *  @auteur     Loïc Gerard
+ *  @check
  */
 class QueryResult implements Iterator {
     /**
@@ -31,34 +31,34 @@ class QueryResult implements Iterator {
      * @throws Exception
      */
     public function __construct($data) {
-	if (!is_array($data)) {
-	    throw new Exception('Les données doivent être sous la forme d\'un tableau d\'objets');
-	}
+        if (!is_array($data)) {
+            throw new Exception('Les données doivent être sous la forme d\'un tableau d\'objets');
+        }
 
-	$this->resultat = $data;
+        $this->resultat = $data;
     }
 
 
     /**
      * Limite les résultats de la query
-     * @param int $from	Index de début de parsing
-     * @param int $to	Index de fin de parsing
+     * @param int $from Index de début de parsing
+     * @param int $to   Index de fin de parsing
      * @throws Exception
      */
     public function limitResults($from, $to = -1) {
-	if ($from < 0) {
-	    throw new Exception('Le paramètre from doit être positif.');
-	} elseif ($from > $this->count()) {
-	    throw new Exception('Le paramètre from est supérieur au nombre de résultats de la requête.');
-	} elseif ($to > $this->count()) {
-	    throw new Exception('Le paramètre to est supérieur au nombre de résultats de la requête.');
-	}
+        if ($from < 0) {
+            throw new Exception('Le paramètre from doit être positif.');
+        } elseif ($from > $this->count()) {
+            throw new Exception('Le paramètre from est supérieur au nombre de résultats de la requête.');
+        } elseif ($to > $this->count()) {
+            throw new Exception('Le paramètre to est supérieur au nombre de résultats de la requête.');
+        }
 
-	$l = NULL;
-	if ($to >= 0) {
-	    $l = $to - $from + 1;
-	}
-	$this->resultat = array_slice($this->resultat, $from, $l);
+        $l = NULL;
+        if ($to >= 0) {
+            $l = $to - $from + 1;
+        }
+        $this->resultat = array_slice($this->resultat, $from, $l);
     }
 
 
@@ -68,14 +68,14 @@ class QueryResult implements Iterator {
      * @param string $defaultValue  Valeur par défaut à initialiser
      */
     public function addColumn($columnName, $defaultValue = '') {
-	$nb = count($this->resultat);
-	for ($i = 0; $i < $nb; $i++) {
-        if(is_callable($defaultValue)) {
-            $this->resultat[$i][$columnName] = $defaultValue($this->resultat[$i]);
-        } else {
-    	    $this->resultat[$i][$columnName] = $defaultValue;
+        $nb = count($this->resultat);
+        for ($i = 0; $i < $nb; $i++) {
+            if(is_callable($defaultValue)) {
+                $this->resultat[$i][$columnName] = $defaultValue($this->resultat[$i]);
+            } else {
+                $this->resultat[$i][$columnName] = $defaultValue;
+            }
         }
-	}
     }
 
 
@@ -85,10 +85,10 @@ class QueryResult implements Iterator {
      * @param string $newColumnName Nom de la nouvelle colonne
      */
     public function duplicateColumn($columnName, $newColumnName){
-	$nb = count($this->resultat);
-	for ($i = 0; $i < $nb; $i++) {
-	    $this->resultat[$i][$newColumnName] = $this->resultat[$i][$columnName];
-	}
+        $nb = count($this->resultat);
+        for ($i = 0; $i < $nb; $i++) {
+            $this->resultat[$i][$newColumnName] = $this->resultat[$i][$columnName];
+        }
     }
 
 
@@ -97,21 +97,20 @@ class QueryResult implements Iterator {
      * @param string $columnName    Nom de la colonne à supprimer
      */
     public function removeColumn($columnName) {
-    $nb = count($this->resultat);
-    for ($i = 0; $i < $nb; $i++) {
-        unset($this->resultat[$i][$columnName]);
+        $nb = count($this->resultat);
+        for ($i = 0; $i < $nb; $i++) {
+            unset($this->resultat[$i][$columnName]);
+        }
     }
-    }
-
 
     /**
      * Redéfinit la valeur d'une cellule
      * @param string $value Valeur
-     * @param string $column	Nom de la colonne
-     * @param int $row	Numéro de la ligne
+     * @param string $column    Nom de la colonne
+     * @param int $row  Numéro de la ligne
      */
     public function setValueAt($value, $column, $row = 0) {
-	$this->resultat[$row][$column] = $value;
+        $this->resultat[$row][$column] = $value;
     }
 
 
@@ -120,152 +119,148 @@ class QueryResult implements Iterator {
      * @return int
      */
     public function count() {
-	return count($this->resultat);
+        return count($this->resultat);
     }
 
 
     /**
      * Retourne la valeur d'une cellule
-     * @param string $column	Nom de la colonne
-     * @param int $row	Numéro de la ligne
+     * @param string $column    Nom de la colonne
+     * @param int $row  Numéro de la ligne
      * @return mixed
      */
     public function getValueAt($column, $row = 0) {
-	return $this->resultat[$row][$column];
+        return $this->resultat[$row][$column];
     }
 
 
     /**
      * Retourne les données en un tableau
-     * @param boolean $getOnlyHeaders	[Defaut : TRUE] Retourne uniquement les colonnes avec headers
-     * @param type $allwaysReturnArrayOfArray	[Defaut : FALSE] : Retourne toujours un tableau de tableaux, même si il n'y a qu'un résultat
+     * @param boolean $getOnlyHeaders   [Defaut : TRUE] Retourne uniquement les colonnes avec headers
+     * @param type $allwaysReturnArrayOfArray   [Defaut : FALSE] : Retourne toujours un tableau de tableaux, même si il n'y a qu'un résultat
      * @return type
      */
     public function getDatasInArray($getOnlyHeaders = true, $allwaysReturnArrayOfArray = false) {
-	if ($this->count() == 1 && !$allwaysReturnArrayOfArray) {
-	    return $this->resultat[0];
-	} else {
-	    if($getOnlyHeaders){
-		return $this->getDatasInArrayWithoutNumericHeaders();
-	    }else{
-		return $this->resultat;
-	    }
-	    
-	}
+        if ($this->count() == 1 && !$allwaysReturnArrayOfArray) {
+            return $this->resultat[0];
+        } else {
+            if($getOnlyHeaders){
+                return $this->getDatasInArrayWithoutNumericHeaders();
+            }else{
+                return $this->resultat;
+            }
+
+        }
     }
-    
-    
+
+
     /**
      * Retourne les données sans les colonnes avec header numérique
      * @return array
      */
     private function getDatasInArrayWithoutNumericHeaders() {
-	$tempData = $this->resultat;
+        $tempData = $this->resultat;
 
-	$keys = array();
-	foreach ($this->resultat[0] AS $k => $v) {
-	    if (is_numeric($k)) {
-		$keys[] = $k;
-	    }
-	}
+        $keys = array();
+        foreach ($this->resultat[0] AS $k => $v) {
+            if (is_numeric($k)) {
+                $keys[] = $k;
+            }
+        }
 
-	$size = ArrayTools::length($tempData);
-	for ($i = 0; $i < $size; $i++) {
-	    foreach ($keys AS $k) {
-		unset($tempData[$i][$k]);
-	    }
-	}
-	return $tempData;
+        $size = ArrayTools::length($tempData);
+        for ($i = 0; $i < $size; $i++) {
+            foreach ($keys AS $k) {
+                unset($tempData[$i][$k]);
+            }
+        }
+        return $tempData;
     }
 
     /**
      * Retourne un tableau des valeurs d'une colonne (dédoublonné)
-     * @param string $column	Nom de la colonne
+     * @param string $column    Nom de la colonne
      * @return mixed
      */
     public function valueList($column){
-	$data = array();
+        $data = array();
 
-	$nb = count($this->resultat);
-	for ($i = 0; $i < $nb; $i++) {
-	    $v = $this->resultat[$i][$column];
-	    if(!is_numeric(ArrayTools::find($data, $v))){
-		$data[] = $v;
-	    }
-	}
+        $nb = count($this->resultat);
+        for ($i = 0; $i < $nb; $i++) {
+            $v = $this->resultat[$i][$column];
+            if(!is_numeric(ArrayTools::find($data, $v))){
+                $data[] = $v;
+            }
+        }
 
-	return $data;
+        return $data;
     }
 
 
     /** Retourne les en-tête de colonne
-     * @return	array
+     * @return  array
      */
     public function getHeaders(){
-	$cols = array();
-	if(ArrayTools::length($this->resultat) > 0){
-	    foreach($this->resultat[0] as $c => $v){
-		if(!is_numeric($c)){
-		    $cols[] = $c;
-		}
-	    }
-	}
+        $cols = array();
+        if(ArrayTools::length($this->resultat) > 0){
+            foreach($this->resultat[0] as $c => $v){
+                if(!is_numeric($c)){
+                    $cols[] = $c;
+                }
+            }
+        }
 
-	return $cols;
+        return $cols;
     }
 
 
     /**
-     * Concatène avec les données d'un autr eobjet QueryResult (Nécessite que les deux QueryResult aient la même structure)
+     * Concatène avec les données d'un autre objet QueryResult (Nécessite que les deux QueryResult aient la même structure)
      * @param \jin\query\QueryResult $qr
      * @throws \Exception
      */
     public function concat(QueryResult $qr){
-	$arraysAreEqual = ($qr->getHeaders() === $this->getHeaders());
-	if(!$arraysAreEqual && $qr->count() > 0 && $this->count() > 0){
-	    throw new \Exception('Concaténation impossible : les deux QueryResult n\'ont pas la même structure');
-	}
+        $arraysAreEqual = ($qr->getHeaders() === $this->getHeaders());
+        if(!$arraysAreEqual && $qr->count() > 0 && $this->count() > 0){
+            throw new \Exception('Concaténation impossible : les deux QueryResult n\'ont pas la même structure');
+        }
 
-	if($qr->count() == 1){
-	    $this->resultat = ArrayTools::merge($this->resultat, array($qr->getDatasInArray()));
-	}else{
-	    $this->resultat = ArrayTools::merge($this->resultat, $qr->getDatasInArray());
-	}
-
+        if($qr->count() == 1){
+            $this->resultat = ArrayTools::merge($this->resultat, array($qr->getDatasInArray()));
+        }else{
+            $this->resultat = ArrayTools::merge($this->resultat, $qr->getDatasInArray());
+        }
     }
-    
-    
+
+
     /**
      * Ajoute une ligne de données
      * @param array $data Tableau associatif contenant les données à ajouter array('colname'=>'valeur','colname2'=>'valeur')
      */
     public function addLine($data){
-	$addData = array();
-	if(empty($this->resultat)){
-	    $p = 0;
-	    foreach($data as $k => $v){
-		$addData[$p] = $v;
-		$addData[$k] = $v;
-	    }
-	} else {
-	    $addData = $this->resultat[0];
-	    $p = 0;
-	    foreach ($addData as $k => $v) {
-		if (!is_numeric($k)) {
-		    if (isset($data[$k])) {
-			$addData[$k] = $data[$k];
-			$addData[$p] = $data[$k];
-		    } else {
-			$addData[$p] = '';
-		    }
-		    $p++;
-		}
-	    }
-	}
-
-	
-	$this->resultat[] = $addData;
-	
+        $addData = array();
+        if(empty($this->resultat)){
+            $p = 0;
+            foreach($data as $k => $v){
+                $addData[$p] = $v;
+                $addData[$k] = $v;
+            }
+        } else {
+            $addData = $this->resultat[0];
+            $p = 0;
+            foreach ($addData as $k => $v) {
+                if (!is_numeric($k)) {
+                    if (isset($data[$k])) {
+                        $addData[$k] = $data[$k];
+                        $addData[$p] = $data[$k];
+                    } else {
+                        $addData[$p] = '';
+                    }
+                    $p++;
+                }
+            }
+        }
+        $this->resultat[] = $addData;
     }
 
     //Fonctions d'itération
@@ -275,7 +270,7 @@ class QueryResult implements Iterator {
      * @return mixed
      */
     public function current() {
-	return current($this->resultat);
+        return current($this->resultat);
     }
 
 
@@ -284,7 +279,7 @@ class QueryResult implements Iterator {
      * @return string
      */
     public function key() {
-	return key($this->resultat);
+        return key($this->resultat);
     }
 
 
@@ -293,8 +288,8 @@ class QueryResult implements Iterator {
      * @return \jin\query\QueryResult
      */
     public function rewind() {
-	reset($this->resultat);
-	return $this;
+        reset($this->resultat);
+        return $this;
     }
 
 
@@ -302,7 +297,7 @@ class QueryResult implements Iterator {
      * Itération : next
      */
     public function next() {
-	next($this->resultat);
+        next($this->resultat);
     }
 
 
@@ -311,7 +306,7 @@ class QueryResult implements Iterator {
      * @return boolean
      */
     public function valid() {
-	return array_key_exists(key($this->resultat), $this->resultat);
+        return array_key_exists(key($this->resultat), $this->resultat);
     }
 
 }
