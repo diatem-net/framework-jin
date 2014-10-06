@@ -161,17 +161,19 @@ class QueryResult implements Iterator {
     private function getDatasInArrayWithoutNumericHeaders() {
         $tempData = $this->resultat;
 
-        $keys = array();
-        foreach ($this->resultat[0] AS $k => $v) {
-            if (is_numeric($k)) {
-                $keys[] = $k;
+        if($this->count() > 0) {
+            $keys = array();
+            foreach ($this->resultat[0] AS $k => $v) {
+                if (is_numeric($k)) {
+                    $keys[] = $k;
+                }
             }
-        }
 
-        $size = ArrayTools::length($tempData);
-        for ($i = 0; $i < $size; $i++) {
-            foreach ($keys AS $k) {
-                unset($tempData[$i][$k]);
+            $size = ArrayTools::length($tempData);
+            for ($i = 0; $i < $size; $i++) {
+                foreach ($keys AS $k) {
+                    unset($tempData[$i][$k]);
+                }
             }
         }
         return $tempData;
