@@ -8,6 +8,7 @@ namespace jin\output\ressources;
 
 use jin\output\ressources\GlobalLoader;
 use jin\output\ressources\optimizer\JsMinify;
+use jin\JinCore;
 
 /** Permet l'automatisation du chargement de fichiers CSS et la gestion auto d'un Minifer et du cache.
  * @auteur  Loïc Gerard
@@ -37,7 +38,7 @@ class JsLoader extends GlobalLoader{
      */
     public function getHTMLCode(){
 	parent::getHTMLLink();
-	return '<script src="/jin/_script/ressource/js.php?uid='.parent::getKey().'"></script>';
+	return '<script src="'.JinCore::getJinRootUrl().'_script/ressource/js.php?uid='.parent::getKey().'"></script>';
     }
     
     
