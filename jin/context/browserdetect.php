@@ -92,7 +92,7 @@ class BrowserDetect {
      * 
      */
     private static function detectBrowser() {
-	require_once(JinCore::getRoot() . '_extlibs/browser/Browser.php');
+	require_once(JinCore::getJinRootPath() . '_extlibs/browser/Browser.php');
 	self::$browserData = new \Browser();
     }
 
