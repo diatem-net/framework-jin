@@ -52,8 +52,8 @@ require_once dirname(__FILE__) . '/securimage.php';
 include '../../launcher.php';
 use jin\filesystem\IniFile;
 use jin\JinCore;
-$config = new IniFile(JinCore::getRoot().JinCore::getRelativePathAssets().'simplecaptcha/config.ini');
-$sfile = JinCore::getProjectRoot() . JinCore::getConfigValue('surchargeAbsolutePath') . '/' . JinCore::getRelativePathAssets() . 'simplecaptcha/config.ini';
+$config = new IniFile(JinCore::getJinRootPath().JinCore::getRelativePathAssets().'simplecaptcha/config.ini');
+$sfile = JinCore::getContainerPath() . JinCore::getConfigValue('surchargeAbsolutePath') . '/' . JinCore::getRelativePathAssets() . 'simplecaptcha/config.ini';
 if (is_file($sfile)) {
     $config->surcharge($sfile);
 }

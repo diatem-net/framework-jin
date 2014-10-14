@@ -7,6 +7,8 @@ namespace jin\output\components\form;
 
 use jin\output\components\GlobalComponent;
 use jin\lang\StringTools;
+use jin\language\Trad;
+
 /** Classe parent de tout composant de type FORM (destinés à être utilisés avec des balises FORM)
  *
  * 	@auteur		Loïc Gerard
@@ -53,6 +55,8 @@ class FormComponent extends GlobalComponent{
     protected function __construct($name, $componentName) {
 	parent::__construct($name, $componentName);
 	$this->label = $name;
+	
+	Trad::loadTradFile('formcomponents.ini');
     }
     
     

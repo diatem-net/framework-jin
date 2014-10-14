@@ -9,6 +9,7 @@ namespace jin\output\components\ui;
 
 use jin\output\components\GlobalComponent;
 use jin\lang\StringTools;
+use jin\language\Trad;
 
 /** Classe parent de tout composant de type INTERFACE
  *
@@ -26,6 +27,8 @@ class UIComponent extends GlobalComponent {
     protected function __construct($name, $componentName) {
 	parent::__construct($name, $componentName);
 	$this->label = $name;
+	
+	Trad::loadTradFile('uicomponents.ini');
     }
     
 

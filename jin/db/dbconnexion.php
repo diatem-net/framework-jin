@@ -61,7 +61,7 @@ class DbConnexion {
     /**	Initialise automatiquement une connexion sur un site géré avec WordPress
      */
     public static function connectWithWordPress(){
-	include JinCore::getProjectRoot().'wp-config.php';
+	include JinCore::getContainerPath().'wp-config.php';
 	
 	self::$cnxHandler = new MySql(DB_HOST, DB_USER, DB_PASSWORD, 5432, DB_NAME);
 	return self::$cnxHandler->connect();

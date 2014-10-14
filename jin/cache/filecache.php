@@ -34,7 +34,7 @@ class FileCache implements CacheInterface {
      */
     public function isInCache($key) {
 	$key = $this->getEncodedKey($key);
-	$cachePath = JinCore::getProjectRoot() . JinCore::getConfigValue('cacheFileFolder') . $key;
+	$cachePath = JinCore::getContainerPath() . JinCore::getConfigValue('cacheFileFolder') . $key;
 	
 	if (file_exists($cachePath)) {
 	    return true;
@@ -51,7 +51,7 @@ class FileCache implements CacheInterface {
     public function getFromCache($key) {
 	$key = $this->getEncodedKey($key);
 
-	$cachePath = JinCore::getProjectRoot() . JinCore::getConfigValue('cacheFileFolder') . $key;
+	$cachePath = JinCore::getContainerPath() . JinCore::getConfigValue('cacheFileFolder') . $key;
 	if (file_exists($cachePath)) {
 	    return unserialize(file_get_contents($cachePath));
 	} else {
@@ -66,7 +66,7 @@ class FileCache implements CacheInterface {
      */
     public function deleteFromCache($key) {
 	$key = $this->getEncodedKey($key);
-	$cachePath = JinCore::getProjectRoot() . JinCore::getConfigValue('cacheFileFolder') . $key;
+	$cachePath = JinCore::getContainerPath() . JinCore::getConfigValue('cacheFileFolder') . $key;
 	if (file_exists($cachePath)) {
 	    unlink($cachePath);
 	}
@@ -82,7 +82,7 @@ class FileCache implements CacheInterface {
 	$key = $this->getEncodedKey($key);
 	$this->deleteFromCache($key);
 	
-	$cachePath = JinCore::getProjectRoot() . JinCore::getConfigValue('cacheFileFolder') . $key;
+	$cachePath = JinCore::getContainerPath() . JinCore::getConfigValue('cacheFileFolder') . $key;
 	file_put_contents($cachePath, serialize($value), LOCK_EX);
     }
 
@@ -91,7 +91,7 @@ class FileCache implements CacheInterface {
      * 	@return	void
      */
     public function clearCache() {
-	$cacheFolder = JinCore::getProjectRoot() . JinCore::getConfigValue('cacheFileFolder');
+	$cacheFolder = JinCore::getContainerPath() . JinCore::getConfigValue('cacheFileFolder');
 	$folder = new Folder($cacheFolder);
 	foreach($folder as $f){
 	    $fullPath = $cacheFolder.$f;

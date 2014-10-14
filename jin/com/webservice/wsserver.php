@@ -92,8 +92,8 @@ class WsServer {
 	error_reporting(0);
 	set_error_handler(null);
 	
-	require_once(JinCore::getRoot() . '_extlibs/katywsdl/classes/WsdlDefinition.php');
-	require_once(JinCore::getRoot() . '_extlibs/katywsdl/classes/WsdlWriter.php');
+	require_once(JinCore::getJinRootPath() . '_extlibs/katywsdl/classes/WsdlDefinition.php');
+	require_once(JinCore::getJinRootPath() . '_extlibs/katywsdl/classes/WsdlWriter.php');
 
 	$def = new \WsdlDefinition();
 	$def->setDefinitionName($this->className);
