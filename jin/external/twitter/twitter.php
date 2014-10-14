@@ -56,7 +56,7 @@ class Twitter{
 	$this->access_token = $access_token;
 	$this->access_token_secret = $access_token_secret;
 	
-	$libPath = JinCore::getRoot().JinCore::getRelativeExtLibs().'twitterauth/';
+	$libPath = JinCore::getJinRootPath().JinCore::getRelativeExtLibs().'twitterauth/';
 	require_once $libPath.'twitteroauth/twitteroauth.php';
 	
 	$this->toa = new \TwitterOAuth($this->consumer_key, $this->consumer_secret, $this->access_token, $this->access_token_secret);

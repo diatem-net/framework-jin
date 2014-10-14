@@ -78,7 +78,7 @@ class DeviceDetect {
      * 
      */
     private static function detectDevice() {
-	require_once(JinCore::getRoot() . '_extlibs/mobile-detect/Mobile_Detect.php');
+	require_once(JinCore::getJinRootPath() . '_extlibs/mobile-detect/Mobile_Detect.php');
 	$detect = new \Mobile_Detect();
 	self::$detectCode = array();
 	self::$detectCode['tablet'] = $detect->isTablet();

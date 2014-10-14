@@ -41,15 +41,15 @@ class AssetFile {
      * @param string $relativePath	    Chemin relatif
      */
     public function __construct($relativePath) {
-	$surcharge = JinCore::getProjectRoot() . JinCore::getConfigValue('surchargeAbsolutePath') . '/' . JinCore::getRelativePathAssets() . $relativePath;
+	$surcharge = JinCore::getContainerPath() . JinCore::getConfigValue('surchargeAbsolutePath') . '/' . JinCore::getRelativePathAssets() . $relativePath;
 
 	if(JinCore::getConfigValue('surcharge') && file_exists($surcharge)){
 	    //Surcharge du fichier
 	    $this->file = new File($surcharge);
-	    $this->url = JinCore::getRootUrl() . JinCore::getConfigValue('surchargeAbsolutePath') . '/' . JinCore::getRelativePathAssets();
+	    $this->url = JinCore::getContainerUrl() . JinCore::getConfigValue('surchargeAbsolutePath') . '/' . JinCore::getRelativePathAssets();
 	}else{
 	    //Fichier natif
-	    $this->file = new File(JinCore::getRoot() . JinCore::getRelativePathAssets() . $relativePath);
+	    $this->file = new File(JinCore::getJinRootPath() . JinCore::getRelativePathAssets() . $relativePath);
 	    $this->url = JinCore::getJinRootUrl() . JinCore::getRelativePathAssets();
 	}
     }

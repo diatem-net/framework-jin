@@ -104,7 +104,7 @@ class MemcacheCache implements CacheInterface {
      * 	@return string			Clé unique
      */
     private function buildMKey($key) {
-	return JinCore::getRoot() . '_' . $key;
+	return JinCore::getJinRootPath() . '_' . $key;
     }
 
 }

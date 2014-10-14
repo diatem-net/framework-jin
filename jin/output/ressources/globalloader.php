@@ -113,7 +113,7 @@ class GlobalLoader{
     protected function generateContent(){
 	$fcontent = '';
 	foreach($this->ressources as $ressourceFile){
-	    $f = new File(JinCore::getProjectRoot().$ressourceFile);
+	    $f = new File(JinCore::getContainerPath().$ressourceFile);
 	    $fcontent .= $f->getContent();
 	}
 	return $fcontent;

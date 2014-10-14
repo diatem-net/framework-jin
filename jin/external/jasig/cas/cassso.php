@@ -21,7 +21,7 @@ class CasSSO{
 	self::$debugging = $debugging;
 	self::$serviceId = $serviceId;
 	
-	$casPath = JinCore::getRoot().JinCore::getRelativeExtLibs().'cas/';
+	$casPath = JinCore::getJinRootPath().JinCore::getRelativeExtLibs().'cas/';
 	require_once  $casPath.'CAS.php';
 	
 	if(self::$debugging){

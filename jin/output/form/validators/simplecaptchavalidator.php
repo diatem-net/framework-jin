@@ -35,10 +35,10 @@ class Simplecaptchavalidator extends GlobalValidator implements ValidatorInterfa
      * @return boolean
      */
     public function isValid($valeur){
-	include_once JinCore::getRoot().JinCore::getRelativeExtLibs() . 'securimage/securimage.php';
+	include_once JinCore::getJinRootPath().JinCore::getRelativeExtLibs() . 'securimage/securimage.php';
 
-	$config = new IniFile(JinCore::getRoot().JinCore::getRelativePathAssets().'simplecaptcha/config.ini');
-	$sfile = JinCore::getProjectRoot() . JinCore::getConfigValue('surchargeAbsolutePath') . '/' . JinCore::getRelativePathAssets().'simplecaptcha/config.ini';
+	$config = new IniFile(JinCore::getJinRootPath().JinCore::getRelativePathAssets().'simplecaptcha/config.ini');
+	$sfile = JinCore::getContainerPath() . JinCore::getConfigValue('surchargeAbsolutePath') . '/' . JinCore::getRelativePathAssets().'simplecaptcha/config.ini';
 	if(is_file($sfile)){
 	    $config->surcharge($sfile);
 	}

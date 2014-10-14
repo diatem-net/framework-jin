@@ -235,8 +235,8 @@ class BrowserDetect {
      * 
      */
     private static function detectBrowser() {
-	require_once(JinCore::getRoot() . '_extlibs/phpbrowscap/Browscap.php');
-	$bc = new \phpbrowscap\Browscap(JinCore::getRoot() . '_extlibs/phpbrowscap/cache/');
+	require_once(JinCore::getJinRootPath() . '_extlibs/phpbrowscap/Browscap.php');
+	$bc = new \phpbrowscap\Browscap(JinCore::getJinRootPath() . '_extlibs/phpbrowscap/cache/');
 	self::$browserData = $bc->getBrowser();
     }
 
