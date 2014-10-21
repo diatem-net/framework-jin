@@ -193,10 +193,10 @@ class ColorTools {
             }
 
             // Check if it's an 3-hexadecimal color
-            if(preg_match('/#[\da-f]{3}/i', $color)) {
+            if(preg_match('/^#[\da-f]{3}$/i', $color)) {
                 $color = preg_replace('/([\da-f])/i', '$1$1', $color);
             }
-            if(preg_match('/#[\da-f]{6}/i', $color)) {
+            if(preg_match('/^#[\da-f]{6}$/i', $color)) {
                 return $color;
             }
         }
@@ -240,10 +240,18 @@ class ColorTools {
                 );
             }
             return array(
-                'red' => $color['red'] ?: ($color['r'] ?: 0),
-                'green' => $color['green'] ?: ($color['g'] ?: 0),
-                'blue' => $color['blue'] ?: ($color['b'] ?: 0),
-                'alpha' => $color['alpha'] ?: 1
+                'red' => isset($color['red'])
+                    ? $color['red']
+                    : (isset($color['r']) ? $color['r'] : 0),
+                'green' => isset($color['green'])
+                    ? $color['green']
+                    : (isset($color['g']) ? $color['g'] : 0),
+                'blue' => isset($color['blue'])
+                    ? $color['blue']
+                    : (isset($color['b']) ? $color['b'] : 0),
+                'alpha' => isset($color['alpha'])
+                    ? $color['alpha']
+                    : 1
             );
         }
         if(is_string($color)) {
@@ -257,10 +265,10 @@ class ColorTools {
             }
 
             // Check if it's an hexadecimal color
-            if(preg_match('/#[\da-f]{3}/i', $color)) {
+            if(preg_match('/^#[\da-f]{3}$/i', $color)) {
                 $color = preg_replace('/([\da-f])/i', '$1$1', $color);
             }
-            if(preg_match('/#[\da-f]{6}/i', $color)) {
+            if(preg_match('/^#[\da-f]{6}$/i', $color)) {
                 list($red, $green, $blue) = sscanf($color, "#%02x%02x%02x");
                 return array(
                     'red' => $red,
@@ -272,6 +280,26 @@ class ColorTools {
         }
 
         return array('red' => 0, 'green' => 0, 'blue' => 0, 'alpha' => 1);
+    }
+
+    /**
+     * Change a color format to the HTML rgb() one
+     * @param  mixed $color Color
+     * @return string       rgb(red, green, blue)
+     */
+    public static function toHTMLRGB($color) {
+        $color = self::toRGB($color);
+        return 'rgb('.$color['red'].', '.$color['green'].', '.$color['blue'].')';
+    }
+
+    /**
+     * Change a color format to the HTML rgb() one
+     * @param  mixed $color Color
+     * @return string       rgba(red, green, blue, alpha)
+     */
+    public static function toHTMLRGBA($color) {
+        $color = self::toRGBA($color);
+        return 'rgba('.$color['red'].', '.$color['green'].', '.$color['blue'].', '.$color['alpha'].')';
     }
 
     /**
