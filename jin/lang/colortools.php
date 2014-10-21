@@ -303,15 +303,18 @@ class ColorTools {
     }
 
     /**
-     * Return one or more dominants for an image
+     * Return the dominant color for an image
      * @param  sring   $src         Image path/url
-     * @param  integer $quantity    Number of dominants to return
      * @param  integer $granularity Search's granularity
-     * @return mixed                A (array of) 6-hexadecimal color(s)
+     * @return mixed                An [red, green, blue] associative array
      */
-    public static function imageDominant($src, $quantity = 1, $granularity = 5) {
+    public static function imageDominant($src, $granularity = 1) {
         $granularity = max(1, abs((int)$granularity));
-        $colors = array();
+        $channels = array(
+            'red' => 0,
+            'green' => 0,
+            'blue' => 0
+        );
         $size = @getimagesize($src);
         if($size === false) {
             user_error("Unable to get image size data.");
@@ -327,19 +330,16 @@ class ColorTools {
             for($y = 0; $y < $size[1]; $y += $granularity) {
                 $thisColor = imagecolorat($img, $x, $y);
                 $rgb = imagecolorsforindex($img, $thisColor);
-                $hex = self::toHex($rgb);
-                if(array_key_exists($hex, $colors)) {
-                    $colors[$hex]++;
-                } else {
-                    $colors[$hex] = 1;
-                }
+                $channels['red'] += $rgb['red'];
+                $channels['green'] += $rgb['green'];
+                $channels['blue'] += $rgb['blue'];
             }
         }
-        arsort($colors);
-        $colors = array_keys($colors);
-        return $quantity == 1
-            ? $colors[0]
-            : array_slice($colors, 0, $quantity);
+        $nbPixels = ceil($size[0] / $granularity) * ceil($size[1] / $granularity);
+        $channels['red'] = round($channels['red'] / $nbPixels);
+        $channels['green'] = round($channels['green'] / $nbPixels);
+        $channels['blue'] = round($channels['blue'] / $nbPixels);
+        return $channels;
     }
 
 }
