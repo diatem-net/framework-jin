@@ -304,7 +304,7 @@ class ColorTools {
 
     /**
      * Return the dominant color for an image
-     * @param  sring   $src         Image path/url
+     * @param  string   $src        Image path/url
      * @param  integer $granularity Search's granularity
      * @return mixed                An [red, green, blue] associative array
      */
@@ -340,6 +340,29 @@ class ColorTools {
         $channels['green'] = round($channels['green'] / $nbPixels);
         $channels['blue'] = round($channels['blue'] / $nbPixels);
         return $channels;
+    }
+
+    /**
+     * Return a visible color over another one (eg. #ffffee is not visible over #fff)
+     * @param  mixed   $color     Background color
+     * @param  boolean $greyscale Should output color be grey?
+     * @return mixed              An [red, green, blue] associative array
+     */
+    public static function visibleOver($color, $greyscale = false) {
+        $color = self::toRGBA($color);
+        if($greyscale) {
+            $median = 255 - ($color['red'] + $color['green'] + $color['blue']) / 3;
+            return array(
+                'red' => $median,
+                'green' => $median,
+                'blue' => $median
+            );
+        }
+        return array(
+            'red' => 255 - $color['red'],
+            'green' => 255 - $color['green'],
+            'blue' => 255 - $color['blue']
+        );
     }
 
 }
