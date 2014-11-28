@@ -325,7 +325,7 @@ class SherlockSearch extends SherlockCore {
 	    }
 	}
 
-
+	
 	return Json::encode($callParams);
     }
 
@@ -370,8 +370,7 @@ class SherlockSearch extends SherlockCore {
 	    return false;
 	}
 
-
-	$retour = parent::callMethod($callString, $callParamsJson);
+	$retour = parent::callMethod($callString, $callParamsJson, 'XGET');
 	if (!$retour) {
 	    parent::throwError('Une erreur ElasticSearch a eu lieu : ' . $this->sherlock->getLastServerResponse());
 	    return false;
@@ -391,6 +390,7 @@ class SherlockSearch extends SherlockCore {
 	    }
 	    $facet->setESReturnData($data);
 	}
+	
 
 	return new SherlockResult($retour, $this->index);
     }
