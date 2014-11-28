@@ -9,6 +9,7 @@ namespace jin\external\diatem\sherlock;
 use jin\com\Curl;
 use jin\dataformat\Json;
 use jin\external\diatem\sherlock\Sherlock;
+use jin\external\diatem\sherlock\SherlockCurl;
 
 
 /** Classe dérivant SherlockConfig, Sherlock, SherlockIndexer, SherlockResult et SherlockSearch
@@ -47,8 +48,11 @@ class SherlockCore{
      * @return array|boolean		Retourne un tableau issu du JSon retourné par ElasticSearch. Retourne FALSE en cas d'échec de l'appel.
      */
     protected function callMethod($method, $args = null, $customRequest = null){
-	$d = Curl::call($this->sherlock->getCnxString().$method, $args, $customRequest, false);
-
+	
+	
+	//$d = Curl::call($this->sherlock->getCnxString().$method, $args, $customRequest, false);
+	$d = SherlockCurl::call($this->sherlock->getCnxString().$method, $args, $customRequest, false);
+	
 	//On log la dernière réponse
 	$this->sherlock->lastResponse = $d;
 	
@@ -56,7 +60,7 @@ class SherlockCore{
 	$this->sherlock->lastCall = $args;
 	
 	if(!$d){
-	    $this->throwError('Appel de l\'url '.$this->sherlock->getCnxString().$method.' impossible : '.Curl::getLastErrorVerbose());
+	    $this->throwError('Appel de l\'url '.$this->sherlock->getCnxString().$method.' impossible : '.SherlockCurl::getLastErrorVerbose());
 	    return false; 
 	}
 

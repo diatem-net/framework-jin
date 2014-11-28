@@ -130,9 +130,8 @@ class SherlockConfig extends SherlockCore {
 	}
 	//Conversion en Json
 	$jsonContent = Json::encode($mapping);
-	
 	$retour = parent::callMethod($this->sherlock->getAppzCode() . '' , $jsonContent);
-
+	
 	if(!isset($retour['acknowledged']) || !$retour['acknowledged']){
 	    parent::throwError('Impossible d\'initialiser l\'application : '.$this->sherlock->getLastError());
 	    return false;
