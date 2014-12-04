@@ -51,7 +51,7 @@ class SherlockCore{
 	
 	
 	//$d = Curl::call($this->sherlock->getCnxString().$method, $args, $customRequest, false);
-	$d = SherlockCurl::call($this->sherlock->getCnxString().$method, $args, $customRequest, false);
+	$d = SherlockCurl::call($this->sherlock->getCnxString().$method, $args, false, $customRequest);
 	
 	//On log la dernière réponse
 	$this->sherlock->lastResponse = $d;
