@@ -17,8 +17,6 @@ use jin\log\Debug;
 /** Gestion d'une requête SQL
  *
  *  @auteur     Loïc Gerard
- *  @version    0.0.1
- *  @check
  */
 class Query {
 
@@ -175,6 +173,14 @@ class Query {
      */
     public function getQueryResults() {
         return new QueryResult($this->resultat);
+    }
+    
+    /**
+    * Retourne l'identifiant de la dernière ligne insérée 
+    * @return int identifiant de la dernière ligne insérée   
+    */
+    public function getLastInsertId(){
+        return DbConnexion::$cnxHandler->cnx->lastInsertId();
     }
 
 
