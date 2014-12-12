@@ -24,7 +24,7 @@ class Json {
 	if($convertIntoString){
 	    return self::encodeWithStringConvert($data);
 	}else{
-	    return json_encode($data);
+	    return json_encode($data, JSON_HEX_QUOT | JSON_HEX_TAG);
 	}
     }
 
@@ -86,7 +86,7 @@ class Json {
      * @return string
      */
     private static function encodeWithStringConvert($arr) {
-	return json_encode(static::convert($arr));
+	return json_encode(static::convert($arr), JSON_HEX_QUOT | JSON_HEX_TAG);
     }
     
     

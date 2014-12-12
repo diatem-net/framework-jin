@@ -86,7 +86,7 @@ class SherlockConfig extends SherlockCore {
 	$mapping['settings']['analysis']['analyzer']['facetanalyzer'] = array();
 	$mapping['settings']['analysis']['analyzer']['facetanalyzer']['type'] = 'custom';
 	$mapping['settings']['analysis']['analyzer']['facetanalyzer']['tokenizer'] = 'keyword';
-	$mapping['settings']['analysis']['analyzer']['facetanalyzer']['filter'] = array('lowercase');
+	$mapping['settings']['analysis']['analyzer']['facetanalyzer']['filter'] = array();
 
 	
 	
