@@ -15,6 +15,7 @@ class JinRestService{
     public $_allow = array();
     public $_content_type = "application/json";
     public $_request = array();
+    public $_requestJSon = array();
     private $_method = "";
     private $_code = 200;
     private $securedRest = false;
@@ -131,7 +132,7 @@ class JinRestService{
 	$toEncode = 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['REDIRECT_URL'];
 	$toEncode .= $this->get_request_method();
 	$toEncode .= $publicKey;
-	$toEncode .= Json::encode($this->_request);
+	$toEncode .= Json::encode($this->_requestJSon, true);
 	
 	return $toEncode;
     }
@@ -169,14 +170,20 @@ class JinRestService{
 	switch ($this->get_request_method()) {
 	    case "POST":
 		$this->_request = $this->cleanInputs($_POST);
+		$this->_requestJSon = $_POST;
 		break;
 	    case "GET":
+		$this->_request = $this->cleanInputs($_GET);
+		$this->_requestJSon = $_GET;
+		break;
 	    case "DELETE":
 		$this->_request = $this->cleanInputs($_GET);
+		$this->_requestJSon = $_GET;
 		break;
 	    case "PUT":
 		parse_str(file_get_contents("php://input"), $this->_request);
 		$this->_request = $this->cleanInputs($_GET);
+		$this->_requestJSon = $_GET;
 		break;
 	    default:
 		$this->response('', 406);
@@ -185,19 +192,12 @@ class JinRestService{
     }
 
     private function cleanInputs($data) {
-	$clean_input = array();
-	if (is_array($data)) {
-	    foreach ($data as $k => $v) {
-		$clean_input[$k] = $this->cleanInputs($v);
-	    }
-	} else {
-	    if (get_magic_quotes_gpc()) {
-		$data = trim(stripslashes($data));
-	    }
-	    $data = strip_tags($data);
-	    $clean_input = trim($data);
+	$cleaned = array();
+	foreach($data as $key => $value){
+	    $cleaned[$key] = Json::decode($value);
 	}
-	return $clean_input;
+	
+	return $cleaned;
     }
 
     private function set_headers() {
