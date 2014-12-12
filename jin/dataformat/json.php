@@ -24,7 +24,7 @@ class Json {
 	if($convertIntoString){
 	    return self::encodeWithStringConvert($data);
 	}else{
-	    return json_encode($data, JSON_HEX_QUOT | JSON_HEX_TAG);
+	    return json_encode($data);
 	}
     }
 
@@ -86,24 +86,23 @@ class Json {
      * @return string
      */
     private static function encodeWithStringConvert($arr) {
-	return json_encode(static::convert($arr), JSON_HEX_QUOT | JSON_HEX_TAG);
+	return json_encode(self::convert($arr), JSON_HEX_QUOT | JSON_HEX_TAG);
     }
     
     
     /**
      * Convertit toutes les valeurs d'un tableau en chaîne (recursif)
-     * @param array $arr    Tableau à convertir
-     * @return array
      */
-    private static function convert($arr){
-	foreach($arr as $k => $v){
-	    if(!is_array($v)){
-		$arr[$k] = (String)$v;
-	    }else{
-		$arr[$k] = static::convert($v);
+    private static function convert($value){
+	if(is_array($value)){
+	    foreach($value AS $k => $v){
+		$value[$k] = self::convert($v);
 	    }
+	}else{
+	    return (String)$value;
 	}
-	return $arr;
+	
+	return $value;
     }
 
 }
