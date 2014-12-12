@@ -16,7 +16,7 @@ use jin\dataformat\Json;
  *
  * 	@auteur		Loïc Gerard
  * 	@version	0.0.1
- * 	@check		
+ * 	@check
  */
 class SherlockConfig extends SherlockCore {
 
@@ -26,9 +26,9 @@ class SherlockConfig extends SherlockCore {
      */
     private $sherlock;
 
-    
+
     /**	Initialise un objet permettant la configuration distante d'un serveur Sherlock.
-     * 
+     *
      * @param \jin\external\diatem\sherlock\Sherlock $sherlock	Instance d'un objet Sherlock correctement initialisé
      */
     public function __construct(Sherlock $sherlock) {
@@ -36,7 +36,7 @@ class SherlockConfig extends SherlockCore {
 	parent::__construct($this->sherlock);
     }
 
-    
+
     /**	Permet d'initialiser Sherlock pour un environnement spécifique.
      *	L'initialisation crée un index sur le serveur Sherlock, supprime cet
      *	index et les données associées si elles existaient, génère la configuration
@@ -44,7 +44,7 @@ class SherlockConfig extends SherlockCore {
      *	transmis en paramètre. Attention en cas de modification de ce fichier
      *	XML il faudra réinitialiser à nouveau l'espace de nom et réindexer toutes
      *	les données.
-     * 
+     *
      * @param string $xmlConfigFilePath	Chemin ou absolu du fichier XML de configuration.
      * @return	boolean	Succès ou échec de l'initialisation
      *  Se référer à la documentation pour connaitre la syntaxe à respecter.
@@ -52,7 +52,7 @@ class SherlockConfig extends SherlockCore {
     public function initializeApplication($xmlConfigFilePath) {
 	//Suppression des données existantes
 	$retour = parent::callMethod($this->sherlock->getAppzCode() . '/', null, 'DELETE');
-	
+
 	//Lecture du fichier XML
 	$file = new File($xmlConfigFilePath);
 	$fileContent = $file->getContent();
@@ -60,7 +60,7 @@ class SherlockConfig extends SherlockCore {
 
 	//Création des paramètres d'appel
 	$mapping = array();
-	
+
 	//Création des tokenizers pour la gestion de l'autocompletion
 	$mapping['settings'] = array();
 	$mapping['settings']['analysis'] = array();
@@ -70,26 +70,24 @@ class SherlockConfig extends SherlockCore {
 	$mapping['settings']['analysis']['filter']['nGram_filter']['min_gram'] = 2;
 	$mapping['settings']['analysis']['filter']['nGram_filter']['max_gram'] = 20;
 	$mapping['settings']['analysis']['filter']['nGram_filter']['token_chars'] = array('letter', 'digit', 'punctuation', 'symbol');
-	
+
 	$mapping['settings']['analysis']['analyzer'] = array();
 	$mapping['settings']['analysis']['analyzer']['nGram_analyzer'] = array();
 	$mapping['settings']['analysis']['analyzer']['nGram_analyzer']['type'] = 'custom';
 	$mapping['settings']['analysis']['analyzer']['nGram_analyzer']['tokenizer'] = 'whitespace';
 	$mapping['settings']['analysis']['analyzer']['nGram_analyzer']['filter'] = array('lowercase', 'asciifolding', 'nGram_filter');
-	
+
 	$mapping['settings']['analysis']['analyzer']['whitespace_analyzer'] = array();
 	$mapping['settings']['analysis']['analyzer']['whitespace_analyzer']['type'] = 'custom';
 	$mapping['settings']['analysis']['analyzer']['whitespace_analyzer']['tokenizer'] = 'whitespace';
 	$mapping['settings']['analysis']['analyzer']['whitespace_analyzer']['filter'] = array('lowercase', 'asciifolding');
-	
+
 	//Analyzer pour les recherches sur des données destinées à des facets
 	$mapping['settings']['analysis']['analyzer']['facetanalyzer'] = array();
 	$mapping['settings']['analysis']['analyzer']['facetanalyzer']['type'] = 'custom';
 	$mapping['settings']['analysis']['analyzer']['facetanalyzer']['tokenizer'] = 'keyword';
 	$mapping['settings']['analysis']['analyzer']['facetanalyzer']['filter'] = array();
 
-	
-	
 	//Création du mapping
 	$mapping['mappings'] = array();
 	for ($i = 0; $i < count($xml->documentType); $i++) {
@@ -97,12 +95,12 @@ class SherlockConfig extends SherlockCore {
 
 	    //On crée l'entrée dans mapping
 	    $mapping['mappings'][$documentTypeName] = array();
-	    
+
 	    //On générère _all pour l'autocompletion
 	    $mapping['mappings'][$documentTypeName]['_all'] = array();
 	    $mapping['mappings'][$documentTypeName]['_all']['index_analyzer'] = 'nGram_analyzer';
 	    $mapping['mappings'][$documentTypeName]['_all']['search_analyzer'] = 'whitespace_analyzer';
-	    
+
 	    $mapping['mappings'][$documentTypeName]['properties'] = array();
 
 	    for ($j = 0; $j < count($xml->documentType[$i]->fields->field); $j++) {
@@ -131,19 +129,19 @@ class SherlockConfig extends SherlockCore {
 	//Conversion en Json
 	$jsonContent = Json::encode($mapping);
 	$retour = parent::callMethod($this->sherlock->getAppzCode() . '' , $jsonContent);
-	
+
 	if(!isset($retour['acknowledged']) || !$retour['acknowledged']){
 	    parent::throwError('Impossible d\'initialiser l\'application : '.$this->sherlock->getLastError());
 	    return false;
 	}
-	
+
 	return true;
     }
-    
-    
-    /**	Retourne les types de documents supportés par l'environnement courant 
+
+
+    /**	Retourne les types de documents supportés par l'environnement courant
      * utilisé pour Sherlock. Retourne FALSE si la connexion est impossible.
-     * 
+     *
      * @return array|boolean	Retourne un tableau contenant les informations sur les
      * types de documents configurés sur l'environnement courant de Sherlock.
      * retourne FALSE si la connexion est impossible.
@@ -157,16 +155,16 @@ class SherlockConfig extends SherlockCore {
 	    return false;
 	}
     }
-    
-    
+
+
     /**	Retourne la configuration complète du serveur Sherlock sous forme de tableau
-     * 
+     *
      * @return	array|boolean	Un tableau contenant les informations sur la configuration
      * du serveur Sherlock, FALSE en cas de connexion impossible
      */
     function getNodesInfo(){
 	$retour = parent::callMethod('_nodes', null, false);
-	
+
 	if ($retour) {
 	    return $retour;
 	} else {
