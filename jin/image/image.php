@@ -260,7 +260,7 @@ class Image{
     public function getEmptyContainer($width, $height, $red = null, $green = null, $blue = null){
 	$container = imagecreatetruecolor($width, $height);
 	if($this->isTransparency()){
-	    imagealphablending($container, false);
+	    //imagealphablending($container, false);
 	    imagesavealpha($container, true);
 	    imagefill($container,0,0,0x7fff0000);
 	}
