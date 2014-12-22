@@ -52,7 +52,7 @@ class QueryOfQuery {
 	if(!is_null($this->query)){
 	    $rs = $this->query->getRs(); 
 	}else if(!is_null($this->queryResult)){
-	    $rs = $this->queryResult->getDatasInArray();
+	    $rs = $this->queryResult->getDatasInArray(true, true);
 	}
 	
 	

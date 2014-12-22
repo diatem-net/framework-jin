@@ -51,21 +51,26 @@ class Curl {
 	
 	if ($requestType == 'DELETE') {
 	    curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'DELETE');
-	    curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($args));
+	    if(!StringTools::contains($url, '?')){
+		$url .= '?' . http_build_query($args);
+	    }else{
+		$url .= '&' . http_build_query($args);
+	    }
+	    curl_setopt($curl, CURLOPT_URL, $url);
 	}
 
 	if ($requestType == 'GET') {
 	    if(!StringTools::contains($url, '?')){
 		$url .= '?' . http_build_query($args);
 	    }else{
-		$url .= '?' . http_build_query($args);
+		$url .= '&' . http_build_query($args);
 	    }
-	    
+	    curl_setopt($curl, CURLOPT_URL, $url);
 	}
 
 	if($requestType == 'POST') {
 	    curl_setopt($curl, CURLOPT_POST, TRUE);
-	    curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($args));
+	    curl_setopt($curl, CURLOPT_POSTFIELDS, $args);
 	}
 
 	if ($requestType == 'PUT') {

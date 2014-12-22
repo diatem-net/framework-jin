@@ -49,7 +49,7 @@ class SherlockIndexer extends SherlockCore {
 	    return false;
 	}
 
-	$retour = parent::callMethod($this->sherlock->getAppzCode() . '/' . $documentType . '/' . $documentId, $jdata);
+	$retour = parent::callMethod($this->sherlock->getAppzCode() . '/' . $documentType . '/' . $documentId, $jdata, 'POST');
 
 	if ($retour) {
 	    if (isset($retour['created'])) {

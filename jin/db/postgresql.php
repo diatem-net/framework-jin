@@ -115,5 +115,16 @@ class PostgreSql {
     public function rollBackTransaction() {
 	$this->cnx->rollback();
     }
+    
+    
+    /**
+     * Retourne le dernier ID inséré. 
+     * @param string $tableName		Nom de la table
+     * @param string $cle		Nom de la clé primaire
+     */
+    public function getLastInsertId($tableName, $cle){
+	$last_insert_id = $this->cnx->lastInsertId($tableName.'_'.$cle.'_seq');
+	return $last_insert_id;
+    }
 
 }
