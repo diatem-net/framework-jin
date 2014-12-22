@@ -90,5 +90,14 @@ class DbConnexion {
     public static function rollBackTransaction() {
 	self::$cnxHandler->rollBackTransaction();
     }
+    
+    /**
+     * Retourne le dernier ID inséré. (Avec MySql les arguments tableName et cle ne sont pas nécessaires)
+     * @param string $tableName		Nom de la table
+     * @param string $cle		Nom de la clé primaire
+     */
+    public function getLastInsertId($tableName = null, $cle = null){
+	return self::$cnxHandler->getLastInsertId($tableName, $cle);
+    }
 
 }
