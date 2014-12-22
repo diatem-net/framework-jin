@@ -115,5 +115,14 @@ class MySql {
     public function rollBackTransaction() {
 	$this->cnx->rollback();
     }
+    
+    
+    /**
+     * Retourne le dernier Id inséré
+     * @return integer
+     */
+    public function getLastInsertId(){
+	return $this->cnx->lastInsertId();
+    }
 
 }
