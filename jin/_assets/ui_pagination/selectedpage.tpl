@@ -1,1 +1,1 @@
-<span class="%class%"><a href="?%getargument%=%page%"><b>%page%</b></a></span>
+<span class="%class%"><a href="%querystring%%getargument%=%page%"><b>%page%</b></a></span>

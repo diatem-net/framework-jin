@@ -317,13 +317,13 @@ class ColorTools {
         );
         $size = @getimagesize($src);
         if($size === false) {
-            user_error("Unable to get image size data.");
+            user_error("Unable to get image size data: ".$src);
             return false;
         }
         $img = @imagecreatefromstring(@file_get_contents($src));
 
         if(!$img) {
-            user_error("Unable to open image file.");
+            user_error("Unable to open image file: ".$src);
             return false;
         }
         for($x = 0; $x < $size[0]; $x += $granularity) {
