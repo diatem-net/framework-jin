@@ -88,8 +88,6 @@ class SherlockConfig extends SherlockCore {
 	$mapping['settings']['analysis']['analyzer']['facetanalyzer']['tokenizer'] = 'keyword';
 	$mapping['settings']['analysis']['analyzer']['facetanalyzer']['filter'] = array();
 
-
-
 	//Création du mapping
 	$mapping['mappings'] = array();
 	for ($i = 0; $i < count($xml->documentType); $i++) {

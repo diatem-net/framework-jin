@@ -12,28 +12,17 @@ class JinRestCall{
     private $publicKey;
     private $privateKey;
     private $url;
-    private $args;
+    private $args = array();
     private $method;
     private $throwError = true;
     
     public function __construct($url, $args = NULL, $method = 'POST') {
 	$this->url = $url;
 	
-	if(!is_null($args) && $method != 'POST'){
-	    foreach($args as $a => $v){
-		if(!is_string($v)){
-		    $args[$a] = (String)$v;
-		}
-	    }
-	}else if(!is_null($args) && $method == 'POST'){
-	    foreach($args as $key=>$value){
-		if(is_bool($value) ){
-		    $args[$key] = ($value) ? 'true' : 'false';
-		}
-	    }
+	foreach($args as $key => $value){
+	    $this->args[$key] = Json::encode($value);
 	}
-	
-	$this->args = $args;
+
 	$this->method = $method;
     }
     
@@ -57,21 +46,6 @@ class JinRestCall{
 		$plus = '?secure='.$this->getHMAC().'&publickey='.$this->publicKey;
 	    }
 	    
-	}
-	
-	if($this->method == 'POST'){
-	}else{
-	    if($this->args){
-		foreach($this->args as $arg => $val){
-	
-		    if($plus == '' && !StringTools::contains($this->url, '?')){
-			$plus .= '?'.$arg.'='.urlencode($val);
-		    }else{
-			$plus .= '&'.$arg.'='.urlencode($val);
-		    }
-		}
-	    }
-	    $this->args = array();
 	}
 	
 	$results = Curl::call($this->url.$plus, $this->args, $this->method, $this->throwError);
@@ -103,6 +77,8 @@ class JinRestCall{
 	} else {
 	    $toEncode .= Json::encode(array());
 	}
+	
+	
 
 	return StringTools::hmac($toEncode, $this->privateKey, 'sha256');
     }
