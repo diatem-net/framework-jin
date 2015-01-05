@@ -39,7 +39,6 @@ class JinCore {
      *  @param  $className  string  Chemin de la classe
      */
     public static function autoload($className) {
-
 	$tab = explode('\\', $className);
 	$path = strtolower(implode(DIRECTORY_SEPARATOR, $tab)) . '.php';
 
@@ -50,7 +49,7 @@ class JinCore {
 	    $path = $surcharge;
 	} else {
 	    //Fichier natif
-	    $path = str_replace('jin/jincore.php', '', __FILE__) . $path;
+	    $path = str_replace('jin'.DIRECTORY_SEPARATOR.'jincore.php', '', __FILE__) . $path;
 	}
 
 	if (is_file($path)) {

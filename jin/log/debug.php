@@ -212,6 +212,8 @@ class Debug {
 	    $dump .= '</div>';
 	} else if ($type == 'object') {
 	    $dump .= '';
+	} else if ($type == 'array') {
+	    $dump .= '<div class="dump_item_content"></div>';
 	} else {
 	    $dump .= '<div class="dump_item_content">' . $var . '</div>';
 	}
