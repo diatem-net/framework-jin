@@ -32,7 +32,7 @@ class Isnumeric extends GlobalValidator implements ValidatorInterface{
      */
     public function isValid($valeur){
 	parent::resetErrors();
-	if(!is_numeric($valeur)){
+	if(!empty($valeur) && !is_numeric($valeur)){
 	    parent::addError(Trad::trad('isnumeric'));
 	    return false;
 	}
