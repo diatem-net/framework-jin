@@ -39,7 +39,6 @@ class JinCore {
      *  @param  $className  string  Chemin de la classe
      */
     public static function autoload($className) {
-
 	$tab = explode('\\', $className);
 	$path = strtolower(implode(DIRECTORY_SEPARATOR, $tab)) . '.php';
 
@@ -50,7 +49,7 @@ class JinCore {
 	    $path = $surcharge;
 	} else {
 	    //Fichier natif
-	    $path = str_replace('jin/jincore.php', '', __FILE__) . $path;
+	    $path = str_replace('jin'.DIRECTORY_SEPARATOR.'jincore.php', '', __FILE__) . $path;
 	}
 
 	if (is_file($path)) {
@@ -66,7 +65,7 @@ class JinCore {
 	if (self::$jinRootUrl) {
 	    return self::$jinRootUrl;
 	}
-	self::$jinRootUrl = self::getContainerUrl() . 'framework-jin/jin/';
+	self::$jinRootUrl = self::getContainerUrl() . 'framework-jin'.DIRECTORY_SEPARATOR.'jin'.DIRECTORY_SEPARATOR.'';
 	return self::$jinRootUrl;
     }
 
@@ -83,8 +82,8 @@ class JinCore {
      * @return string   Chemin absolu de le dossier contenant la librairie Jin
      */
     public static function getContainerPath() {
-	$basePath = str_replace('framework-jin/jin/jincore.php', '', __FILE__);
-	$basePath = str_replace('jin/jincore.php', '', $basePath);
+	$basePath = str_replace('framework-jin'.DIRECTORY_SEPARATOR.'jin'.DIRECTORY_SEPARATOR.'jincore.php', '', __FILE__);
+	$basePath = str_replace('jin'.DIRECTORY_SEPARATOR.'jincore.php', '', $basePath);
 
 	return $basePath;
     }

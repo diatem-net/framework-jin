@@ -65,4 +65,56 @@ class TimeTools {
     public static function toHTML5Format($date = null, $withHour = false) {
         return self::toAmericanFormat($date, $withHour);
     }
+    
+    
+    /**
+     * Retourne TRUE si date1 est plus récente que date2
+     * @param string|DateTime $date1	Date1
+     * @param string|DateTime $date2	Date2
+     * @param	string		$operator (Opérateur de comparaison : =, <, <=, >=, >)
+     * @return boolean|null	    Si TRUE : date1 > date2
+     */
+    public static function compare($date1, $date2, $operator = '='){
+	if(is_string($date1)) {
+            $time1 = strtotime($date1);
+        } elseif(is_a($date1, 'DateTime')) {
+            $time1 = $date1->getTimestamp();
+        } else {
+            throw new \Exception('Format date1 invalide');
+        }
+	
+	if(is_string($date2)) {
+            $time2 = strtotime($date2);
+        } elseif(is_a($date2, 'DateTime')) {
+            $time2 = $date2->getTimestamp();
+        } else {
+            throw new \Exception('Format date2 invalide');
+        }
+	
+	if($operator == '='){
+	    if($time1 == $time2){
+		return true;
+	    }
+	}else if($operator == '>'){
+	    if($time1 > $time2){
+		return true;
+	    }
+	}else if($operator == '<'){
+	    if($time1 < $time2){
+		return true;
+	    }
+	}else if($operator == '>='){
+	    if($time1 >= $time2){
+		return true;
+	    }
+	}else if($operator == '<='){
+	    if($time1 <= $time2){
+		return true;
+	    }
+	}else{
+	    throw new \Exception('Opérateur '.$operator.' non supporté');
+	}
+	
+	return false;
+    }
 }

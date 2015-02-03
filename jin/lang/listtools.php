@@ -169,10 +169,11 @@ class ListTools{
     
     /**
      * Retourne le nombre d'éléments d'une liste
+     * @param string $list  Liste source
      * @param string $delimiter	Séparateur
      * @return int
      */
-    public static function len($delimiter = ','){
+    public static function len($list, $delimiter = ','){
 	$arr = self::toArray($list, $delimiter);
 	return count($arr);
     }

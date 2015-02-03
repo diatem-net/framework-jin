@@ -57,7 +57,7 @@ final class Crop extends ImageFilter implements FilterInterface{
 	    if($startHeight == $this->height &&
 		$startWidth == $this->width){
 		//Cas spécial. pas de redimentionnement nécessaire.
-		$resizedTmp = $imageRessource;
+		return $imageRessource;
 	    }else{
 		//ratios identiques. On peut prendre la largeur ou la hauteur comme base indifféremment
 		$nouvelleLargeur = $this->width;

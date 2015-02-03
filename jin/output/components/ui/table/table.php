@@ -359,7 +359,9 @@ class Table extends UIComponent implements ComponentInterface{
 
         if(isset($this->col_classes[$h])){
         $hc = StringTools::replaceAll($hc, '%columnclass%', $this->col_classes[$h]);
-        }else{
+	}else if(isset($this->col_classes[$colI])){
+	$hc = StringTools::replaceAll($hc, '%columnclass%', $this->col_classes[$colI]);
+	}else{
         $hc = StringTools::replaceAll($hc, '%columnclass%', '');
         }
         $cols .= $hc;
@@ -438,7 +440,9 @@ class Table extends UIComponent implements ComponentInterface{
 
         if(isset($this->col_classes[$h])){
         $hc = StringTools::replaceAll($hc, '%columnclass%', $this->col_classes[$h]);
-        }else{
+	}else if(isset($this->col_classes[$colI])){
+	$hc = StringTools::replaceAll($hc, '%columnclass%', $this->col_classes[$colI]);
+	}else{
         $hc = StringTools::replaceAll($hc, '%columnclass%', '');
         }
 

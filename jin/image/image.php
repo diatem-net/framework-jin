@@ -179,7 +179,7 @@ class Image{
 	    $contents = ob_get_contents();
 	    ob_end_clean();
 
-	    $base64 = "data:image/jpeg;base64," . base64_encode($contents);
+	    $base64 = base64_encode($contents);
 	    return $base64;
 	}else if($this->extension == 'png'){
 	    ob_start();
@@ -187,7 +187,7 @@ class Image{
 	    $contents = ob_get_contents();
 	    ob_end_clean();
 
-	    $base64 = "data:image/png;base64," . base64_encode($contents);
+	    $base64 = base64_encode($contents);
 	    return $base64;
 	}else{
 	    throw new \Exception('Impossible de générer l\'image : extension non supportée');
