@@ -130,15 +130,12 @@ class PostgreSql {
 
     /**
      * Change un tableau PostgreSql en un tableau PHP
-     * @param string $arr       Un tableau PostgreSql
+     * @param string  $dbarr       Un tableau PostgreSql
+     * @param boolean $unique      Supprimer les doublons
      * @return Un tableau PHP
      * @author http://php.net/manual/en/ref.pgsql.php#58660
      */
-    public static function phpArray($dbarr) {
-        // Check for empty array
-        if($dbarr == '{NULL}')
-            return array();
-
+    public static function phpArray($dbarr, $unique = false) {
         // Take off the first and last characters (the braces)
         $arr = substr($dbarr, 1, strlen($dbarr) - 2);
 
@@ -155,13 +152,17 @@ class PostgreSql {
                 $in_quotes = !$in_quotes;
             elseif ($char == ',' && !$in_quotes) {
                 // Add text so far to the array
-                $elements[] = substr($arr, $j, $i - $j);
+                $element = substr($arr, $j, $i - $j);
+                if($element != 'NULL')
+                    $elements[] = $element;
                 $j = $i + 1;
             }
             $i++;
         }
         // Add final text to the array
-        $elements[] = substr($arr, $j);
+        $element = substr($arr, $j);
+        if($element != 'NULL')
+            $elements[] = $element;
 
         // Do one further loop over the elements array to remote double quoting
         // and escaping of double quotes and backslashes
@@ -175,6 +176,9 @@ class PostgreSql {
             }
         }
 
+        if($unique) {
+            $elements = array_unique($elements);
+        }
         return $elements;
     }
 
