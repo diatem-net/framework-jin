@@ -77,6 +77,16 @@ class File {
 	    throw new \Exception('Impossible d\'ouvrir le fichier ' . $path . ' : celui-ci n\'existe pas.');
 	}
     }
+    
+    
+    /**
+     * Retourne la somme de contrôle MD5
+     * @param boolean $raw_output  Lorsque TRUE, retourne le prétraitement en format binaire brut avec une grandeur de 16.
+     * @return string
+     */
+    public function getMD5($raw_output = false){
+        return md5_file($this->path, $raw_output);
+    }
 
     
     /**
