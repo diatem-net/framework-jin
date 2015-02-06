@@ -82,7 +82,7 @@ class Csv {
             // On ouvre le fichier en écriture seule et on le vide de son contenu
             $fp = @fopen($filePath, 'w');
             if ($fp === false)
-                throw new Exception("Le fichier ${$filePath} n'a pas pu être créé.");
+                throw new \Exception("Le fichier ${$filePath} n'a pas pu être créé.");
 
             if($this->useHeaders){
                 // Les entêtes sont les clés du tableau associatif
