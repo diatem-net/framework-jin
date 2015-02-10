@@ -156,6 +156,8 @@ class GeoProjectionMercator {
         $bounds = $this->TileBounds($tx, $ty, $zoom);
         $min = $this->MetersToLatLon($bounds['min']['x'], $bounds['min']['y']);
         $max = $this->MetersToLatLon($bounds['max']['x'], $bounds['max']['y']);
+        $min['max']['lat'] = $min['max']['lat']*-1;
+        $min['min']['lat'] = $min['min']['lat']*-1;
         return array('min' => $min, 'max' => $max);
     }
 
