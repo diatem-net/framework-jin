@@ -141,6 +141,8 @@ class GeoProjectionMercator {
     public function TileBounds($tx, $ty, $zoom) {
         $min = $this->PixelsToMeters($tx * $this->tileSize, $ty * $this->tileSize, $zoom);
         $max = $this->PixelsToMeters(($tx + 1) * $this->tileSize, ($ty + 1) * $this->tileSize, $zoom);
+        $min['y'] = $min['y']*-1;
+        $max['y'] = $max['y']*-1;
         return array('min' => $min, 'max' => $max);
     }
 
