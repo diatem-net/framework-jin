@@ -442,7 +442,23 @@ class DForm {
     public function getErrorClassName() {
 	return $this->errorClassName;
     }
-
+    
+    /**
+     * Injecte les données d'une datasource dans le formulaire (utilise le paramètre dataSourceColumn)
+     * @param type $queryResult
+     */
+        
+    public function setDataSource($queryResult) {
+       
+        $values = array();        
+        $currentValue = current($queryResult);
+        
+        foreach ($this->fields as $fieldName => $v) {
+           $values[$fieldName] = $currentValue[0][$v['dataSourceColumn']] ;
+        }     
+        
+        $this->populate($values);   
+    }   
 
     /**
      * Injecte un tableau de données dans le formulaire

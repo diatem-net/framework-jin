@@ -42,7 +42,7 @@ class JinCore {
 	$tab = explode('\\', $className);
 	$path = strtolower(implode(DIRECTORY_SEPARATOR, $tab)) . '.php';
 
-	$surcharge = self::getContainerPath() . self::getConfigValue('surchargeAbsolutePath') . '/' . str_replace('jin/', '', $path);
+	$surcharge = self::getContainerPath() . self::getConfigValue('surchargeAbsolutePath') . ''.DIRECTORY_SEPARATOR.'' . str_replace('jin'.DIRECTORY_SEPARATOR.'', '', $path);
 
 	if (self::getConfigValue('surcharge') && file_exists($surcharge)) {
 	    //Surcharge
