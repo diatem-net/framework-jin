@@ -53,6 +53,7 @@ class SherlockIndexer extends SherlockCore {
 
         if ($retour) {
             if (isset($retour['error'])) {
+                parent::throwError($retour['error']);
                 return false;
             }
             if (isset($retour['created'])) {
