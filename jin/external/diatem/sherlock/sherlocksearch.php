@@ -259,8 +259,16 @@ class SherlockSearch extends SherlockCore {
         $callParams = array();
         $callParams['query'] = array();
 
+        //Check si facet selectionné
+        $facetSelected = false;
+        foreach ($this->sherlockfacets as $facet) {
+            if ($facet->getArgArrayForSearchQuery()) {
+                $facetSelected = true;
+            }
+        }
+        
         //Ajout des critères de recherche
-        if (count($this->criterias) > 0 || count($this->conditions) > 0) {
+        if (count($this->criterias) > 0 || count($this->conditions) > 0 || $facetSelected) {
             $callParams['query']['bool'] = array();
 
             if (count($this->criterias) > 0) {
@@ -285,7 +293,11 @@ class SherlockSearch extends SherlockCore {
             }
 
             if (count($this->conditions) > 0 || $facetQuery) {
-                //$callParams['query']['bool']['must'] = array();
+                
+                if(!isset($callParams['query']['bool']['must'])){
+                    $callParams['query']['bool']['must'] = array();
+                }
+
                 foreach ($this->conditions as $condition) {
                     $callParams['query']['bool']['must'] = ArrayTools::merge($callParams['query']['bool']['must'], $condition->getParamArray());
                 }
@@ -295,6 +307,8 @@ class SherlockSearch extends SherlockCore {
                     }
                 }
             }
+        }else{
+            $callParams['query']['match_all'] = array();
         }
 
 
@@ -336,8 +350,8 @@ class SherlockSearch extends SherlockCore {
      */
     public function search() {
         if (count($this->conditions) == 0 && count($this->criterias) == 0) {
-            parent::throwError('Vous ne pouvez pas effectuer de recherche sans définir de conditions ou de critères de recherche.');
-            return false;
+            //parent::throwError('Vous ne pouvez pas effectuer de recherche sans définir de conditions ou de critères de recherche.');
+            //return false;
         }
 
         //base
@@ -362,6 +376,8 @@ class SherlockSearch extends SherlockCore {
 
         //On initialise l'array servant à déterminer le Json envoyé à elesticSearch
         $callParamsJson = $this->getJsonQuery();
+        
+        
 
         if (!$callParamsJson) {
             parent::throwError('Une erreur a eu lieu lors de la transformation des parametres au format Json : ' . Json::getLastErrorVerbose());
