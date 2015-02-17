@@ -102,4 +102,19 @@ class Radio extends FormComponent implements ComponentInterface{
         }
         $this->values = $values;
     }
+    
+     
+    /**
+    * Définit une datasource permettant de définir des valeurs au radio
+    * @param type $queryResult
+    * @param type $colNameForLabel
+    * @param type $colNameForValue
+    */
+    public function setDataSource($queryResult, $colNameForLabel, $colNameForValue){
+        foreach($queryResult as $v){
+            $this->values[] = array('value' => $v[$colNameForValue], 'label' => $v[$colNameForLabel]);
+        }
+    }
+    
+    
 }
