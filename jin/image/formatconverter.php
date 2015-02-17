@@ -46,5 +46,28 @@ class FormatConverter{
         
         return true;
     }
+    
+    
+    /**
+     * Convertit au format PNG
+     * @param string $outputFilePath    Fichier de sortie
+     * @param tinteger $compression         Compression. (De 1 à 100 - 0 par défaut)
+     * @return boolean
+     */
+    public function saveInPng($outputFilePath, $compression = 0){
+        $exec = 'convert -quality '.$compression.' '.$this->imagePath.' '.$outputFilePath.' 2>&1';
+        exec($exec, $yaks);
+        
+        if(!empty($yaks)){
+            $strError = '';
+            foreach($yaks AS $e){
+                $strError .= ' >> '.$e;
+            }
+            throw new \Exception($strError);
+            return false;
+        }
+        
+        return true;
+    }
 }
 
