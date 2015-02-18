@@ -9,6 +9,7 @@ use jin\filesystem\File;
 use jin\image\ImageFilter;
 use jin\lang\ListTools;
 use jin\lang\StringTools;
+use jin\image\ImagePart;
 
 /** Classe permettant la modification d'images. Typiquement on instancie un
  * objet jin\image\Image puis on y applique des filtres. jin\image\filters/*
@@ -34,6 +35,10 @@ class Image{
      * @var \jin\filesystem\File	Objet File représentant l'image
      */
     private $file;
+    
+    private $emptyRessource;
+    
+    private $buildedRessource;
     
     
     /**
@@ -64,19 +69,31 @@ class Image{
     private $pngCompression = 0;
     
     
+    
     /**
      * Constructeur
-     * @param string $path Chemin d'un fichier existant
+     * @param string $path Chemin d'un fichier existant. Si NULL construction d'une image vide.
+     * 
      * @throws \Exception
      */
-    public function __construct($path) {
-	$this->path = $path;
-	$this->file = new File($this->path);
-	
-	$this->extension = StringTools::toLowerCase(ListTools::last($this->path, '.'));
-	if($this->extension != 'jpg' && $this->extension != 'png'){
-	    throw new \Exception('Extension '.$this->extension.' non supportée');
-	}
+    public function __construct($path = null, $width = null, $height = null, $red = null, $green = null, $blue = null) {
+        if($path){
+            $this->path = $path;
+            $this->file = new File($this->path);
+
+            $this->extension = StringTools::toLowerCase(ListTools::last($this->path, '.'));
+            if($this->extension != 'jpg' && $this->extension != 'png'){
+                throw new \Exception('Extension '.$this->extension.' non supportée');
+            }
+        }else{
+            if(!is_null($red) && !is_null($green) && !is_null($blue)){
+                $this->extension = 'jpg';
+                $this->emptyRessource = $this->getEmptyContainer($width, $height, $red, $green, $blue);
+            }else{
+                $this->extension = 'png';
+                $this->emptyRessource = $this->getEmptyContainer($width, $height);
+            }
+        }
     }
     
     
@@ -113,7 +130,47 @@ class Image{
 	}else{
 	    throw new \Exception('Impossible de générer l\'image : extension non supportée');
 	}
-	
+    }
+    
+    
+    /**
+     * Retourne une portion d'image
+     * @param integer $x                Coordonnée X du point supérieur gauche où débuter la découpe
+     * @param integer $y                Coordonnée Y du point supérieur gauche où débuter la découpe
+     * @param integer $width            Largeur (en pixels) de la zone à découper
+     * @param integer $height           Hauteur (en pixels) de la zone à découper
+     * @return jin\image\ImagePart
+     */
+    public function getImagePart($x, $y, $width, $height){
+        return new ImagePart($x, $y, $width, $height, $this);
+    }
+    
+    
+    /**
+     * Retourne la largeur de l'image
+     * @return integer
+     * @throws \Exception
+     */
+    public function getWidth(){
+        if(!$this->buildedRessource){
+            throw new \Exception('Il est nécessaire d\'appliquer les filtres au préalable.');
+        }
+        
+        return imagesx($this->buildedRessource);
+    }
+    
+    
+    /**
+     * Retourne la hauteur de l'image
+     * @return integer
+     * @throws \Exception
+     */
+    public function getHeight(){
+        if(!$this->buildedRessource){
+            throw new \Exception('Il est nécessaire d\'appliquer les filtres au préalable.');
+        }
+        
+        return imagesy($this->buildedRessource);
     }
     
     
@@ -200,7 +257,11 @@ class Image{
      * @return resource	RessourceImage GD
      */
     public function getImageRessource(){
-	return $this->applyFilters();
+        if(!$this->buildedRessource){
+            $this->buildedRessource = $this->applyFilters();
+        }
+        
+	return $this->buildedRessource;
     }
     
     
@@ -247,6 +308,33 @@ class Image{
     
     
     /**
+     * Retourne l'extension de l'image
+     * @return string
+     */
+    public function getExtension(){
+        return $this->extension;
+    }
+    
+    
+    /**
+     * Retourne la qualité JPG (de 0 à 100) (si fichier de type JPG)
+     * @return integer
+     */
+    public function getJpgQuality(){
+        return $this->jpgQuality;
+    }
+    
+    
+    /**
+     * Retourne le degré de compression. (de 0 à 100) (Si fichier de type PNG)
+     * @return type
+     */
+    public function getPngCompression(){
+        return $this->pngCompression;
+    }
+    
+    
+    /**
      * Crée une image container vide compatible avec la gestion colorimétrique et
      * la transparence de l'image courante. (A utiliser pour les filtres)
      * Retourne un objet ResourceImage GD
@@ -264,7 +352,7 @@ class Image{
 	    imagesavealpha($container, true);
 	    imagefill($container,0,0,0x7fff0000);
 	}
-	if($red && $green && $blue){
+	if(!is_null($red) && !is_null($green) && !is_null($blue)){
 	    $color = imagecolorallocate($container, $red, $green, $blue);
 	    imagefill($container, 0, 0, $color);
 	}
@@ -277,7 +365,9 @@ class Image{
      * @return resource
      */
     private function applyFilters(){
-	if($this->extension == 'jpg'){
+        if($this->emptyRessource){
+            $source = $this->emptyRessource;
+        }else if($this->extension == 'jpg'){
 	    $source = imagecreatefromjpeg($this->path);
 	}else if($this->extension == 'png'){
 	    $source = imagecreatefrompng($this->path);
@@ -286,6 +376,8 @@ class Image{
 	foreach($this->filters as $filtre){
 	    $source = $filtre->apply($source);
 	}
+        
+        $this->buildedRessource = $source;
 	
 	return $source;
     }
