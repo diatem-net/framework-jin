@@ -84,7 +84,7 @@ class MySql {
      */
     public function connect() {
 	try {
-	    $this->cnx = new PDO($this->dns, $this->user, $this->pass);
+	    $this->cnx = new PDO($this->dns, $this->user, $this->pass, array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8'));
 	    $this->cnx->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 	    return true;
 	} catch (Exception $e) {
