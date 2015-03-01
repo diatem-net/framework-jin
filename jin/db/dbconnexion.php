@@ -7,6 +7,7 @@ namespace jin\db;
 
 use jin\db\PostgreSql;
 use jin\db\MySql;
+use jin\db\SqLite3;
 use \Exception;
 use jin\JinCore;
 
@@ -65,6 +66,11 @@ class DbConnexion {
 	
 	self::$cnxHandler = new MySql(DB_HOST, DB_USER, DB_PASSWORD, 5432, DB_NAME);
 	return self::$cnxHandler->connect();
+    }
+    
+    public static function connectWithSqLite3($fileName){
+        self::$cnxHandler = new SqLite3($fileName);
+        return self::$cnxHandler->connect();
     }
 
     
