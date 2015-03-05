@@ -15,6 +15,7 @@ use jin\lang\StringTools;
 use jin\lang\NumberTools;
 use jin\image\filters\AbsoluteResize;
 use jin\image\filters\Opacity;
+use jin\image\filters\RectangleFill;
 
 /**
  * Classe permettant le mapping d'une image en tuiles GoogleMap
@@ -37,6 +38,31 @@ class CustomGoogleMapper{
      * @var \jin\external\gmap\customgmapper\GeoZone
      */
     private $imageGeoZone;
+    
+    
+     /**
+     * Représentation géographique de la zone valide. (le reste devant être masqué). Si Null pas de masquage
+     * @var \jin\external\gmap\customgmapper\GeoZone
+     */
+    private $valideGeoZone;
+    
+    /**
+     * Couleur de masquage (en dehors de la zone valide). Composante rouge.
+     * @var integer
+     */
+    private $masquageColorR;
+    
+     /**
+     * Couleur de masquage (en dehors de la zone valide). Composante verte.
+     * @var integer
+     */
+    private $masquageColorG;
+    
+     /**
+     * Couleur de masquage (en dehors de la zone valide). Composante bleue.
+     * @var integer
+     */
+    private $masquageColorB;
     
     /**
      * Représentation géographique des coordonnées des tuiles recouvertes par l'image au niveau de zoom spécifié
@@ -123,6 +149,24 @@ class CustomGoogleMapper{
         
         $this->calculateLimitTiles();
         $this->calculateOutputSize();
+    }
+    
+    
+    /**
+     * Définit une zone de masquage. On remplit de la couleur indiquée les zones situées en dehors de la zone indiquée.
+     * @param integer $lat1     Latitude du point A de la zone "valide"
+     * @param integer $lat2     Latitude du point B de la zone "valide"
+     * @param integer $lon1     Longitude du point A de la zone "valide"
+     * @param integer $lon2     Longitude du point B de la zone "valide"
+     * @param integer $r        Couleur de remplissage. Composante rouge.
+     * @param integer $g        Couleur de remplissage. Composante verte.
+     * @param integer $b        Couleur de remplissage. Composante bleue.
+     */
+    public function setMaskZone($lat1, $lat2, $lon1, $lon2, $r, $g, $b){
+        $this->valideGeoZone = new GeoZone($lat1, $lat2, $lon1, $lon2);
+        $this->masquageColorR = $r;
+        $this->masquageColorG = $g;
+        $this->masquageColorB = $b;
     }
     
     
@@ -240,6 +284,41 @@ class CustomGoogleMapper{
             $imageOpacity = new Opacity($opacity);
             $full->addFilter($imageOpacity);
         }
+        
+        //Si masquage, on crée les rectangles nécessaires
+        if($this->valideGeoZone){
+            $y_c1 = $this->valideGeoZone->getNordOuestPoint();
+            $y_c2 = $this->valideGeoZone->getSudOuestPoint();
+            $y_b = $this->tilesGeoZone->getNordOuestPoint();
+            $y_a = $this->tilesGeoZone->getSudOuestPoint();
+            $topMargin = round($this->outputHeight * (($y_b->getLatitude() - $y_c1->getLatitude()) / ($y_b->getLatitude() - $y_a->getLatitude())));
+            $bottomMargin = round($this->outputHeight - ($this->outputHeight * (($y_b->getLatitude() - $y_c2->getLatitude()) / ($y_b->getLatitude() - $y_a->getLatitude()))));
+            
+            $x_c1 = $this->valideGeoZone->getNordOuestPoint();
+            $x_c2 = $this->valideGeoZone->getNordEstPoint();
+            $x_a = $this->tilesGeoZone->getNordOuestPoint();
+            $x_b = $this->tilesGeoZone->getNordEstPoint();
+            $leftMargin = round($this->outputWidth * (($x_c1->getLongitude() - $x_a->getLongitude()) / ($x_b->getLongitude() - $x_a->getLongitude())));
+            $rightMargin = round($this->outputWidth - ($this->outputWidth * (($x_c2->getLongitude() - $x_a->getLongitude()) / ($x_b->getLongitude() - $x_a->getLongitude()))));
+            
+            //Masque top
+            $rectangleTop = new RectangleFill(0, 0, $this->outputWidth, $topMargin, $this->masquageColorR, $this->masquageColorG, $this->masquageColorB);
+            $full->addFilter($rectangleTop);
+            
+            //Masque bottom
+            $rectangleBottom = new RectangleFill(0, ($this->outputHeight - $bottomMargin), $this->outputWidth, $this->outputHeight, $this->masquageColorR, $this->masquageColorG, $this->masquageColorB);
+            $full->addFilter($rectangleBottom);
+            
+            //Masque left
+            $rectangleLeft = new RectangleFill(0, 0, $leftMargin, $this->outputHeight, $this->masquageColorR, $this->masquageColorG, $this->masquageColorB);
+            $full->addFilter($rectangleLeft);
+            
+            //Masque right
+            $rectangleRight = new RectangleFill(($this->outputWidth - $rightMargin), 0, $this->outputWidth, $this->outputHeight, $this->masquageColorR, $this->masquageColorG, $this->masquageColorB);
+            $full->addFilter($rectangleRight);
+
+        }
+        
         
         $startTileY = $this->soTile['y'] - $this->nbTilesY + 1;
         $tileX = $this->soTile['x'];
