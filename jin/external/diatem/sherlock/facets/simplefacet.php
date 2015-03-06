@@ -10,13 +10,15 @@ use jin\lang\ArrayTools;
 class SimpleFacet implements Iterator{
     private $fieldName;
     private $facetName;
+    private $renderLimit;
     private $ESData = array();
     private $selectedValue = null;
     private $childFacets = null;
 
-    public function __construct($fieldName, $facetName) {
+    public function __construct($fieldName, $facetName, $renderLimit = 0) {
         $this->fieldName = $fieldName;
         $this->facetName = $facetName;
+        $this->renderLimit = $renderLimit;
     }
 
     public function getName(){
@@ -32,6 +34,7 @@ class SimpleFacet implements Iterator{
         $outArray[$this->facetName] = array();
         $outArray[$this->facetName]['terms'] = array();
         $outArray[$this->facetName]['terms']['field'] = $this->fieldName;
+        $outArray[$this->facetName]['terms']['size'] = $this->renderLimit;
 
         return $outArray;
     }
@@ -45,7 +48,7 @@ class SimpleFacet implements Iterator{
                     $fullCond = ArrayTools::merge($fullCond, $condition->getParamArray());
                 }
                 return $fullCond;
-            }else{
+            }else{+
                 $condition = new ConditionOnSingleTerm(array($this->fieldName), $this->selectedValue);
                 return $condition->getParamArray();
             }
@@ -74,6 +77,10 @@ class SimpleFacet implements Iterator{
             }
         }
         return false;
+    }
+
+    public function setRenderLimit($value){
+        $this->renderLimit = $value;
     }
 
     public function setSelectedValue($value){
