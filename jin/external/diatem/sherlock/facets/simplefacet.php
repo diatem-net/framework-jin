@@ -25,6 +25,10 @@ class SimpleFacet implements Iterator{
         return $this->facetName;
     }
 
+    public function getDatasInArray(){
+        return (array) $this->ESData;
+    }
+
     public function setChildFacet(SimpleFacet $facetObject){
         $this->childFacets = $facetObject;
     }
