@@ -29,14 +29,81 @@ final class Crop extends ImageFilter implements FilterInterface{
     
     
     /**
-     * Constructeur
-     * @param integer $width	Largeur de l'image en sortie
-     * @param integer $height	Hauteur de l'image en sortie
+     * Alignement vertical TOP
      */
-    public function __construct($width, $height) {
+    const VERTICAL_TOP = 0;
+    
+    
+    /**
+     * Alignement vertical Centre
+     */
+    const VERTICAL_CENTER = 1;
+    
+    
+    /**
+     * Alignement vertical Bas
+     */
+    const VERTICAL_BOTTOM = 2;
+    
+    
+    /**
+     * Alignement horizontal gauche
+     */
+    const HORIZONTAL_LEFT = 3;
+    
+    
+    /**
+     * Alignement horizontal centré
+     */
+    const HORIZONTAL_CENTER = 4;
+    
+    
+    /**
+     * Alignement horizontal droite
+     */
+    const HORIZONTAL_RIGHT = 5;
+    
+    
+    /**
+     * Position verticale de l'image croppée
+     * @var int
+     */
+    private $verticalPosition;
+    
+    
+    /**
+     * Position horizontale de l'image croppée
+     * @var int
+     */
+    private $horizontalPosition;
+    
+    
+    /**
+     * Constructeur
+     * @param integer $width                Largeur de l'image en sortie
+     * @param integer $height               Hauteur de l'image en sortie
+     * @param integer $verticalPosition     Position verticale de l'image croppée/ (Crop::VERTICAL_CENTER par défaut)
+     * @param integer $horizontalPosition   Position horizontale de l'image croppée/ (Crop::HORIZONTAL_CENTER par défaut)
+     */
+    public function __construct($width, $height, $verticalPosition = self::VERTICAL_CENTER, $horizontalPosition = self::HORIZONTAL_CENTER) {
 	parent::__construct();
 	$this->width = $width;
 	$this->height = $height;
+        
+        if($verticalPosition != self::VERTICAL_BOTTOM &&
+                $verticalPosition != self::VERTICAL_CENTER && 
+                $verticalPosition != self::VERTICAL_TOP){
+            throw new \Exception('Position verticale non valide.');
+        }
+        
+        if($horizontalPosition != self::HORIZONTAL_CENTER &&
+                $horizontalPosition != self::HORIZONTAL_LEFT && 
+                $horizontalPosition != self::HORIZONTAL_RIGHT){
+            throw new \Exception('Position horizontale non valide.');
+        }
+        
+        $this->verticalPosition = $verticalPosition;
+        $this->horizontalPosition = $horizontalPosition;
     }
     
     
@@ -94,15 +161,34 @@ final class Crop extends ImageFilter implements FilterInterface{
 	    //On a redimensionné sur la largeur. On coupe le haut et le bas
 	    $resized = $this->image->getEmptyContainer($this->width, $this->height);
 	    $xdecay = 0;
-	    $ydecay = ($startHeight - $this->height) / 2;
+	    $ydecay = null;
+            
+            if($this->verticalPosition == self::VERTICAL_TOP){
+                $ydecay = 0;
+            }else if($this->verticalPosition == self::VERTICAL_BOTTOM){
+                $ydecay = $startHeight - $this->height;
+            }else if($this->verticalPosition == self::VERTICAL_CENTER){
+                $ydecay = ($startHeight - $this->height) / 2;
+            }
+            
+            
 	    imagecopyresampled($resized, $resizedTmp, 0, 0, $xdecay, $ydecay, $this->width, $this->height, $this->width, $this->height);
 	    imagedestroy($resizedTmp);
 	    return $resized;
 	}else{
 	    //On a redimensionné sur la hauteur. On coupe à droite et à gauche
 	    $resized = $this->image->getEmptyContainer($this->width, $this->height);
-	    $xdecay = ($startWidth - $this->width) / 2;
+	    $xdecay = null;
 	    $ydecay = 0;
+            
+            if($this->horizontalPosition == self::HORIZONTAL_LEFT){
+                $xdecay = 0;
+            }else if($this->horizontalPosition == self::HORIZONTAL_RIGHT){
+                $xdecay = $startWidth - $this->width;
+            }else if($this->verticalPosition == self::HORIZONTAL_CENTER){
+                $xdecay = ($startWidth - $this->width) / 2;
+            }
+            
 	    imagecopyresampled($resized, $resizedTmp, 0, 0, $xdecay, $ydecay, $this->width, $this->height, $this->width, $this->height);
 	    imagedestroy($resizedTmp);
 	    return $resized;
