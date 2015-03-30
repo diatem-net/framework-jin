@@ -4,10 +4,10 @@ namespace jin\external\diatem\sherlock\facets;
 
 use \Iterator;
 use jin\log\Debug;
-use jin\external\diatem\sherlock\searchconditions\ConditionOnSingleTerm;
+use jin\external\diatem\sherlock\searchconditions\ConditionOnNumericRange;
 use jin\lang\ArrayTools;
 
-class SimpleFacet implements Iterator{
+class RangeFacet implements Iterator{
     private $fieldName;
     private $facetName;
     private $renderLimit;
@@ -29,7 +29,7 @@ class SimpleFacet implements Iterator{
         return (array) $this->ESData;
     }
 
-    public function setChildFacet(SimpleFacet $facetObject){
+    public function setChildFacet(RangeFacet $facetObject){
         $this->childFacets = $facetObject;
     }
 
@@ -44,16 +44,16 @@ class SimpleFacet implements Iterator{
     }
 
     public function getArgArrayForSearchQuery(){
-        if($this->selectedValue){
-            if(is_array($this->selectedValue)){
+        if($this->selectedValue && is_array($this->selectedValue)){
+            if(is_array($this->selectedValue[0])){
                 $fullCond = array();
                 foreach($this->selectedValue as $value){
-                    $condition = new ConditionOnSingleTerm(array($this->fieldName), $value);
+                    $condition = new ConditionOnNumericRange(array($this->fieldName), $value);
                     $fullCond = ArrayTools::merge($fullCond, $condition->getParamArray());
                 }
                 return $fullCond;
             }else{
-                $condition = new ConditionOnSingleTerm(array($this->fieldName), $this->selectedValue);
+                $condition = new ConditionOnNumericRange(array($this->fieldName), $this->selectedValue);
                 return $condition->getParamArray();
             }
 
