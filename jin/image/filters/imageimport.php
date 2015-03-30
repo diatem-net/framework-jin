@@ -21,6 +21,8 @@ final class ImageImport extends ImageFilter implements FilterInterface{
      */
     private $imagePasted;
     
+    private $gdResource;
+    
     /**
      * Calage X
      * @var integer
@@ -38,22 +40,25 @@ final class ImageImport extends ImageFilter implements FilterInterface{
      * Constructeur
      * @param String $imagePath Chemin de l'image à coller. (image ou imagePath requis)
      * @param Image $image  Objet image à coller. (image ou imagePath requis)
+     * 
      * @param integer $x    Calage X du point supérieur gauche de l'image à coller.
      * @param integer $y    Calage Y du point supérieur gauche de l'image à coller.
      * @throws \Exception
      */
-    public function __construct($imagePath = null, \jin\image\Image $image = null, $x, $y) {
+    public function __construct($imagePath = null, \jin\image\Image $image = null, $gdResource = null, $x, $y) {
 	parent::__construct();
         
         $this->x = $x;
         $this->y = $y;
         
-        if($imagePath){
+        if($gdResource){
+            $this->gdResource = $gdResource;
+        }else if($imagePath){
             $this->imagePasted = new Image($imagePath);
         }else if($image){
             $this->imagePasted = $image;
         }else{
-            throw new \Exception('Vous devez fournir au filtre ImageImport le chemin d\'une image existante ou un objet jin\image\Image');
+            throw new \Exception('Vous devez fournir au filtre ImageImport le chemin d\'une image existante, un objet jin\image\Image ou une ressource GD');
         }
         
     }
@@ -65,16 +70,24 @@ final class ImageImport extends ImageFilter implements FilterInterface{
      * @return resource	ImageRessource GD modifié
      */
     public function apply($imageRessource){
-        
-        $source = $this->imagePasted->getImageRessource();
+        if($this->gdResource){
+            $source = $this->gdResource;
+            $w = imagesx($this->gdResource);
+            $h = imagesy($this->gdResource);
+        }else{
+            $source = $this->imagePasted->getImageRessource();
+            $w = $this->imagePasted->getWidth();
+            $h = $this->imagePasted->getHeight();
+        }
+
         imagecopymerge($imageRessource, 
                 $source, 
                 $this->x, 
                 $this->y, 
                 0, 
                 0, 
-                $this->imagePasted->getWidth(),
-                $this->imagePasted->getHeight(),
+                $w,
+                $h,
                 100);
 	
 	return $imageRessource;

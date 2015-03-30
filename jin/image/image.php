@@ -36,8 +36,18 @@ class Image{
      */
     private $file;
     
+    
+    /**
+     * Ressource vide temporaire
+     * @var ressource
+     */
     private $emptyRessource;
     
+    
+    /**
+     * Ressource image après traitement
+     * @var ressource
+     */
     private $buildedRessource;
     
     
@@ -69,14 +79,20 @@ class Image{
     private $pngCompression = 0;
     
     
-    
+    public static function getImageObjectFromGDResource($gdResource, $transparency = true){
+        $image = new Image(null, imagesx($gdResource), imagesy($gdResource));
+        $image->setGdResource($gdResource);
+        
+        return $image;
+    }
+
     /**
      * Constructeur
      * @param string $path Chemin d'un fichier existant. Si NULL construction d'une image vide.
      * 
      * @throws \Exception
      */
-    public function __construct($path = null, $width = null, $height = null, $red = null, $green = null, $blue = null) {
+    public function __construct($path = null, $width = null, $height = null, $red = null, $green = null, $blue = null, $transparency = true) {
         if($path){
             $this->path = $path;
             $this->file = new File($this->path);
@@ -86,12 +102,16 @@ class Image{
                 throw new \Exception('Extension '.$this->extension.' non supportée');
             }
         }else{
-            if(!is_null($red) && !is_null($green) && !is_null($blue)){
+            if(!is_null($red) && !is_null($green) && !is_null($blue) && !$transparency){
                 $this->extension = 'jpg';
                 $this->emptyRessource = $this->getEmptyContainer($width, $height, $red, $green, $blue);
             }else{
                 $this->extension = 'png';
-                $this->emptyRessource = $this->getEmptyContainer($width, $height);
+                if(!is_null($red) && !is_null($green) && !is_null($blue)){
+                    $this->emptyRessource = $this->getEmptyContainer($width, $height, $red, $green, $blue);
+                }else{
+                    $this->emptyRessource = $this->getEmptyContainer($width, $height);
+                }
             }
         }
     }
@@ -118,15 +138,19 @@ class Image{
 	if($this->extension == 'jpg'){
 	    if($path){
 		imagejpeg($image, $path, $this->jpgQuality);
-	    }else{
+	    }else if($this->path){
 		imagejpeg($image, $this->path, $this->jpgQuality);
-	    }
+	    }else{
+                throw new \Exception('Aucun fichier de sortie configuré.');
+            }
 	}else if($this->extension == 'png'){
 	    if($path){
 		imagepng($image, $path, $this->pngCompression);
-	    }else{
+	    }else if($this->path){
 		imagepng($image, $this->path, $this->pngCompression);
-	    }
+	    }else{
+                throw new \Exception('Aucun fichier de sortie configuré.');
+            }
 	}else{
 	    throw new \Exception('Impossible de générer l\'image : extension non supportée');
 	}
@@ -349,8 +373,12 @@ class Image{
 	$container = imagecreatetruecolor($width, $height);
 	if($this->isTransparency()){
 	    //imagealphablending($container, false);
-	    imagesavealpha($container, true);
-	    imagefill($container,0,0,0x7fff0000);
+	    //imagesavealpha($container, true);
+	    //imagefill($container,0,0,0x7fff0000);
+            imagesavealpha($container, true);
+
+            $trans_colour = imagecolorallocatealpha($container, 0, 0, 0, 127);
+            imagefill($container, 0, 0, $trans_colour);
 	}
 	if(!is_null($red) && !is_null($green) && !is_null($blue)){
 	    $color = imagecolorallocate($container, $red, $green, $blue);
@@ -371,6 +399,8 @@ class Image{
 	    $source = imagecreatefromjpeg($this->path);
 	}else if($this->extension == 'png'){
 	    $source = imagecreatefrompng($this->path);
+            imagealphablending($source, false);
+            imagesavealpha($source, true);
 	}
 	
 	foreach($this->filters as $filtre){
@@ -380,5 +410,9 @@ class Image{
         $this->buildedRessource = $source;
 	
 	return $source;
+    }
+    
+    protected function setGdResource($gd){
+        $this->emptyRessource = $gd;
     }
 }
