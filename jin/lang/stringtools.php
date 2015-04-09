@@ -365,7 +365,7 @@ class StringTools {
             $chaine = '';
             for ($i = 0; $i <= $hauteur; $i++) {
                 $chaine .= $elements[$i];
-                if ($i > 0 && $i < ($hauteur)) {
+                if ($i < ($hauteur)) {
                     $chaine .= $cesure;
                 } else if ($i == ($hauteur)) {
                     $chaine .= $suffixe;

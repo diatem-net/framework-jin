@@ -32,6 +32,9 @@ class Isemail extends GlobalValidator implements ValidatorInterface{
      */
     public function isValid($valeur){
 	parent::resetErrors();
+        if($valeur == ''){
+            return true;
+        }
 	if(!filter_var($valeur, FILTER_VALIDATE_EMAIL)){
 	    parent::addError(Trad::trad('isemail'));
 	    return false;
