@@ -7,6 +7,7 @@ use jin\output\webapp\template\TemplateManager;
 class Output{
     
     private static $vars;
+    public static $controller;
     
     public static function addTemplate($code){
         TemplateManager::addTemplate($code);

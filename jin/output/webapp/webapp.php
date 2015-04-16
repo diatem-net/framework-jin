@@ -14,12 +14,10 @@ class WebApp {
     private static $templateFolder = 'templates';
     private static $cacheFolder = 'cache';
     public static $routeur;
-    public static $request;
     public static $page;
     
     public static function init($appFolder) {
         self::$appFolder = $appFolder;
-        self::$request = new Request();
         self::$routeur = new Routeur();
         
         self::$page->beforeRender();
