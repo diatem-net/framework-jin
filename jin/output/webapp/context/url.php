@@ -41,10 +41,11 @@ class Url{
      * @param string $urlPattern        Modèle d'url ou base de l'Url. (%a% désigne par ex. un argument a) NULL indique que c'est le modèle d'Url par défaut qui sera utilisé
      * @param array $arguments          Arguments à transmettre en GET array('nomArgument' => 'valeurArgument')
      * @param boolean $absolute         Url absolue (par défaut) ou relative
+     * @param string $anchor            Ancre (null par défaut)
      * @return string
      */
-    public static function getUrl($urlPattern = null, $arguments = array(), $absolute = true){
-        return self::buildUrl($urlPattern, $arguments, $absolute);
+    public static function getUrl($urlPattern = null, $arguments = array(), $absolute = true, $anchor = null){
+        return self::buildUrl($urlPattern, $arguments, $absolute, false, array(), $anchor);
     }
     
     
@@ -54,10 +55,11 @@ class Url{
      * @param array $addedArguments     Arguments supplémentaires à transmettre en GET array('nomArgument' => 'valeurArgument')
      * @param array $ignoredArguments   Arguments GET à ignorer array('nomArgument1', 'nomArgument2')
      * @param boolean $absolute         url absolue (par défaut) ou relative
+     * @param string $anchor            Ancre (null par défaut)
      * @return string
      */
-    public static function getCurrentUrl($urlPattern = null, $addedArguments = array(), $ignoredArguments = array(), $absolute = true){
-        return self::buildUrl($urlPattern, $addedArguments, $absolute, true, $ignoredArguments);
+    public static function getCurrentUrl($urlPattern = null, $addedArguments = array(), $ignoredArguments = array(), $absolute = true, $anchor = null){
+        return self::buildUrl($urlPattern, $addedArguments, $absolute, true, $ignoredArguments, $anchor);
     }
     
     
@@ -68,15 +70,23 @@ class Url{
      * @param boolean $absolute         url absolue (par défaut) ou relative
      * @param boolean $fromCurrent      si TRUE on détermine certains paramètres de l'Url courante
      * @param array $ignoredArguments   Arguments GET à ignorer array('nomArgument1', 'nomArgument2') (Appliqué uniquement si $fromCurrent = TRUE)
+     * @param string $anchor            Ancre (null par défaut)
      * @return string
      */
-    private static function buildUrl($urlPattern = null, $arguments = array(), $absolute = true, $fromCurrent = false, $ignoredArguments = array()){
+    private static function buildUrl($urlPattern = null, $arguments = array(), $absolute = true, $fromCurrent = false, $ignoredArguments = array(), $anchor = null){
         $url = '';
         $urlPatternArgs = array();
         
         if($absolute){
             $url = JinCore::getContainerUrl();
+            if(StringTools::right($url, 1) != '/'){
+                $url .= '/';
+            }
+            if(StringTools::right($url, 2) == '//'){
+                $url = StringTools::left($url, StringTools::len($url)-1);
+            }
         }
+        
         
         if($fromCurrent){
             $arguments = ArrayTools::merge($arguments, Request::getAllGetArguments());
@@ -106,6 +116,10 @@ class Url{
                 }
                 $url .= $k.'='.urlencode($v);
             }
+        }
+        
+        if($anchor){
+            $url .= '#'.$anchor;
         }
         
         return $url;

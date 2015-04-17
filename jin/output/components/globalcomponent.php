@@ -21,6 +21,13 @@ class GlobalComponent{
      * @var string  Nom du composant
      */
     protected $name;
+    
+    
+    /**
+     * 
+     * @var string  Id du composant
+     */
+    protected $id = '';
 
 
     /**
@@ -78,6 +85,24 @@ class GlobalComponent{
      */
     public function getName(){
         return $this->name;
+    }
+    
+    
+    /**
+     * Retourne l'identifiant
+     * @return string
+     */
+    public function getId(){
+        return $this->id;
+    }
+    
+    
+    /**
+     * Modifie l'identifiant
+     * @param string $id
+     */
+    public function setid($id){
+        $this->id = $id;
     }
 
 
@@ -190,6 +215,7 @@ class GlobalComponent{
      */
     protected function replaceMagicFields($html){
     $html = StringTools::replaceAll($html, '%name%', $this->getName());
+    $html = StringTools::replaceAll($html, '%id%', $this->getId());
     $html = StringTools::replaceAll($html, '%style%', $this->getStyleCSS());
     $html = StringTools::replaceAll($html, '%class%', ArrayTools::toList($this->classes, ' '));
 

@@ -19,11 +19,11 @@ class Routeur{
     }
     
     public function __construct() {
-        if(!WebApp::$request->getArgumentValue(self::$rootArgumentName, true)){
+        if(!Request::getArgumentValue(self::$rootArgumentName, true)){
             $this->rootToIndex();
         }else{
-            if(is_dir(WebApp::getPagesFolder().WebApp::$request->getArgumentValue(self::$rootArgumentName))){
-                $this->rootToPage(WebApp::$request->getArgumentValue(self::$rootArgumentName));
+            if(is_dir(WebApp::getPagesFolder().Request::getArgumentValue(self::$rootArgumentName))){
+                $this->rootToPage(Request::getArgumentValue(self::$rootArgumentName));
             }else{
                 $this->rootTo404();
             }
@@ -51,6 +51,7 @@ class Routeur{
     private function rootToPage($page){
         WebApp::$page = new Page($page, Request::getRequestMethod());
     }
+    
    
     
 }

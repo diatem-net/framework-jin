@@ -2,6 +2,8 @@
 
 namespace jin\output\webapp\context;
 
+use jin\output\webapp\WebApp;
+
 class View{
     private $file;
     
@@ -15,6 +17,7 @@ class View{
     
     public function executeAndReturnContent(){
         ob_start();
+        Output::$controller = WebApp::$page->controller;
         include $this->file;
         $content = ob_get_contents();
         ob_clean();
