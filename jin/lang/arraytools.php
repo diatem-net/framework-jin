@@ -307,5 +307,26 @@ class ArrayTools {
     public static function isKeyExists($array, $key){
 	return array_key_exists($key, $array);
     }
+    
+    
+    /**
+     * Retourne si le tableau est de type associatif (FALSE si il est de type séquentiel)
+     * @param array $array  Tableau source
+     * @return boolean
+     */
+    public static function isAssociativeArray($array){
+        return array_keys($array) !== range(0, count($array) - 1);
+    }
+    
+    
+    /**
+     * Retourne toutes les clés d'un tableau
+     * @param array $array  Tableau source
+     * @return array
+     */
+    public static function getAllKeys($array){
+        return array_keys($array);
+    }
+    
 
 }
