@@ -3,6 +3,10 @@
 namespace jin\output\webapp\context;
 
 class DefaultController{
+    public function onInit(){
+        
+    }
+    
     public function beforeRender(){
     }
     

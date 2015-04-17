@@ -94,6 +94,10 @@ class Page {
 
         return $folder;
     }
+    
+    public function onInit(){
+        $this->controller->onInit();
+    }
 
     public function beforeRender() {
         $this->controller->beforeRender();
