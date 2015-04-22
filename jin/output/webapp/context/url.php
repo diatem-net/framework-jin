@@ -89,7 +89,7 @@ class Url{
         
         
         if($fromCurrent){
-            $arguments = ArrayTools::merge($arguments, Request::getAllGetArguments());
+            $arguments = ArrayTools::merge(Request::getAllGetArguments(), $arguments);
         }
         
         if($urlPattern){
