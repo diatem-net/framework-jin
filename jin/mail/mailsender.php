@@ -5,6 +5,8 @@
  */
 namespace jin\mail;
 
+use jin\lang\StringTools;
+
 /** Classe d'envoi d'emails
  *
  *  @auteur     Loïc Gerard
@@ -244,7 +246,7 @@ class MailSender {
 
 
     /** Construit le corps du message à partir d'un template prédéfini
-     *
+     *  @depreciated
      *  @param      string      $template           Chemin d'accès du template à utiliser pour le mail
      *  @param      array       $data               Données à substituer dans le template
      *  @param      boolean     $html               [optionel] Message au format HTML ? (FALSE par défaut)
@@ -266,6 +268,27 @@ class MailSender {
         $content = preg_replace('/'.$tags[0].'\s*'.$key.'\s*'.$tags[1].'/i', $value, $content);
     }
     self::setMessage($content, true);
+    }
+    
+    
+    /** Construit le corps du message à partir d'un template prédéfini
+     *  @param      string      $template           Chemin d'accès du template à utiliser pour le mail
+     *  @param      array       $data               Données à substituer dans le template. Format array('clerecherchee' => 'valeur de remplacement')
+     *  @param      boolean     $html               [optionel] Message au format HTML ? (FALSE par défaut)
+     *  @return     void
+     */
+    public function buildContentFromTemplate($template, $data, $html = false) {
+        if (!is_file($template)) {
+            throw new \Exception('Le template fourni est introuvable : ' . $template);
+            return;
+        }
+        $content = file_get_contents($template);
+        
+        foreach($data AS $k => $v){
+            $content = StringTools::replaceAll($content, $k, $v);
+        }
+        
+        self::setMessage($content, true);
     }
 
 
