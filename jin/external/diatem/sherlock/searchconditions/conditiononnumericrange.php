@@ -10,9 +10,9 @@ use jin\external\diatem\sherlock\SearchItemInterface;
 
 /** Filtre Sherlock de type condition : filtre sur une plage de valeurs numériques ou de type date
  *
- * 	@auteur		Loïc Gerard
- * 	@version	0.0.1
- * 	@check
+ *  @auteur     Loïc Gerard
+ *  @version    0.0.1
+ *  @check
  */
 class ConditionOnNumericRange implements SearchItemInterface{
     /**
@@ -28,48 +28,47 @@ class ConditionOnNumericRange implements SearchItemInterface{
     private $values;
 
 
-    /**	Valeur de bas de plage
+    /** Valeur de bas de plage
      *
      * @var int|string
      */
     private $min;
 
 
-    /**	Valeur de haut de plage
+    /** Valeur de haut de plage
      *
      * @var int|string
      */
     private $max;
 
 
-    /**	Constructeur
+    /** Constructeur
      *
      * @param array $fields Noms des champs sur lesquels appliquer le filtre
      * @param int|string $values  Valeur de test
      */
     public function __construct($fields, $values) {
-	$this->fields = $fields;
-	$this->values = $values;
-	$this->min = $this->values[0];
-	$this->max = $this->values[1];
+        $this->fields = $fields;
+        $this->values = $values;
+        $this->min = $this->values[0];
+        $this->max = $this->values[1];
     }
 
 
-    /**	Construit le tableau destiné à être ajouté dans une requête de recherche par SherlockSearch
+    /** Construit le tableau destiné à être ajouté dans une requête de recherche par SherlockSearch
      *
-     * @return array	Paramètres de recherche SherlockSearch
+     * @return array    Paramètres de recherche SherlockSearch
      */
     public function getParamArray(){
+        $outArray = array();
+        foreach ($this->fields as $field){
 
-	$outArray = array();
-	foreach ($this->fields as $field){
+            $condArray['range'] = array();
+            $condArray['range'][$field]['gte'] = $this->min;
+            $condArray['range'][$field]['lte'] = $this->max;
+            $outArray[] = $condArray;
+        }
 
-	    $condArray['range'] = array();
-	    $condArray['range'][$field]['gte'] = $this->min;
-	    $condArray['range'][$field]['lte'] = $this->max;
-	    $outArray[] = $condArray;
-	}
-
-	return $outArray;
+        return $outArray;
     }
 }
