@@ -1,0 +1,1 @@
+<input class="%class%" type="hidden" name="%name%" value="%value%" %attributes%>

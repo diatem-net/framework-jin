@@ -175,9 +175,17 @@ class ColorTools {
                 $green = $color[1];
                 $blue = $color[2];
             } else {
-                $red = $color['red'] ?: ($color['r'] ?: 0);
-                $green = $color['green'] ?: ($color['g'] ?: 0);
-                $blue = $color['blue'] ?: ($color['b'] ?: 0);
+                $red = isset($color['red']) ?: (isset($color['r']) ?: 0);
+                $red = isset($color['red'])
+                    ? $color['red']
+                    : (isset($color['r']) ? $color['r'] : 0);
+                $green = isset($color['green'])
+                    ? $color['green']
+                    : (isset($color['g']) ? $color['g'] : 0);
+                $blue = isset($color['blue'])
+                    ? $color['blue']
+                    : (isset($color['b']) ? $color['b'] : 0);
+                
             }
             return '#'
                 .substr('00' . dechex($red), -2)
@@ -305,7 +313,7 @@ class ColorTools {
     /**
      * Return the dominant color for an image
      * @param  string   $src        Image path/url
-     * @param  integer $granularity Search's granularity
+     * @param  integer $granularity Search's granularity (Ex. default value : 30/40.)
      * @return mixed                An [red, green, blue] associative array
      */
     public static function imageDominant($src, $granularity = 1) {

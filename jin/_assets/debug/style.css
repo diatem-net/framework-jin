@@ -141,7 +141,7 @@
 
 .dump_container .dump_variable ul{
     margin:0px;
-    list-style: none;
+    list-style: none !important;
     padding:0px;
 }
 
@@ -158,6 +158,7 @@
 .dump_container .dump_variable ul li{
     border:1px solid #E6E6E6;
     margin-bottom:5px;
+    list-style: none !important;
 }
 
 .dump_container .clear{
@@ -227,7 +228,7 @@
     width:15px;
     background-position: center;
     background-repeat: none;
-    background-image: url(%asseturl%separateur.png);	
+    background-image: url(%asseturl%separateur.png);
     float:left;
 }
 
@@ -236,7 +237,7 @@
     width:15px;
     background-position: center;
     background-repeat: none;
-    background-image: url(%asseturl%separateur_gris.png);	
+    background-image: url(%asseturl%separateur_gris.png);
     float:left;
 }
 

@@ -10,17 +10,23 @@ use jin\lang\ArrayTools;
 class SimpleFacet implements Iterator{
     private $fieldName;
     private $facetName;
+    private $renderLimit;
     private $ESData = array();
     private $selectedValue = null;
     private $childFacets = null;
 
-    public function __construct($fieldName, $facetName) {
+    public function __construct($fieldName, $facetName, $renderLimit = 0) {
         $this->fieldName = $fieldName;
         $this->facetName = $facetName;
+        $this->renderLimit = $renderLimit;
     }
 
     public function getName(){
         return $this->facetName;
+    }
+
+    public function getDatasInArray(){
+        return (array) $this->ESData;
     }
 
     public function setChildFacet(SimpleFacet $facetObject){
@@ -32,6 +38,7 @@ class SimpleFacet implements Iterator{
         $outArray[$this->facetName] = array();
         $outArray[$this->facetName]['terms'] = array();
         $outArray[$this->facetName]['terms']['field'] = $this->fieldName;
+        $outArray[$this->facetName]['terms']['size'] = $this->renderLimit;
 
         return $outArray;
     }
@@ -74,6 +81,10 @@ class SimpleFacet implements Iterator{
             }
         }
         return false;
+    }
+
+    public function setRenderLimit($value){
+        $this->renderLimit = $value;
     }
 
     public function setSelectedValue($value){

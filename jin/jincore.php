@@ -65,8 +65,11 @@ class JinCore {
 	if (self::$jinRootUrl) {
 	    return self::$jinRootUrl;
 	}
-	self::$jinRootUrl = self::getContainerUrl() . 'framework-jin'.DIRECTORY_SEPARATOR.'jin'.DIRECTORY_SEPARATOR.'';
-	return self::$jinRootUrl;
+        
+	self::$jinRootUrl = self::getContainerUrl() . 'framework-jin/jin/';
+              
+	return self::$jinRootUrl;        
+        
     }
 
     /** Retourne le chemin absolu de la racine de la librairie Jin
@@ -83,8 +86,8 @@ class JinCore {
      */
     public static function getContainerPath() {
 	$basePath = str_replace('framework-jin'.DIRECTORY_SEPARATOR.'jin'.DIRECTORY_SEPARATOR.'jincore.php', '', __FILE__);
-	$basePath = str_replace('jin'.DIRECTORY_SEPARATOR.'jincore.php', '', $basePath);
-
+	$basePath = str_replace('jin'.DIRECTORY_SEPARATOR.'jincore.php', '', $basePath);        
+        
 	return $basePath;
     }
 
@@ -105,11 +108,18 @@ class JinCore {
 	    $rootUrl .= ":" . $_SERVER["SERVER_PORT"];
 	}
 	
-	$rootUrl .= StringTools::replaceAll(self::getContainerPath(), $_SERVER['DOCUMENT_ROOT'], '');
+	$rep = StringTools::replaceAll(self::getContainerPath(), $_SERVER['DOCUMENT_ROOT'], '');
+               
+        if($rep!='' && StringTools::left($rootUrl, 1) != '/' ){
+            $rep = '/'.$rep;
+        }
+        
+        $rootUrl .= $rep;
+        
 	if(StringTools::right($rootUrl, 1) != '/'){
 	    $rootUrl .= '/';
-	}
-	
+	}          
+        
 	self::$containerUrl = $rootUrl;
 	return self::$containerUrl;
     }
