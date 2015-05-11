@@ -10,11 +10,11 @@ use jin\external\diatem\sherlock\SearchItemInterface;
 
 /** Filtre Sherlock de type critère : recherche absolue sur plusieurs termes
  *
- *  @auteur     Loïc Gerard
+ *  @auteur     Samuel Marchal
  *  @version    0.0.1
  *  @check
  */
-class AbsoluteOnText implements SearchItemInterface{
+class ApproximateOnPhrase implements SearchItemInterface{
     /**
      *
      * @var array Noms des champs sur lesquels appliquer le filtre
@@ -47,8 +47,10 @@ class AbsoluteOnText implements SearchItemInterface{
 
         $critArray = array();
         $critArray['multi_match'] = array();
-        $critArray['multi_match']["query"] = $this->values;
-        $critArray['multi_match']["fields"] = $this->fields;
+        $critArray['multi_match']['type'] = 'phrase';
+        $critArray['multi_match']['slop'] = 10;
+        $critArray['multi_match']['query'] = $this->values;
+        $critArray['multi_match']['fields'] = $this->fields;
 
         return array($critArray);
 
