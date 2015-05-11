@@ -18,7 +18,7 @@ class Output{
     }
     
     public static function addTo($key, $valueToAdd){
-        if(self::$vars[$key]){
+        if(isset(self::$vars[$key])){
             self::$vars[$key] .= $valueToAdd;
         }else{
             self::$vars[$key] = $valueToAdd;
