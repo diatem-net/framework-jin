@@ -17,9 +17,20 @@ class Output{
         self::$vars[$key] = $value;
     }
     
-    public static function get($key, $nullIfUndefined = true){
+    public static function addTo($key, $valueToAdd){
+        if(self::$vars[$key]){
+            self::$vars[$key] .= $valueToAdd;
+        }else{
+            self::$vars[$key] = $valueToAdd;
+        }
+    }
+    
+    public static function get($key, $nullIfUndefined = true, $defaultValueIfUndefined = null){
         if(!isset(self::$vars[$key])){
             if($nullIfUndefined){
+                if($defaultValueIfUndefined){
+                    return $defaultValueIfUndefined;
+                }
                 return null;
             }else{
                 throw new \Exception('Valeur '.$key.' non définie');
