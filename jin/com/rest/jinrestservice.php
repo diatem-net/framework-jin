@@ -129,7 +129,11 @@ class JinRestService{
     
     
     private function getToEncodeString($publicKey){
-	$toEncode = 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['REDIRECT_URL'];
+        $protocol = 'http';
+	if (isset($_SERVER['HTTPS']) && $_SERVER["HTTPS"] == "on") {
+    		$protocol .= 's';
+	}
+	$toEncode = $protocol.'://'.$_SERVER['HTTP_HOST'].$_SERVER['REDIRECT_URL'];
 	$toEncode .= $this->get_request_method();
 	$toEncode .= $publicKey;
 	$toEncode .= Json::encode($this->_requestJSon, true);
