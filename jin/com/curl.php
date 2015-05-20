@@ -42,11 +42,16 @@ class Curl {
      * @return boolean
      * @throws \Exception
      */
-    public static function call($url, $args = null, $requestType = 'POST', $throwError = true){
+    public static function call($url, $args = null, $requestType = 'POST', $throwError = true, $httpAuthUser = null, $httpAuthPassword = null){
 	$curl = curl_init();
 	curl_setopt($curl, CURLOPT_URL, $url);
 	curl_setopt($curl, CURLOPT_COOKIESESSION, true);
 	curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        
+        if(!is_null($httpAuthUser) && !is_null($httpAuthPassword)){
+            curl_setopt($curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+            curl_setopt($curl, CURLOPT_USERPWD, $httpAuthUser.':'.$httpAuthPassword);
+        }
 	
 	
 	if ($requestType == 'DELETE') {
