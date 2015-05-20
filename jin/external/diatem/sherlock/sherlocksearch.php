@@ -14,6 +14,8 @@ use jin\external\diatem\sherlock\searchcriterias\AbsoluteOnSingleTerm;
 use jin\external\diatem\sherlock\searchcriterias\ApproximateOnSingleTerm;
 use jin\external\diatem\sherlock\searchcriterias\ApproximateOnText;
 use jin\external\diatem\sherlock\searchcriterias\AbsoluteOnText;
+use jin\external\diatem\sherlock\searchcriterias\ApproximateOnPhrase;
+use jin\external\diatem\sherlock\searchcriterias\AbsoluteOnPhrase;
 use jin\external\diatem\sherlock\searchcriterias\NumericRange;
 use jin\external\diatem\sherlock\searchconditions\ConditionOnSingleTerm;
 use jin\external\diatem\sherlock\searchconditions\ConditionOnNumericRange;
@@ -32,22 +34,24 @@ use jin\log\Debug;
 class SherlockSearch extends SherlockCore {
 
     /**
-     *
      * @var \jin\external\diatem\sherlock\Sherlock    Instance d'un objet Sherlock
      */
     private $sherlock;
 
     /**
-     *
      * @var array   Critères de recherche.
      */
     private $criterias = array();
 
     /**
-     *
      * @var array Condition de recherche.
      */
     private $conditions = array();
+
+    /**
+     * @var array Facets
+     */
+    private $facets = array();
 
     /**
      *
@@ -57,9 +61,9 @@ class SherlockSearch extends SherlockCore {
 
     /**
      *
-     * @var string  Mode d'application des conditions. (or ou and)
+     * @var string  Mode d'application des conditions. (should | must | must_not)
      */
-    private $conditionOperator = 'and';
+    private $defaultMode = 'must';
 
     /**
      *
@@ -78,7 +82,6 @@ class SherlockSearch extends SherlockCore {
      * @var init Nombre minimum de critères devant être réussis pour qu'un résultat soit retourné
      */
     private $minimumShouldMatch = null;
-    private $sherlockfacets = array();
 
     /** Constructeur
      *
@@ -94,13 +97,16 @@ class SherlockSearch extends SherlockCore {
 
     /** Ajoute une condition sur un terme EXACT. Une condition dois TOUJOURS être respectée pour qu'un resultat soit retourné.
      *
-     * @param string $value Terme exact
+     * @param string $value         Terme exact
      * @param string $fieldNames    Liste des champs dans lesquels effectuer la recherche. (Séparés par des virgules, sans espaces)
+     * @param string $mode          Mode (must | should | default)
      * @return boolean  Succes ou echec
      */
-    public function addCondition($value, $fieldNames) {
-        $this->conditions[] = new ConditionOnSingleTerm(ListTools::toArray($fieldNames), $value);
-
+    public function addCondition($value, $fieldNames, $mode = null) {
+        if(!in_array($mode, array('must', 'should'))) {
+            $mode = 'default';
+        }
+        $this->conditions[$mode][] = new ConditionOnSingleTerm(ListTools::toArray($fieldNames), $value);
         return true;
     }
 
@@ -108,42 +114,74 @@ class SherlockSearch extends SherlockCore {
      *
      * @param numeric|string $minValue  Valeur de bas de plage.
      * @param numeric|string $maxValue  Valeur de haut de plage.
-     * @param string $fieldNames    Liste des champs dans lesquels effectuer la recherche. (Séparés par des virgules, sans espaces)
+     * @param string $fieldNames        Liste des champs dans lesquels effectuer la recherche. (Séparés par des virgules, sans espaces)
+     * @param string $mode              Mode (must | should | default)
      * @return boolean  Succes ou echec
      */
-    public function addRangeCondition($minValue, $maxValue, $fieldNames) {
-        $this->conditions[] = new ConditionOnNumericRange(ListTools::toArray($fieldNames), array($minValue, $maxValue));
+    public function addRangeCondition($minValue, $maxValue, $fieldNames, $mode = null) {
+        if(!in_array($mode, array('must', 'should'))) {
+            $mode = 'default';
+        }
+        $this->conditions[$mode][] = new ConditionOnNumericRange(ListTools::toArray($fieldNames), array($minValue, $maxValue));
         return true;
     }
 
     /** Ajoute un critère de recherche portant sur un terme unique.
      *
-     * @param string $value     Terme recherché
+     * @param string $value         Terme recherché
      * @param string $fieldNames    Liste des champs dans lesquels effectuer la recherche. (Séparés par des virgules, sans espaces)
      * @param boolean $approximate  [optionel] Définit si la recherche doit porter sur le terme EXACT (FALSE) ou sur une approximation (TRUE). (TRUE par défaut)
+     * @param string $mode          Mode (must | should | default)
      * @return boolean  Succes ou echec
      */
-    public function addSingleTermCriteria($value, $fieldNames, $approximate = true) {
+    public function addSingleTermCriteria($value, $fieldNames, $approximate = true, $mode = null) {
+        if(!in_array($mode, array('must', 'should'))) {
+            $mode = 'default';
+        }
         if ($approximate) {
-            $this->criterias[] = new ApproximateOnSingleTerm(ListTools::toArray($fieldNames), $value);
+            $this->criterias[$mode][] = new ApproximateOnSingleTerm(ListTools::toArray($fieldNames), $value);
         } else {
-            $this->criterias[] = new AbsoluteOnSingleTerm(ListTools::toArray($fieldNames), $value);
+            $this->criterias[$mode][] = new AbsoluteOnSingleTerm(ListTools::toArray($fieldNames), $value);
         }
         return true;
     }
 
     /** Ajoute un critère de recherche portant sur une chaîne de caractère pouvant comprendre plusieurs termes.
      *
-     * @param string $value     Termes ou phrase recherchée
+     * @param string $value         Termes ou phrase recherchée
      * @param string $fieldNames    Liste des champs dans lesquels effectuer la recherche. (Séparés par des virgules, sans espaces)
      * @param type $approximate     [optionel] Définit si la recherche doit porter sur le terme EXACT (FALSE) ou sur une approximation (TRUE). (TRUE par défaut)
+     * @param string $mode          Mode (must | should | default)
      * @return boolean  Succes ou echec
      */
-    public function addTextCriteria($value, $fieldNames, $approximate = true) {
+    public function addTextCriteria($value, $fieldNames, $approximate = true, $mode = null) {
+        if(!in_array($mode, array('must', 'should'))) {
+            $mode = 'default';
+        }
         if ($approximate) {
-            $this->criterias[] = new ApproximateOnText(ListTools::toArray($fieldNames), $value);
+            $this->criterias[$mode][] = new ApproximateOnText(ListTools::toArray($fieldNames), $value);
         } else {
-            $this->criterias[] = new AbsoluteOnText(ListTools::toArray($fieldNames), $value);
+            $this->criterias[$mode][] = new AbsoluteOnText(ListTools::toArray($fieldNames), $value);
+        }
+        return true;
+    }
+
+    /** Ajoute un critère de recherche portant sur une suite de termes dans un ordre donné.
+     *
+     * @param string $value         Phrase recherchée
+     * @param string $fieldNames    Liste des champs dans lesquels effectuer la recherche. (Séparés par des virgules, sans espaces)
+     * @param type $approximate     [optionel] Définit si la recherche doit porter sur le terme EXACT (FALSE) ou sur une approximation (TRUE). (TRUE par défaut)
+     * @param string $mode          Mode (must | should | default)
+     * @return boolean  Succes ou echec
+     */
+    public function addPhraseCriteria($value, $fieldNames, $approximate = true, $mode = null) {
+        if(!in_array($mode, array('must', 'should'))) {
+            $mode = 'default';
+        }
+        if ($approximate) {
+            $this->criterias[$mode][] = new ApproximateOnPhrase(ListTools::toArray($fieldNames), $value);
+        } else {
+            $this->criterias[$mode][] = new AbsoluteOnPhrase(ListTools::toArray($fieldNames), $value);
         }
         return true;
     }
@@ -152,12 +190,29 @@ class SherlockSearch extends SherlockCore {
      *
      * @param numeric|string $minValue  Valeur de bas de plage.
      * @param numeric|string $maxValue  Valeur de haut de plage.
-     * @param string $fieldNames    Liste des champs dans lesquels effectuer la recherche. (Séparés par des virgules, sans espaces)
+     * @param string $fieldNames        Liste des champs dans lesquels effectuer la recherche. (Séparés par des virgules, sans espaces)
+     * @param string $mode              Mode (must | should | default)
      * @return boolean  Succes ou echec
      */
-    public function addRangeCriteria($minValue, $maxValue, $fieldNames) {
+    public function addRangeCriteria($minValue, $maxValue, $fieldNames, $mode = null) {
+        if(!in_array($mode, array('must', 'should'))) {
+            $mode = 'default';
+        }
+        $this->criterias[$mode][] = new NumericRange(ListTools::toArray($fieldNames), array($minValue, $maxValue));
+        return true;
+    }
 
-        $this->criterias[] = new NumericRange(ListTools::toArray($fieldNames), array($minValue, $maxValue));
+    /** Ajoute une facette.
+     *
+     * @param object $facet    Facette
+     * @param string $mode     Mode (must | should | default)
+     * @return boolean         Succes ou echec
+     */
+    public function addFacet($facet, $mode = null) {
+        if(!in_array($mode, array('must', 'should'))) {
+            $mode = 'default';
+        }
+        $this->facets[$mode][] = $facet;
         return true;
     }
 
@@ -177,15 +232,22 @@ class SherlockSearch extends SherlockCore {
     /** Modifie le mode d'application des conditions en optant pour un mode Cumulatif (toutes les conditions doivent être justes)
      *
      */
-    public function setConditionOperatorToAnd() {
-        $this->conditionOperator = 'and';
+    public function setDefaultModeToMust() {
+        $this->defaultMode = 'must';
+    }
+
+    /** Modifie le mode d'application des conditions en optant pour un mode exclusif (aucune condition ne doit être juste)
+     *
+     */
+    public function setDefaultModeToMustNot() {
+        $this->defaultMode = 'must_not';
     }
 
     /** Modifie le mode d'application des conditions en optant pour un mode optionnel. (Une condition au moins doit être juste)
      *
      */
-    public function setConditionOperatorToOr() {
-        $this->conditionOperator = 'or';
+    public function setDefaultModeToShould() {
+        $this->defaultMode = 'should';
     }
 
     /** Définit le nombre maximal de résultats qui seront retournés. -1 pour ne définir aucune limite.
@@ -210,10 +272,6 @@ class SherlockSearch extends SherlockCore {
      */
     public function setMinimumShouldMatch($nb) {
         $this->minimumShouldMatch = $nb;
-    }
-
-    public function addFacet($facetObject) {
-        $this->sherlockfacets[] = $facetObject;
     }
 
     //--------------------------------------------------------------------------
@@ -257,85 +315,118 @@ class SherlockSearch extends SherlockCore {
      */
     public function getJsonQuery() {
         $callParams = array();
-        $callParams['query'] = array();
+        $callParams['aggregations'] = array();
+        $callParams['query']['bool'][$this->defaultMode] = array();
 
-        //Check si facet selectionné
-        $facetSelected = false;
-        foreach ($this->sherlockfacets as $facet) {
-            if ($facet->getArgArrayForSearchQuery()) {
-                $facetSelected = true;
-            }
-        }
-        
+        $hasShould = false;
+
         //Ajout des critères de recherche
-        if (count($this->criterias) > 0 || count($this->conditions) > 0 || $facetSelected) {
-            $callParams['query']['bool'] = array();
-
-            if (count($this->criterias) > 0) {
-                $callParams['query']['bool']['must'] = array();
-                foreach ($this->criterias as $criteria) {
-                    $callParams['query']['bool']['must'] = ArrayTools::merge($callParams['query']['bool']['must'], $criteria->getParamArray());
-                }
-
-                //Directif minimum should match (doit au minimum avoir une clause de juste, ou un pourcentage)
-                if (!is_null($this->minimumShouldMatch)) {
-                    $callParams['query']['bool']['minimum_should_match'] = $this->minimumShouldMatch;
-                }
+        if (isset($this->criterias['default']) && count($this->criterias['default']) > 0) {
+            foreach ($this->criterias['default'] as $criteria) {
+                $this->criterias[$this->defaultMode][] = $criteria;
             }
-
-            //NEW !
-            $facetQuery = false;
-            foreach ($this->sherlockfacets as $facet) {
-                if ($facet->getArgArrayForSearchQuery()) {
-                    $facetQuery = true;
-                    break;
-                }
-            }
-
-            if (count($this->conditions) > 0 || $facetQuery) {
-                
-                if(!isset($callParams['query']['bool']['must'])){
-                    $callParams['query']['bool']['must'] = array();
-                }
-
-                foreach ($this->conditions as $condition) {
-                    $callParams['query']['bool']['must'] = ArrayTools::merge($callParams['query']['bool']['must'], $condition->getParamArray());
-                }
-                foreach ($this->sherlockfacets as $facet) {
-                    if ($facet->getArgArrayForSearchQuery()) {
-                        $callParams['query']['bool']['must'] = ArrayTools::merge($callParams['query']['bool']['must'], $facet->getArgArrayForSearchQuery());
-                    }
-                }
-            }
-        }else{
-            $callParams['query']['match_all'] = array();
+            unset($this->criterias['default']);
         }
-
-
-
-    //Ajout des conditions (filtres absolus)
-    /*
-    if(count($this->conditions) > 0 || $facetQuery) {
-        $callParams['query']['constant_score'] = array();
-        $callParams['query']['constant_score']['filter'] = array();
-        $callParams['query']['constant_score']['filter'][$this->conditionOperator] = array();
-        foreach($this->conditions as $condition){
-            $callParams['query']['constant_score']['filter'][$this->conditionOperator] = ArrayTools::merge($callParams['query']['constant_score']['filter'][$this->conditionOperator], $condition->getParamArray());
-        }
-        foreach ($this->sherlockfacets as $facet){
-            if($facet->getArgArrayForSearchQuery()){
-                $callParams['query']['constant_score']['filter'][$this->conditionOperator] = ArrayTools::merge($callParams['query']['constant_score']['filter'][$this->conditionOperator], $facet->getArgArrayForSearchQuery());
+        if (isset($this->criterias['must']) && count($this->criterias['must']) > 0) {
+            $qr = &$callParams['query']['bool'][$this->defaultMode];
+            if($this->defaultMode !== 'must') {
+                $callParams['query']['bool'][$this->defaultMode]['bool']['must'] = array();
+                $qr = &$callParams['query']['bool'][$this->defaultMode]['bool']['must'];
+            }
+            foreach ($this->criterias['must'] as $criteria) {
+                $qr = ArrayTools::merge($qr, $criteria->getParamArray());
             }
         }
-    }
-    */
+        if (isset($this->criterias['should']) && count($this->criterias['should']) > 0) {
+            $qr = &$callParams['query']['bool'][$this->defaultMode];
+            if($this->defaultMode !== 'should') {
+                $callParams['query']['bool'][$this->defaultMode]['bool']['should'] = array();
+                $qr = &$callParams['query']['bool'][$this->defaultMode]['bool']['should'];
+            }
+            foreach ($this->criterias['should'] as $criteria) {
+                $hasShould = true;
+                $qr = ArrayTools::merge($qr, $criteria->getParamArray());
+            }
+        }
+
+        //Ajout des conditions de recherche
+        if (isset($this->conditions['default']) && count($this->conditions['default']) > 0) {
+            foreach ($this->conditions['default'] as $condition) {
+                $this->conditions[$this->defaultMode][] = $condition;
+            }
+            unset($this->conditions['default']);
+        }
+        if (isset($this->conditions['must']) && count($this->conditions['must']) > 0) {
+            $qr = &$callParams['query']['bool'][$this->defaultMode];
+            if($this->defaultMode !== 'must') {
+                $callParams['query']['bool'][$this->defaultMode]['bool']['must'] = array();
+                $qr = &$callParams['query']['bool'][$this->defaultMode]['bool']['must'];
+            }
+            foreach ($this->conditions['must'] as $condition) {
+                $qr = ArrayTools::merge($qr, $condition->getParamArray());
+            }
+        }
+        if (isset($this->conditions['should']) && count($this->conditions['should']) > 0) {
+            $qr = &$callParams['query']['bool'][$this->defaultMode];
+            if($this->defaultMode !== 'should') {
+                $callParams['query']['bool'][$this->defaultMode]['bool']['should'] = array();
+                $qr = &$callParams['query']['bool'][$this->defaultMode]['bool']['should'];
+            }
+            foreach ($this->conditions['should'] as $condition) {
+                $hasShould = true;
+                $qr = ArrayTools::merge($qr, $condition->getParamArray());
+            }
+        }
 
         //Ajout des facets
-        if (count($this->sherlockfacets) > 0) {
-            $callParams['aggregations'] = array();
-            foreach ($this->sherlockfacets as $facet) {
+        if (isset($this->facets['default']) && count($this->facets['default']) > 0) {
+            foreach ($this->facets['default'] as $facet) {
+                $this->facets[$this->defaultMode][] = $facet;
+            }
+            unset($this->facets['default']);
+        }
+        if (isset($this->facets['must']) && count($this->facets['must']) > 0) {
+            $qr = &$callParams['query']['bool'][$this->defaultMode];
+            if($this->defaultMode !== 'must') {
+                $callParams['query']['bool'][$this->defaultMode]['bool']['must'] = array();
+                $qr = &$callParams['query']['bool'][$this->defaultMode]['bool']['must'];
+            }
+            foreach ($this->facets['must'] as $facet) {
+                if ($facet->getArgArrayForSearchQuery()) {
+                    $qr = ArrayTools::merge($qr, $facet->getArgArrayForSearchQuery());
+                }
                 $callParams['aggregations'] = ArrayTools::merge($callParams['aggregations'], $facet->getArgArrayForAggregate());
             }
+        }
+        if (isset($this->facets['should']) && count($this->facets['should']) > 0) {
+            $qr = &$callParams['query']['bool'][$this->defaultMode];
+            if($this->defaultMode !== 'should') {
+                $callParams['query']['bool'][$this->defaultMode]['bool']['should'] = array();
+                $qr = &$callParams['query']['bool'][$this->defaultMode]['bool']['should'];
+            }
+            foreach ($this->facets['should'] as $facet) {
+                if ($facet->getArgArrayForSearchQuery()) {
+                    $hasShould = true;
+                    $qr = ArrayTools::merge($qr, $facet->getArgArrayForSearchQuery());
+                }
+                $callParams['aggregations'] = ArrayTools::merge($callParams['aggregations'], $facet->getArgArrayForAggregate());
+            }
+        }
+
+        if ($hasShould && !is_null($this->minimumShouldMatch)) {
+            $qr = &$callParams['query']['bool'];
+            if($this->defaultMode !== 'should') {
+                $qr = &$callParams['query']['bool'][$this->defaultMode]['bool'];
+            }
+            $qr['minimum_should_match'] = $this->minimumShouldMatch;
+        }
+
+        if(count($callParams['aggregations']) == 0) {
+            unset($callParams['aggregations']);
+        }
+        if(count($callParams['query']['bool'][$this->defaultMode]) == 0) {
+            unset($callParams['query']['bool']);
+            $callParams['query']['match_all'] = array();
         }
 
         return Json::encode($callParams);
@@ -349,12 +440,7 @@ class SherlockSearch extends SherlockCore {
      * @return boolean|\jin\external\diatem\sherlock\SherlockResult Objet SherlockResult décrivant les données issues de la recherche
      */
     public function search() {
-        if (count($this->conditions) == 0 && count($this->criterias) == 0) {
-            //parent::throwError('Vous ne pouvez pas effectuer de recherche sans définir de conditions ou de critères de recherche.');
-            //return false;
-        }
 
-        //base
         $callString = $this->sherlock->getAppzCode() . '/';
 
         //Recherche dans tous les documentTypes ou dans les documentType spécifiés
@@ -362,7 +448,6 @@ class SherlockSearch extends SherlockCore {
             $callString .= $this->documentTypes . '/';
         }
 
-        //base
         $callString .= '_search?sort=_score';
 
         //si limite en nb de résultats
@@ -373,11 +458,8 @@ class SherlockSearch extends SherlockCore {
         //On spécifie l'index (0 par défaut)
         $callString .= '&from=' . $this->index;
 
-
         //On initialise l'array servant à déterminer le Json envoyé à elesticSearch
         $callParamsJson = $this->getJsonQuery();
-        
-        
 
         if (!$callParamsJson) {
             parent::throwError('Une erreur a eu lieu lors de la transformation des parametres au format Json : ' . Json::getLastErrorVerbose());
@@ -396,18 +478,25 @@ class SherlockSearch extends SherlockCore {
         }
 
         //Debug::dump($retour);
-        //Data facets
-        foreach ($this->sherlockfacets as $facet) {
-            $data = array();
-            if (isset($retour['aggregations'][$facet->getName()])) {
-                $data = array_map(function($item) {
-                    // Remove empty facets
-                    return array_filter($item, function($v) {
-                        return $v['key'];
-                    });
-                }, $retour['aggregations'][$facet->getName()]);
+
+        foreach (array('must', 'should', 'default') as $mode) {
+            if(isset($this->facets[$mode]) && count($this->facets[$mode]) > 0) {
+                foreach ($this->facets[$mode] as $facet) {
+                    $data = array();
+                    if (isset($retour['aggregations'][$facet->getName()])) {
+                        $data = array_map(function($item) {
+                            // Remove empty facets (ie. if it's not like array('key', 'doc_count'))
+                            if(!is_array($item)) {
+                                return false;
+                            }
+                            return array_filter($item, function($v) {
+                                return $v['key'];
+                            });
+                        }, $retour['aggregations'][$facet->getName()]);
+                    }
+                    $facet->setESReturnData($data);
+                }
             }
-            $facet->setESReturnData($data);
         }
 
 
