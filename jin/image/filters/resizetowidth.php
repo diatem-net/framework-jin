@@ -43,7 +43,6 @@ final class ResizeToWidth extends ImageFilter implements FilterInterface{
 	$startHeight = imagesy($imageRessource);
 	
 	$xratio = $startWidth/$this->width;
-	$yratio = $startHeight/$this->height;
 	
 	$nouvelleLargeur = $this->width;
 	$nouvelleHauteur = (($startHeight*(($nouvelleLargeur)/$startWidth)));

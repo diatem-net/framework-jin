@@ -42,7 +42,6 @@ final class ResizeToHeight extends ImageFilter implements FilterInterface{
 	$startWidth = imagesx($imageRessource);
 	$startHeight = imagesy($imageRessource);
 	
-	$xratio = $startWidth/$this->width;
 	$yratio = $startHeight/$this->height;
 	
 	//La hauteur de l'image fait foi. (Seule dimension permettant un redimentionnement sans perte de matière)
