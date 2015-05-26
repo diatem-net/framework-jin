@@ -10,21 +10,21 @@ namespace jin\com;
 use jin\log\Debug;
 use jin\lang\StringTools;
 
-/** Classe permettant de générer des appels CURL
+/** Classe permettant de gï¿½nï¿½rer des appels CURL
  *
- * 	@auteur		Loïc Gerard
+ * 	@auteur		Loï¿½c Gerard
  */
 class Curl {
 
     /**
      *
-     * @var string  Dernière erreur rencontrée
+     * @var string  Derniï¿½re erreur rencontrï¿½e
      */
     private static $lastErrorText = '';
     
     /**
      *
-     * @var int	Dernier code d'erreur rencontré
+     * @var int	Dernier code d'erreur rencontrï¿½
      */
     private static $lastErrorCode = 0;
 
@@ -33,13 +33,13 @@ class Curl {
     
     /**
      * Appelle une Url
-     * @param string        $url                Url à  appeler
-     * @param array|string  $args               [optional] Arguments à  transmettre (NULL par défaut)
-     * @param string        $requestType        [optionel] Type de requête. (POST,GET, DELETE ou PUT) (POST par défaut)
-     * @param boolean       $throwError         [optionel] Génère les erreurs directement (True par défaut)
-     * @param string        $contentType        [optionel] Header 'Content-type'. Par défaut : application/json
-     * @param array         $headers            [optionel] Headers additionnels. (Sous la forme d'un tableau clé/valeur)
-     * @param string        $outputTraceFile    [optionel] Si renseigné : effectue une trace des flux réseaux dans le fichier ainsi déterminé. (Chemin absolu du fichier)
+     * @param string        $url                Url ï¿½ appeler
+     * @param array|string  $args               [optional] Arguments ï¿½ transmettre (NULL par dï¿½faut)
+     * @param string        $requestType        [optionel] Type de requï¿½te. (POST,GET, DELETE ou PUT) (POST par dï¿½faut)
+     * @param boolean       $throwError         [optionel] Gï¿½nï¿½re les erreurs directement (True par dï¿½faut)
+     * @param string        $contentType        [optionel] Header 'Content-type'. Par dï¿½faut : application/json
+     * @param array         $headers            [optionel] Headers additionnels. (Sous la forme d'un tableau clï¿½/valeur)
+     * @param string        $outputTraceFile    [optionel] Si renseignï¿½ : effectue une trace des flux rï¿½seaux dans le fichier ainsi dï¿½terminï¿½. (Chemin absolu du fichier)
      * @return boolean
      * @throws \Exception
      */
@@ -88,9 +88,9 @@ class Curl {
 	//Delete
 	if ($requestType == 'DELETE') {
 	    curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'DELETE');
-	    if(!StringTools::contains($url, '?')){
+	    if(!StringTools::contains($url, '?') && !empty($args)){
 		$url .= '?' . http_build_query($args);
-	    }else{
+	    }else if(!empty($args)){
 		$url .= '&' . http_build_query($args);
 	    }
 	    curl_setopt($curl, CURLOPT_URL, $url);
@@ -98,9 +98,9 @@ class Curl {
 
         //Get
 	if ($requestType == 'GET') {
-	    if(!StringTools::contains($url, '?')){
+	    if(!StringTools::contains($url, '?') && !empty($args)){
 		$url .= '?' . http_build_query($args);
-	    }else{
+	    }else if(!empty($args)){
 		$url .= '&' . http_build_query($args);
 	    }
 	    curl_setopt($curl, CURLOPT_URL, $url);
@@ -115,7 +115,9 @@ class Curl {
         //Put
 	if ($requestType == 'PUT') {
 	    curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'PUT');
-	    curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($args));
+            if(!empty($args)){
+                curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($args));
+            }
             
 	}
 
@@ -151,7 +153,7 @@ class Curl {
 
     
     /**
-     * Retourne la dernière erreur rencontrée (verbose)
+     * Retourne la derniï¿½re erreur rencontrï¿½e (verbose)
      * @return string
      */
     public static function getLastErrorVerbose() {
@@ -175,7 +177,7 @@ class Curl {
     
     
     /**
-     * Retourne le détail textuel du dernier code HTTP retourné
+     * Retourne le dï¿½tail textuel du dernier code HTTP retournï¿½
      * @return string
      */
     public static function getLastHttpCodeVerbose(){
