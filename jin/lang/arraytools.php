@@ -17,6 +17,8 @@ use jin\lang\StringTools;
  */
 class ArrayTools {
 
+
+    
     /** Permet de trier un tableau associatif en précisant la colonne à utiliser pour trier
      *  @param  array   $array  Tableau à trier
      *  @param  string  $index  Index de la colonne à utiliser pour effectuer le tri
@@ -135,33 +137,58 @@ class ArrayTools {
 
     /**
      * Détermine la valeur max d'un tableau
-     * @param array $array  Tableau source
+     * @param array $array  Tableau source (tableau simple ou tableau de tableaux associatifs)
+     * @param string $key   Clé (si renseigné, array est un tableau de tableaux associatifs)
      * @return float
      */
-    public static function max($array){
-        $m = 0;
-        foreach($array AS $v){
-            if(is_numeric($v) && $v > $m){
-                $m = $v;
+    public static function max($array, $key = null){
+        if($key){
+            $m = 0;
+            foreach($array AS $v){
+                if(is_numeric($v[$key]) && $v[$key] > $m){
+                    $m = $v[$key];
+                }
             }
+            return $m;
+        }else{
+            $m = 0;
+            foreach($array AS $v){
+                if(is_numeric($v) && $v > $m){
+                    $m = $v;
+                }
+            }
+            return $m;
         }
-        return $m;
+        
+        
     }
 
 
      /**
      * Détermine la valeur min d'un tableau
-     * @param array $array  Tableau source
+     * @param array $array  Tableau source (tableau simple ou tableau de tableaux associatifs)
+     * @param string $key   Clé (si renseigné, array est un tableau de tableaux associatifs)
      * @return float
      */
-    public static function min($array){
-        $m = null;
-        foreach($array AS $v){
-            if(is_numeric($v) && (is_null($m) || $v < $m)){
-                $m = $v;
+    public static function min($array, $key = null){
+        if($key){
+            $m = null;
+            foreach($array AS $v){
+                if(is_numeric($v[$key]) && (is_null($m) || $v[$key] < $m)){
+                    $m = $v[$key];
+                }
             }
+            return $m;
+        }else{
+            $m = null;
+            foreach($array AS $v){
+                if(is_numeric($v) && (is_null($m) || $v < $m)){
+                    $m = $v;
+                }
+            }
+            return $m;
         }
-        return $m;
+        
     }
 
 
