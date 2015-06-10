@@ -545,5 +545,35 @@ class StringTools {
     public static function base64Decode($chaine) {
         return base64_decode($chaine);
     }
+    
+    
+    /**
+     * Génère un lien mailto protégé
+     * @param type $emailAdress
+     * @param type $name
+     * @return string
+     */
+    public static function protectEmailLink($emailAdress, $name = null, $texteDuLien = null){
+        $email = preg_replace("/\"/","\\\"",$emailAdress);
+
+        if($name == null){
+           $name = $email;
+        }
+        
+        if($texteDuLien == null){
+            $texteDuLien = $name;
+        }
+
+        $old = "document.write('<a href=\"mailto:$email\">$texteDuLien</a>')";
+
+        $output = "";
+
+        for ($i=0; $i < strlen($old); $i++) {
+            $output = $output . '%' . bin2hex(substr($old,$i,1));
+        }
+
+        $output = '<script type="text/javascript">eval(unescape(\''.$output.'\'))</script>';
+        return $output;
+    }
 
 }
