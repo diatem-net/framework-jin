@@ -49,9 +49,11 @@ class SherlockConfig extends SherlockCore {
     * @return	boolean	Succès ou échec de l'initialisation
     *  Se référer à la documentation pour connaitre la syntaxe à respecter.
     */
-    public function initializeApplication($xmlConfigFilePath) {
-        //Suppression des données existantes
-        $retour = parent::callMethod($this->sherlock->getAppzCode() . '/', null, 'DELETE');
+    public function initializeApplication($xmlConfigFilePath, $flush = true) {
+        if($flush) {
+            //Suppression des données existantes
+            parent::callMethod($this->sherlock->getAppzCode() . '/', null, 'DELETE');
+        }
 
         //Lecture du fichier XML
         $file = new File($xmlConfigFilePath);
@@ -129,7 +131,7 @@ class SherlockConfig extends SherlockCore {
         $jsonContent = Json::encode($mapping);
         $retour = parent::callMethod($this->sherlock->getAppzCode() . '' , $jsonContent);
 
-        if(!isset($retour['acknowledged']) || !$retour['acknowledged']){
+        if($flush && (!isset($retour['acknowledged']) || !$retour['acknowledged'])){
             parent::throwError('Impossible d\'initialiser l\'application : '.$this->sherlock->getLastError());
             return false;
         }
