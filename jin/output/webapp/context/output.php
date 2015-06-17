@@ -6,7 +6,7 @@ use jin\output\webapp\template\TemplateManager;
 
 class Output{
     
-    private static $vars;
+    private static $vars = array();
     public static $controller;
     
     public static function addTemplate($code){
