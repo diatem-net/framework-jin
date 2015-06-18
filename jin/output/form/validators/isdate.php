@@ -34,6 +34,10 @@ class Isdate extends GlobalValidator implements ValidatorInterface{
     public function isValid($valeur){
 	parent::resetErrors();
 	
+        if($valeur == ''){
+            return true;
+        }
+        
 	$format = $this->getArgValue('format');
 	$d = \DateTime::createFromFormat($format, $valeur);
 	$res =  $d && $d->format($format) == $valeur;
