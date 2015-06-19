@@ -10,6 +10,7 @@ use jin\output\form\validators\ValidatorInterface;
 use jin\output\form\validators\GlobalValidator;
 use jin\lang\StringTools;
 use jin\lang\ArrayTools;
+use jin\lang\ListTools;
 use jin\language\Trad;
 
 /** Validateur : teste si les caractères d'une valeurs sont parmis une liste de caractères authorisés
@@ -39,7 +40,7 @@ class Charsinlist extends GlobalValidator implements ValidatorInterface{
             return true;
         }
         
-        $chars = parent::getArgValue('chars');
+        $chars = ListTools::toArray(parent::getArgValue('chars'));
         $stringChars = StringTools::explode($valeur);
         
         foreach($stringChars AS $char){
