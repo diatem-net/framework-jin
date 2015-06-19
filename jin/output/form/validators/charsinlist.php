@@ -43,7 +43,7 @@ class Charsinlist extends GlobalValidator implements ValidatorInterface{
         $stringChars = StringTools::explode($valeur);
         
         foreach($stringChars AS $char){
-            if(ArrayTools::find($chars, $char) === false){
+            if(ArrayTools::find($chars, $char) === false || ArrayTools::find($chars, $char) === null){
                 $eMsg = Trad::trad('charsinlist');
                 $eMsg = StringTools::replaceAll($eMsg, '%chars%', parent::getArgValue('chars'));
                 parent::addError($eMsg);
