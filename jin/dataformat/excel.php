@@ -10,6 +10,7 @@ namespace jin\dataformat;
 use jin\query\QueryResult;
 use jin\JinCore;
 use jin\lang\NumberTools;
+use jin\lang\StringTools;
 
 /** Gestion de flux EXCEL
  *
@@ -67,7 +68,7 @@ class Excel {
     /**
      * Constructeur
      */
-    public function __construct($excelFilePath = null, $useHeaders = true) {
+    public function __construct($excelFilePath = null, $useHeaders = true, $headersInLowCase = true) {
         if($excelFilePath){
             //Include Library
             require_once JinCore::getJinRootPath().JinCore::getRelativeExtLibs() . 'phpexcel/PHPExcel/IOFactory.php';
@@ -99,7 +100,11 @@ class Excel {
                     foreach ($cellIterator as $cell) {
                         if (!is_null($cell)) {
                             $value = $cell->getCalculatedValue();
-                            $headers[] = $cell->getCalculatedValue();
+                            if($headersInLowCase){
+                                $headers[] = $cell->getCalculatedValue();
+                            }else{
+                                $headers[] = StringTools::toLowerCase($cell->getCalculatedValue());
+                            } 
                         }
                     }
                 }else if(!$useHeaders || $row > 0){
@@ -116,7 +121,11 @@ class Excel {
                             $value = '';
                         }
                         if($this->useHeaders){
-                            $ligne[$headers[$col]] = $value;
+                            if($headersInLowCase){
+                                $ligne[StringTools::toLowerCase($headers[$col])] = $value;
+                            }else{
+                                $ligne[$headers[$col]] = $value;
+                            }
                         }else{
                             $ligne[] = $value;
                         }
@@ -245,15 +254,6 @@ class Excel {
         
         //Création objet PHPExcel
         $objPHPExcel = new \PHPExcel();
-        
-        //Attributs du fichier
-        $objPHPExcel->getProperties()->setCreator("Maarten Balliauw")
-                ->setLastModifiedBy("Maarten Balliauw")
-                ->setTitle("PHPExcel Test Document")
-                ->setSubject("PHPExcel Test Document")
-                ->setDescription("Test document for PHPExcel, generated using PHP classes.")
-                ->setKeywords("office PHPExcel php")
-                ->setCategory("Test result file");
         
         //Feuille 1
         $objPHPExcel->setActiveSheetIndex(0);
