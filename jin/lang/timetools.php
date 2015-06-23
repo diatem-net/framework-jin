@@ -130,4 +130,18 @@ class TimeTools {
         $operator = $strict ? '<' : '<=';
         return TimeTools::compare($from, $date, $operator) && TimeTools::compare($date, $to, $operator);
     }
+
+    /**
+    * Retourne la version littérale d'un mois
+    * @param integer $month Mois
+    * @return string        Mois littéral
+    */
+    public static function literalMonth($month){
+        $month = intval($month);
+        if($month < 1 || $month > 12) {
+            return '';
+        }
+        $months = array('Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre');
+        return $months[$month - 1];
+    }
 }
