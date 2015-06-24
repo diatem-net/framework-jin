@@ -99,6 +99,16 @@ class SimpleFacet implements Iterator{
         return iterator_count($this);
     }
 
+    public function setSelectedFirst(){
+        usort($this->ESData, function($a, $b) {
+            $selectedfirst = intval($b['selected']) - intval($a['selected']);
+            if($selectedfirst != 0) {
+                return $selectedfirst;
+            }
+            return $b['doc_count'] - $a['doc_count'];
+        });
+    }
+
     //Fonctions d'itération
 
     /**
