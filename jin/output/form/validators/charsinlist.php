@@ -17,7 +17,7 @@ use jin\language\Trad;
  *
  * 	@auteur		Loïc Gerard
  * 	@version	0.0.1
- * 	@check		
+ * 	@check
  */
 class Charsinlist extends GlobalValidator implements ValidatorInterface{
     /**
@@ -27,7 +27,7 @@ class Charsinlist extends GlobalValidator implements ValidatorInterface{
     public function __construct($args) {
 	parent::__construct($args, array('chars'));
     }
-    
+
     /**
      * Teste la validité
      * @param mixed $valeur Valeur à tester
@@ -35,14 +35,14 @@ class Charsinlist extends GlobalValidator implements ValidatorInterface{
      */
     public function isValid($valeur){
 	parent::resetErrors();
-        
-        if($valeur == ''){
+
+        if($valeur == '' || parent::getArgValue('chars') == '' || count(parent::getArgValue('chars'))){
             return true;
         }
-        
+
         $chars = ListTools::toArray(parent::getArgValue('chars'));
         $stringChars = StringTools::explode($valeur);
-        
+
         foreach($stringChars AS $char){
             if(ArrayTools::find($chars, $char) === false || ArrayTools::find($chars, $char) === null){
                 $eMsg = Trad::trad('charsinlist');
@@ -53,8 +53,8 @@ class Charsinlist extends GlobalValidator implements ValidatorInterface{
         }
         return true;
     }
-    
-    
+
+
     /**
      * Priorité NIV1 du validateur
      * @return boolean
