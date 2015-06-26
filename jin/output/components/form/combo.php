@@ -25,6 +25,11 @@ class Combo extends FormComponent implements ComponentInterface{
      */
     private $values = array();
 
+    /**
+     *
+     * @var array  Valeurs a présélectionner. (Tableau de la forme array('value',...))
+     */  
+    private $checkedValues = array();
 
     /**
      * Constructeur
@@ -66,8 +71,16 @@ class Combo extends FormComponent implements ComponentInterface{
 		    $selected = 'checked="checked" ';
 		}
 	    }
+            
+            if(is_numeric(ArrayTools::find($this->checkedValues, $v['value']))){                
+                    $selected = 'checked="checked" ';
+            }         
+            
+            
+            
 	    $ac = StringTools::replaceAll($ac, '%item_selected%', $selected);
 	    $addContent .= $ac;
+            
 	}
 	$addContent = parent::replaceMagicFields($addContent);
 
@@ -90,7 +103,14 @@ class Combo extends FormComponent implements ComponentInterface{
 	}
 	$this->values[] = array('value' => $value, 'label' => $label);
     }
-
+      
+    /**
+     * Définit les value à mettre à checked
+     * @param array $valuesToChecked  Tableau de values array(1,'toto'...)   
+     */  
+    public function forceCheckedValues($valuesToChecked){
+        $this->checkedValues = $valuesToChecked;
+    }
 
     /**
      * Définit l'ensemble des données des cases à cocher
