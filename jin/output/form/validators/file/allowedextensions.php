@@ -1,8 +1,8 @@
 <?php
 /**
- * Jin Framework
- * Diatem
- */
+* Jin Framework
+* Diatem
+*/
 
 namespace jin\output\form\validators\file;
 
@@ -13,28 +13,31 @@ use jin\lang\ListTools;
 use jin\lang\StringTools;
 
 /** Validateur : teste si le fichier est de types précisés
- *
- *  @auteur     Loïc Gerard
- *  @version    0.0.1
- *  @check
- */
+*
+*  @auteur     Loïc Gerard
+*  @version    0.0.1
+*  @check
+*/
 class Allowedextensions extends GlobalFileValidator implements ValidatorInterface{
     /**
-     * Constructeur
-     * @param type $args    Tableau d'arguments. extensionList (Liste d'extensions supportées. ex: jpg,csv)
-     */
+    * Constructeur
+    * @param type $args    Tableau d'arguments. extensionList (Liste d'extensions supportées. ex: jpg,csv)
+    */
     public function __construct($args) {
         parent::__construct($args, array('extensionList'));
     }
 
     /**
-     * Teste la validité
-     * @param array $valeur Valeur $_FILES à tester
-     * @return boolean
-     */
+    * Teste la validité
+    * @param array $valeur Valeur $_FILES à tester
+    * @return boolean
+    */
     public function isValid($valeur){
         parent::resetErrors();
 
+        if(parent::getArgValue('extensionList') == '' || count(parent::getArgValue('extensionList')) == 0) {
+            return true;
+        }
         $currentExt = ListTools::last($valeur['name'], '.');
         if($currentExt && !ListTools::containsNoCase(parent::getArgValue('extensionList'), $currentExt)){
             $eMsg = Trad::trad('allowedextensions');
@@ -47,9 +50,9 @@ class Allowedextensions extends GlobalFileValidator implements ValidatorInterfac
 
 
     /**
-     * Priorité NIV1 du validateur
-     * @return boolean
-     */
+    * Priorité NIV1 du validateur
+    * @return boolean
+    */
     public function isPrior(){
         return false;
     }
