@@ -12,7 +12,7 @@ use jin\output\form\validators\GlobalValidator;
  *
  * 	@auteur		Loïc Gerard
  * 	@version	0.0.1
- * 	@check		
+ * 	@check
  */
 class GlobalFileValidator extends GlobalValidator{
 
@@ -21,7 +21,7 @@ class GlobalFileValidator extends GlobalValidator{
      * @return string
      */
     public function getType(){
-	return 'filevalidator';
+	   return 'filevalidator';
     }
 }
 
