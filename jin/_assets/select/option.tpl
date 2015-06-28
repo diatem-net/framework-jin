@@ -1,1 +1,1 @@
-<option value="%value%" %selected%>%label%</option>
+<option value="%value%" %attributes% %selected%>%label%</option>
