@@ -44,16 +44,23 @@
         $o_content = $o->getContent();
 
         $addContent = '';
-        foreach($this->values as $k => $v){
+        foreach($this->values as $k => $option){
             $ac = $o_content;
-            $ac = StringTools::replaceAll($ac, '%value%', $v);
+            $attributes = '';
+            if(count($option['attributes']) > 0) {
+                foreach($option['attributes'] as $att_k => $att_v) {
+                    $attributes .= ' '.$att_k.'="'.$att_v.'"';
+                }
+            }
+            $ac = StringTools::replaceAll($ac, '%value%', $option['value']);
+	    $ac = StringTools::replaceAll($ac, '%attributes%', $attributes);
             $ac = StringTools::replaceAll($ac, '%label%', $k);
 
             $selected = false;
-            if($this->getValue() == $v){
+            if($this->getValue() == $option['value']){
                 $selected = true;
             }
-            if(is_null($this->getValue() && $this->getDefaultValue() == $v)){
+            if(is_null($this->getValue() && $this->getDefaultValue() == $option['value'])){
                 $selected = true;
             }
 
@@ -75,11 +82,15 @@
 
     /**
     * Ajoute un choix dans la liste
-    * @param string $value Valeur du choix
-    * @param string $label Label affiché
+    * @param string $value      Valeur du choix
+    * @param string $label      Label affiché
+    * @param array  $attributes Attributs supplémentaires pour l'option
     */
-    public function addValue($value, $label){
-        $this->values[$label] = $value;
+    public function addValue($value, $label, $attributes = array()){
+        $this->values[$label] = array(
+            'value'      => $value,
+            'attributes' => $attributes
+        );
     }
 
     /**
@@ -87,7 +98,12 @@
     * @param array $values Tableau de valeurs (clé/valeur) ex. array('label'=>'val','label','val');
     */
     public function setValues($values){
-        $this->values = $values;
+        // Pour rétrocompatibilité : impossible de passer des attributs dans le tableau
+        if(count($values) > 0) {
+            foreach($values as $label => $value) {
+                $this->addValue($value, $label);
+            }
+        }
     }
 
 
@@ -99,7 +115,10 @@
     */
     public function setDataSource($queryResult, $colNameForLabel, $colNameForValue){
         foreach($queryResult as $v){
-            $this->values[$v[$colNameForLabel]] = $v[$colNameForValue];
+            $this->values[$v[$colNameForLabel]] = array(
+		'value' => $v[$colNameForValue],
+		'attributes' => array()
+	    );
         }
     }
 }
