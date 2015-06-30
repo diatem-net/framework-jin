@@ -154,8 +154,8 @@ class DForm {
             $this->fields[$fieldName]['errors'] = array();
 
             //On détermine la nouvelle valeur
-            if(isset($_POST[$fieldName])){
-                $this->fields[$fieldName]['value'] = $_POST[$fieldName];
+            if(isset($_POST[trim($fieldName, '[]')])){
+                $this->fields[$fieldName]['value'] = $_POST[trim($fieldName, '[]')];
             }else{
                 $this->fields[$fieldName]['value'] = '';
             }
