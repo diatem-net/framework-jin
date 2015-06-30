@@ -1,0 +1,1 @@
+<label for="%name%">%label%</label><select multiple="1" autocomplete="off" name="%name%" class="%class%">%items%</select>%error%
