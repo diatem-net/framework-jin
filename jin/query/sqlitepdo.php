@@ -20,7 +20,7 @@ class SQLitePDO extends PDO {
         $filename = realpath($filename);
         parent::__construct('sqlite:' . $filename);
 
-        $key = ftok($filename, 'a');
+        $key = $this->ftok($filename, 'a');
         $this->sem = $this->sem_get($key);
     }
 
@@ -80,6 +80,27 @@ class SQLitePDO extends PDO {
      */
     private function sem_release($sem_id) {
         return flock($sem_id, LOCK_UN);
+    }
+    
+    
+    /**
+     * Implémentation méthode ftok pour support sous Windows
+     * @param string $filename
+     * @param string $proj
+     * @return string
+     */
+    private function ftok($filename = "", $proj = ""){
+        if(!function_exists('ftok')){
+            if(empty($filename) || !file_exists($filename)){
+                return -1;
+            }else{
+                $filename = $filename . (string) $proj;
+                for($key = array(); sizeof($key) < strlen($filename); $key[] = ord(substr($filename, sizeof($key), 1)));
+                return dechex(array_sum($key));
+            }
+        }else{
+            return ftok($filename, $proj);
+        }
     }
 
 }
