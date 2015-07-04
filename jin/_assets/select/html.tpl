@@ -1,1 +1,1 @@
-<label for="%name%">%label%</label><select autocomplete="off" name="%name%" class="%class%">%items%</select>%error%
+<label for="%name%">%label%</label><select autocomplete="off" name="%name%" class="%class%" %selectattributes%>%items%</select>%error%
