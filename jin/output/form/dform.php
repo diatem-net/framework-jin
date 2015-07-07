@@ -144,7 +144,35 @@ class DForm {
     * @return boolean	TRUE si le formulaire est valide
     */
     public function isValid() {
+        $errors = $this->checkForm(true);
+        if(count($errors) == 0){
+            return true;
+        }
+        return false;
+    }
+    
+
+    /**
+     * Retourne un tableau associatif array(array('field'=>'','error'=>'')) 
+     * contenant l'ensemble des erreurs rencontrées sur le formulaire
+     * @return array
+     */
+    public function getAllErrors(){
+        return $this->checkForm(false);
+    }
+    
+    
+    /**
+     * teste la validité des données et renvoie un tableau associatif contenant 
+     * erreurs recontrées array(array('field'=>'','error'=>'')) 
+     * @param boolean $saveFiles    (defaut : FALSE) Définit si le système doit
+     * procéder à l'enregistrement des champs de type FILE
+     * @return array
+     * @throws \Exception
+     */
+    private function checkForm($saveFiles = false){
         $valide = true;
+        $allErrors = array();
 
         //On passe dans les champs de type FIELD
         foreach ($this->fields as $fieldName => $v) {
@@ -185,6 +213,10 @@ class DForm {
             } else {
                 $this->fields[$fieldName]['errors'] = $errors;
             }
+            
+            foreach($this->fields[$fieldName]['errors'] AS $error){
+                $allErrors[] = array('field' => $fieldName, 'error' => $error);
+            }
         }
 
         //ON PASSE DANS LES PIECES JOINTES
@@ -221,10 +253,14 @@ class DForm {
             } else {
                 $this->attachementFields[$fieldName]['errors'] = $errors;
             }
+            
+            foreach($this->attachementFields[$fieldName]['errors'] AS $error){
+                $allErrors[] = array('field' => $fieldName, 'error' => $error);
+            }
         }
 
         //SI tout est valide : enregistrer les pièces jointes
-        if ($valide) {
+        if ($valide && $saveFiles) {
             foreach ($this->attachementFields as $fieldName => $v) {
 
                 if (isset($_FILES[$fieldName]) && !empty($_FILES[$fieldName]['name'])) {
@@ -248,8 +284,8 @@ class DForm {
                 }
             }
         }
-
-        return $valide;
+        
+        return $allErrors;
     }
 
     /**
