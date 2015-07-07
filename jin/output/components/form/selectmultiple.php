@@ -8,6 +8,7 @@ namespace jin\output\components\form;
 use jin\output\components\form\FormComponent;
 use jin\output\components\ComponentInterface;
 use jin\filesystem\AssetFile;
+use jin\lang\ArrayTools;
 use jin\lang\StringTools;
 
 
@@ -36,6 +37,12 @@ class SelectMultiple extends FormComponent implements ComponentInterface{
      * @var array  Valeurs sélectionnées. (Tableau de la forme array('value',...))
      */
     private $selectedValues = array();
+
+    /**
+     *
+     * @var array Attributs ajoutés sur select
+     */
+    private $selectattributes = array();
 
     /**
     * Constructeur
@@ -86,10 +93,52 @@ class SelectMultiple extends FormComponent implements ComponentInterface{
         }
 
         $html = parent::render();
+        $strAttributes = '';
+        foreach ($this->selectattributes as $key => $value) {
+            $strAttributes .= ' ' . $key . '="' . $value . '"';
+        }
+        $html = StringTools::replaceAll($html, '%selectattributes%', $strAttributes);
         $html = StringTools::replaceAll($html, '%items%', $addContent);
 
         return $html;
     }
+
+    /**
+     * Ajoute un nouvel attribut sur le select
+     * @param string $attributeName  Nom de l'attribut
+     * @param string $attributeValue Value de l'attribut
+     * @return boolean               Retourne FALSE si cet atribut était déjà ajouté
+     */
+    public function addSelectAttribute($attributeName, $attributeValue){
+        if(!ArrayTools::isKeyExists($this->selectattributes, $attributeName)){
+            $this->selectattributes[$attributeName] = $attributeValue;
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Supprime un attribut ajouté sur le select
+     * @param string $attributeName Nom de l'attribut
+     * @return boolean              Retourne FALSE si cet attribut n'était pas ajouté
+     */
+    public function removeSelectAttribute($attributeName){
+        if(isset($this->selectattributes[$attributeName])){
+            unset($this->selectattributes[$attributeName]);
+            return true;
+        }
+        return false;
+    }
+
+
+    /**
+     * Retourne un tableau des attributs ajoutés
+     * @return array
+     */
+    public function getSelectAttributes(){
+        return $this->selectattributes;
+    }
+
 
 
     /**
