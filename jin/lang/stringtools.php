@@ -468,6 +468,19 @@ class StringTools {
     }
 
 
+    /** Nettoie un nom de fichier de tous les caractères spéciaux
+     *
+     *  @param  string  $filename           Chaîne de caractère
+     *  @return string                      Chaîne de caractère nettoyée
+     */
+    public static function cleanFileName($filename) {
+        $filename_parts = explode('.', $filename);
+        $extension = array_pop($filename_parts);
+        $filename = implode($filename_parts);
+        return self::clean($filename).'.'.$extension;
+    }
+
+
     /** Nettoie la chaîne de caractère de tous les caractères spéciaux
      *
      *  @param  string  $chaine                 Chaîne de caractère
@@ -545,8 +558,8 @@ class StringTools {
     public static function base64Decode($chaine) {
         return base64_decode($chaine);
     }
-    
-    
+
+
     /**
      * Génère un lien mailto protégé
      * @param type $emailAdress
@@ -559,7 +572,7 @@ class StringTools {
         if($name == null){
            $name = $email;
         }
-        
+
         if($texteDuLien == null){
             $texteDuLien = $name;
         }
