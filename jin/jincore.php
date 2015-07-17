@@ -107,10 +107,11 @@ class JinCore {
 	if ($_SERVER["SERVER_PORT"] != "80") {
 	    $rootUrl .= ":" . $_SERVER["SERVER_PORT"];
 	}
-	
-	$rep = StringTools::replaceAll(self::getContainerPath(), $_SERVER['DOCUMENT_ROOT'], '');
-               
-        if($rep!='' && StringTools::left($rootUrl, 1) != '/' ){
+	$bp = self::getContainerPath();
+        $bp = StringTools::replaceAll($bp, '\\', '/');
+	$rep = StringTools::replaceAll($bp, $_SERVER['DOCUMENT_ROOT'], '');
+ 
+        if($rep!='' && StringTools::left($rep, 1) != '/' ){
             $rep = '/'.$rep;
         }
         
@@ -118,7 +119,8 @@ class JinCore {
         
 	if(StringTools::right($rootUrl, 1) != '/'){
 	    $rootUrl .= '/';
-	}          
+	}
+        
         
 	self::$containerUrl = $rootUrl;
 	return self::$containerUrl;

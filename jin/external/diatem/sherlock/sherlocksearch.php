@@ -76,6 +76,18 @@ class SherlockSearch extends SherlockCore {
      * @var int Index de début de parsing
      */
     private $index = 0;
+    
+    /**
+     *
+     * @var string  Attribut utilisé pour trier les résultats (si null = tri par score)
+     */
+    private $sortby;
+    
+    /**
+     *
+     * @var string Sens du sorting
+     */
+    private $sortside = 'asc';
 
     /**
      *
@@ -273,6 +285,16 @@ class SherlockSearch extends SherlockCore {
     public function setMinimumShouldMatch($nb) {
         $this->minimumShouldMatch = $nb;
     }
+    
+    /**
+     * Ajoute une contrainte d'ordonancement des résultats
+     * @param string $sortBy    Attribut sur lequel ordonner
+     * @param string $sens      Sens. (asc ou desc)
+     */
+    public function setSorting($sortBy, $sens){
+        $this->sortby = $sortBy;
+        $this->sortside = $sens;
+    }
 
     //--------------------------------------------------------------------------
     //GETTERS
@@ -315,6 +337,10 @@ class SherlockSearch extends SherlockCore {
      */
     public function getJsonQuery() {
         $callParams = array();
+        //ordonnancement
+        if($this->sortby){
+            $callParams['sort'][$this->sortby]['order'] = $this->sortside;
+        }
         $callParams['aggregations'] = array();
         $callParams['query']['bool'][$this->defaultMode] = array();
 
@@ -448,15 +474,21 @@ class SherlockSearch extends SherlockCore {
             $callString .= $this->documentTypes . '/';
         }
 
-        $callString .= '_search?sort=_score';
+        //$callString .= '_search?sort=_score';
+        $callString .= '_search';
+        
+        //On spécifie l'index (0 par défaut)
+        $callString .= '?from=' . $this->index;
 
         //si limite en nb de résultats
         if ($this->maxResults > 0) {
             $callString .= '&size=' . $this->maxResults;
         }
 
-        //On spécifie l'index (0 par défaut)
-        $callString .= '&from=' . $this->index;
+        //Pas d'ordonnancement spécifique
+        if(!$this->sortby){
+            $callString .= '&sort=_score';
+        }
 
         //On initialise l'array servant à déterminer le Json envoyé à elesticSearch
         $callParamsJson = $this->getJsonQuery();
