@@ -226,18 +226,12 @@
 .dump_container ul .dump_item .dump_separator{
     height:20px;
     width:15px;
-    background-position: center;
-    background-repeat: none;
-    background-image: url(%asseturl%separateur.png);
     float:left;
 }
 
 .dump_container ul .dump_item .dump_pleinseparator{
     height:20px;
     width:15px;
-    background-position: center;
-    background-repeat: none;
-    background-image: url(%asseturl%separateur_gris.png);
     float:left;
 }
 
