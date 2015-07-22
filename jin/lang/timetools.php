@@ -22,6 +22,18 @@ class TimeTools {
         return round(microtime(true) * 1000);
     }
 
+    /** Passe une date d'un format X à un format Y
+    *
+    * @param  string $date        Date quelconque
+    * @param  string $fromFormat  Format d'entrée
+    * @param  string $toFormat    Format de sortie
+    * @return string              Date formatée
+    */
+    public static function fromFormatToFormat($date, $fromFormat, $toFormat) {
+        $dt = \DateTime::createFromFormat($fromFormat, $date);
+        return $dt->format($toFormat);
+    }
+
     /** Passe une date au format européen jj/mm/aaaa hh:mm:ss
     *
     * @param  string|DateTime $date Date quelconque
