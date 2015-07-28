@@ -61,7 +61,7 @@ class SherlockSearch extends SherlockCore {
 
     /**
      *
-     * @var string  Mode d'application des conditions. (should | must | must_not)
+     * @var string  Mode d'application des conditions. (should | must)
      */
     private $defaultMode = 'must';
 
@@ -76,13 +76,13 @@ class SherlockSearch extends SherlockCore {
      * @var int Index de début de parsing
      */
     private $index = 0;
-    
+
     /**
      *
      * @var string  Attribut utilisé pour trier les résultats (si null = tri par score)
      */
     private $sortby;
-    
+
     /**
      *
      * @var string Sens du sorting
@@ -285,7 +285,7 @@ class SherlockSearch extends SherlockCore {
     public function setMinimumShouldMatch($nb) {
         $this->minimumShouldMatch = $nb;
     }
-    
+
     /**
      * Ajoute une contrainte d'ordonancement des résultats
      * @param string $sortBy    Attribut sur lequel ordonner
@@ -336,13 +336,25 @@ class SherlockSearch extends SherlockCore {
      * @return string   Query JSon
      */
     public function getJsonQuery() {
+
         $callParams = array();
+        $callParamsAlter = array();
+        $callParamsDefault = array();
+
+        $alterMode        = 'should';
+        $callParamsMust   = &$callParamsDefault;
+        $callParamsShould = &$callParamsAlter;
+        if($this->defaultMode == 'should') {
+            $alterMode        = 'must';
+            $callParamsMust   = &$callParamsAlter;
+            $callParamsShould = &$callParamsDefault;
+        }
+
         //ordonnancement
         if($this->sortby){
             $callParams['sort'][$this->sortby]['order'] = $this->sortside;
         }
         $callParams['aggregations'] = array();
-        $callParams['query']['bool'][$this->defaultMode] = array();
 
         $hasShould = false;
 
@@ -354,24 +366,14 @@ class SherlockSearch extends SherlockCore {
             unset($this->criterias['default']);
         }
         if (isset($this->criterias['must']) && count($this->criterias['must']) > 0) {
-            $qr = &$callParams['query']['bool'][$this->defaultMode];
-            if($this->defaultMode !== 'must') {
-                $callParams['query']['bool'][$this->defaultMode]['bool']['must'] = array();
-                $qr = &$callParams['query']['bool'][$this->defaultMode]['bool']['must'];
-            }
             foreach ($this->criterias['must'] as $criteria) {
-                $qr = ArrayTools::merge($qr, $criteria->getParamArray());
+                $callParamsMust = ArrayTools::merge($callParamsMust, $criteria->getParamArray());
             }
         }
         if (isset($this->criterias['should']) && count($this->criterias['should']) > 0) {
-            $qr = &$callParams['query']['bool'][$this->defaultMode];
-            if($this->defaultMode !== 'should') {
-                $callParams['query']['bool'][$this->defaultMode]['bool']['should'] = array();
-                $qr = &$callParams['query']['bool'][$this->defaultMode]['bool']['should'];
-            }
             foreach ($this->criterias['should'] as $criteria) {
                 $hasShould = true;
-                $qr = ArrayTools::merge($qr, $criteria->getParamArray());
+                $callParamsShould = ArrayTools::merge($callParamsShould, $criteria->getParamArray());
             }
         }
 
@@ -383,24 +385,14 @@ class SherlockSearch extends SherlockCore {
             unset($this->conditions['default']);
         }
         if (isset($this->conditions['must']) && count($this->conditions['must']) > 0) {
-            $qr = &$callParams['query']['bool'][$this->defaultMode];
-            if($this->defaultMode !== 'must') {
-                $callParams['query']['bool'][$this->defaultMode]['bool']['must'] = array();
-                $qr = &$callParams['query']['bool'][$this->defaultMode]['bool']['must'];
-            }
             foreach ($this->conditions['must'] as $condition) {
-                $qr = ArrayTools::merge($qr, $condition->getParamArray());
+                $callParamsMust = ArrayTools::merge($callParamsMust, $condition->getParamArray());
             }
         }
         if (isset($this->conditions['should']) && count($this->conditions['should']) > 0) {
-            $qr = &$callParams['query']['bool'][$this->defaultMode];
-            if($this->defaultMode !== 'should') {
-                $callParams['query']['bool'][$this->defaultMode]['bool']['should'] = array();
-                $qr = &$callParams['query']['bool'][$this->defaultMode]['bool']['should'];
-            }
             foreach ($this->conditions['should'] as $condition) {
                 $hasShould = true;
-                $qr = ArrayTools::merge($qr, $condition->getParamArray());
+                $callParamsShould = ArrayTools::merge($callParamsShould, $condition->getParamArray());
             }
         }
 
@@ -412,48 +404,52 @@ class SherlockSearch extends SherlockCore {
             unset($this->facets['default']);
         }
         if (isset($this->facets['must']) && count($this->facets['must']) > 0) {
-            $qr = &$callParams['query']['bool'][$this->defaultMode];
-            if($this->defaultMode !== 'must') {
-                $callParams['query']['bool'][$this->defaultMode]['bool']['must'] = array();
-                $qr = &$callParams['query']['bool'][$this->defaultMode]['bool']['must'];
-            }
             foreach ($this->facets['must'] as $facet) {
                 if ($facet->getArgArrayForSearchQuery()) {
-                    $qr = ArrayTools::merge($qr, $facet->getArgArrayForSearchQuery());
+                    $callParamsMust = ArrayTools::merge($callParamsMust, $facet->getArgArrayForSearchQuery());
                 }
                 $callParams['aggregations'] = ArrayTools::merge($callParams['aggregations'], $facet->getArgArrayForAggregate());
             }
         }
         if (isset($this->facets['should']) && count($this->facets['should']) > 0) {
-            $qr = &$callParams['query']['bool'][$this->defaultMode];
-            if($this->defaultMode !== 'should') {
-                $callParams['query']['bool'][$this->defaultMode]['bool']['should'] = array();
-                $qr = &$callParams['query']['bool'][$this->defaultMode]['bool']['should'];
-            }
             foreach ($this->facets['should'] as $facet) {
                 if ($facet->getArgArrayForSearchQuery()) {
                     $hasShould = true;
-                    $qr = ArrayTools::merge($qr, $facet->getArgArrayForSearchQuery());
+                    $callParamsShould = ArrayTools::merge($callParamsShould, $facet->getArgArrayForSearchQuery());
                 }
                 $callParams['aggregations'] = ArrayTools::merge($callParams['aggregations'], $facet->getArgArrayForAggregate());
             }
         }
 
         if ($hasShould && !is_null($this->minimumShouldMatch)) {
-            $qr = &$callParams['query']['bool'];
-            if($this->defaultMode !== 'should') {
-                $qr = &$callParams['query']['bool'][$this->defaultMode]['bool'];
-            }
-            $qr['minimum_should_match'] = $this->minimumShouldMatch;
+            $callParamsShould['minimum_should_match'] = $this->minimumShouldMatch;
         }
 
         if(count($callParams['aggregations']) == 0) {
             unset($callParams['aggregations']);
         }
-        if(count($callParams['query']['bool'][$this->defaultMode]) == 0) {
-            unset($callParams['query']['bool']);
-            $callParams['query']['match_all'] = array();
-        }
+
+        $callParams['query'] = array(
+            'filtered' => array(
+                'filter' => array(
+                    'bool' => array(
+                        $this->defaultMode => array(
+                            $callParamsDefault,
+                            array(
+                                'bool' => array(
+                                    $alterMode => $callParamsAlter
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+        );
+
+        // if(count($callParams['query']['filtered']['filter']['bool'][$this->defaultMode]) == 0) {
+        //     unset($callParams['query']['filtered']['filter']['bool']);
+        //     $callParams['query']['filtered']['filter']['match_all'] = array();
+        // }
 
         return Json::encode($callParams);
     }
@@ -476,7 +472,7 @@ class SherlockSearch extends SherlockCore {
 
         //$callString .= '_search?sort=_score';
         $callString .= '_search';
-        
+
         //On spécifie l'index (0 par défaut)
         $callString .= '?from=' . $this->index;
 
