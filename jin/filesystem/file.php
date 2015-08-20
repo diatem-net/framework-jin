@@ -80,6 +80,25 @@ class File {
     
     
     /**
+     * Retourne le type MIME du fichier
+     */
+    public function getMimeType(){
+        $finfo = finfo_open(FILEINFO_MIME_TYPE); 
+        return finfo_file($finfo, $this->path);
+    }
+    
+    
+    /**
+     * Retourne le contenu binaire du fichier
+     * @return string
+     */
+    public function getBlob(){
+        $blob = fopen($this->path,'rb');
+        return stream_get_contents($blob);
+    }
+    
+    
+    /**
      * Retourne la somme de contrôle MD5
      * @param boolean $raw_output  Lorsque TRUE, retourne le prétraitement en format binaire brut avec une grandeur de 16.
      * @return string
@@ -129,6 +148,10 @@ class File {
     }
     
     
+    /**
+     * @depreciated Utiliser getBlob() en lieu et place.
+     * @return string
+     */
     public function getBinaryContent(){
 	$ret = fopen($this->path, 'r', true);
 	return base64_encode(stream_get_contents($ret));
