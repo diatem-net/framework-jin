@@ -269,8 +269,8 @@ class MailSender {
     }
     self::setMessage($content, true);
     }
-    
-    
+
+
     /** Construit le corps du message à partir d'un template prédéfini
      *  @param      string      $template           Chemin d'accès du template à utiliser pour le mail
      *  @param      array       $data               Données à substituer dans le template. Format array('clerecherchee' => 'valeur de remplacement')
@@ -283,11 +283,11 @@ class MailSender {
             return;
         }
         $content = file_get_contents($template);
-        
+
         foreach($data AS $k => $v){
             $content = StringTools::replaceAll($content, $k, $v);
         }
-        
+
         self::setMessage($content, true);
     }
 
@@ -415,7 +415,8 @@ class MailSender {
     // for each attached file, do...
     for ($i = 0; $i < count($this->attachements); $i++) {
         $filename = $this->attachements[$i]['aattach'];
-        $basename = basename($filename);
+        $basenameparts = explode('/', $filename);
+        $basename = end($basenameparts);
         $ctype = $this->attachements[$i]['actype']; // content-type
         $disposition = $this->attachements[$i]['adispo'];
 

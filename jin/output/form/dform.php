@@ -150,21 +150,21 @@ class DForm {
         }
         return false;
     }
-    
+
 
     /**
-     * Retourne un tableau associatif array(array('field'=>'','error'=>'')) 
+     * Retourne un tableau associatif array(array('field'=>'','error'=>''))
      * contenant l'ensemble des erreurs rencontrées sur le formulaire
      * @return array
      */
     public function getAllErrors(){
         return $this->checkForm(false);
     }
-    
-    
+
+
     /**
-     * teste la validité des données et renvoie un tableau associatif contenant 
-     * erreurs recontrées array(array('field'=>'','error'=>'')) 
+     * teste la validité des données et renvoie un tableau associatif contenant
+     * erreurs recontrées array(array('field'=>'','error'=>''))
      * @param boolean $saveFiles    (defaut : FALSE) Définit si le système doit
      * procéder à l'enregistrement des champs de type FILE
      * @return array
@@ -213,7 +213,7 @@ class DForm {
             } else {
                 $this->fields[$fieldName]['errors'] = $errors;
             }
-            
+
             foreach($this->fields[$fieldName]['errors'] AS $error){
                 $allErrors[] = array('field' => $fieldName, 'error' => $error);
             }
@@ -253,7 +253,7 @@ class DForm {
             } else {
                 $this->attachementFields[$fieldName]['errors'] = $errors;
             }
-            
+
             foreach($this->attachementFields[$fieldName]['errors'] AS $error){
                 $allErrors[] = array('field' => $fieldName, 'error' => $error);
             }
@@ -269,7 +269,9 @@ class DForm {
                         $uploadfile = $v['uploadfolder'];
                     }else{
                         //On conserve le nom du fichier originel
-                        $uploadfile = $v['uploadfolder'] . basename($_FILES[$fieldName]['name']);
+                        $basenameparts = explode('/', $_FILES[$fieldName]['name']);
+                        $basename = end($basenameparts);
+                        $uploadfile = $v['uploadfolder'] . $basename;
                     }
                     $this->attachementFields[$fieldName]['value'] = array(
                         'filename' => $_FILES[$fieldName]['name'],
@@ -284,7 +286,7 @@ class DForm {
                 }
             }
         }
-        
+
         return $allErrors;
     }
 
