@@ -18,7 +18,7 @@ use jin\lang\StringTools;
 class ArrayTools {
 
 
-    
+
     /** Permet de trier un tableau associatif en précisant la colonne à utiliser pour trier
      *  @param  array   $array  Tableau à trier
      *  @param  string  $index  Index de la colonne à utiliser pour effectuer le tri
@@ -159,8 +159,8 @@ class ArrayTools {
             }
             return $m;
         }
-        
-        
+
+
     }
 
 
@@ -188,7 +188,7 @@ class ArrayTools {
             }
             return $m;
         }
-        
+
     }
 
 
@@ -355,5 +355,18 @@ class ArrayTools {
         return array_keys($array);
     }
 
+    /**
+     * Supprime récursivement les éléments vides du tableau
+     * @param array $array  Tableau source
+     * @return array
+     */
+    public static function filterRecursive($array) {
+        foreach ($array as &$value) {
+            if (is_array($value)) {
+                $value = self::filterRecursive($value);
+            }
+        }
+        return array_filter($array);
+    }
 
 }
