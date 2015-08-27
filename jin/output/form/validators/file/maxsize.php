@@ -35,28 +35,30 @@ class Maxsize extends GlobalFileValidator implements ValidatorInterface{
     */
     public function isValid($valeur){
         parent::resetErrors();
-
-        if(parent::getArgValue('maxsize') <= 0) {
-            return true;
-        }
-        if($valeur['size'] > parent::getArgValue('maxsize')){
-            $eMsg = Trad::trad('maxsize');
-
-            $o = parent::getArgValue('maxsize');
-            $ko = parent::getArgValue('maxsize')/1024;
-            $mo = parent::getArgValue('maxsize')/1024/1024;
-
-            $msize = $o.' octets';
-            if($mo > 1){
-                $msize = NumberTools::numberFormat($mo, 2).' mo';
-            }else if($ko > 1){
-                $msize = NumberTools::numberFormat($ko, 2).' ko';
+        
+        if(isset($valeur['size'])){
+            if(parent::getArgValue('maxsize') <= 0) {
+                return true;
             }
+            if($valeur['size'] > parent::getArgValue('maxsize')){
+                $eMsg = Trad::trad('maxsize');
 
-            $eMsg = StringTools::replaceAll($eMsg, '%maxsize%', $msize);
-            parent::addError($eMsg);
+                $o = parent::getArgValue('maxsize');
+                $ko = parent::getArgValue('maxsize')/1024;
+                $mo = parent::getArgValue('maxsize')/1024/1024;
 
-            return false;
+                $msize = $o.' octets';
+                if($mo > 1){
+                    $msize = NumberTools::numberFormat($mo, 2).' mo';
+                }else if($ko > 1){
+                    $msize = NumberTools::numberFormat($ko, 2).' ko';
+                }
+
+                $eMsg = StringTools::replaceAll($eMsg, '%maxsize%', $msize);
+                parent::addError($eMsg);
+
+                return false;
+            }
         }
 
         return true;
