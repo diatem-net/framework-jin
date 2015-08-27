@@ -36,28 +36,30 @@ class Minsize extends GlobalFileValidator implements ValidatorInterface{
     public function isValid($valeur){
         parent::resetErrors();
 
-        if(parent::getArgValue('minsize') <= 0) {
-            return true;
-        }
-
-        if($valeur['size'] <  parent::getArgValue('minsize')){
-            $eMsg = Trad::trad('minsize');
-
-            $o = parent::getArgValue('minsize');
-            $ko = parent::getArgValue('minsize')/1024;
-            $mo = parent::getArgValue('minsize')/1024/1024;
-
-            $msize = $o.' octets';
-            if($mo > 1){
-                $msize = NumberTools::numberFormat($mo, 2).' mo';
-            }else if($ko > 1){
-                $msize = NumberTools::numberFormat($ko, 2).' ko';
+        if(isset($valeur['size'])){
+            if(parent::getArgValue('minsize') <= 0) {
+                return true;
             }
 
-            $eMsg = StringTools::replaceAll($eMsg, '%minsize%', $msize);
-            parent::addError($eMsg);
+            if($valeur['size'] <  parent::getArgValue('minsize')){
+                $eMsg = Trad::trad('minsize');
 
-            return false;
+                $o = parent::getArgValue('minsize');
+                $ko = parent::getArgValue('minsize')/1024;
+                $mo = parent::getArgValue('minsize')/1024/1024;
+
+                $msize = $o.' octets';
+                if($mo > 1){
+                    $msize = NumberTools::numberFormat($mo, 2).' mo';
+                }else if($ko > 1){
+                    $msize = NumberTools::numberFormat($ko, 2).' ko';
+                }
+
+                $eMsg = StringTools::replaceAll($eMsg, '%minsize%', $msize);
+                parent::addError($eMsg);
+
+                return false;
+            }
         }
 
         return true;
