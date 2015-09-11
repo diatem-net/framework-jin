@@ -24,6 +24,12 @@ class Query {
      *  @var array  Liste des arguments
      */
     private $arguments = array();
+    
+    /**
+     *
+     * @var array   Typage des arguments
+     */
+    private $argumentsType = array();
 
 
     /**
@@ -149,9 +155,19 @@ class Query {
 
         foreach ($this->arguments as $name => $argument) {
             if(is_int($name)) {
-                $psql = StringTools::replaceFirst($psql, '\?', $argument);
+                if($this->argumentsType[$name] == self::$SQL_STRING){
+                    $psql = StringTools::replaceFirst($psql, '\?', '\''.$argument.'\'');
+                }else{
+                    $psql = StringTools::replaceFirst($psql, '\?', $argument);
+                }
+                
             } else {
-                $psql = StringTools::replaceFirst($psql, '\:'.$name, $argument);
+                if($this->argumentsType[$name] == self::$SQL_STRING){
+                    $psql = StringTools::replaceFirst($psql, '\:'.$name, '\''.$argument.'\'');
+                }else{
+                    $psql = StringTools::replaceFirst($psql, '\:'.$name, $argument);
+                }
+                
             }
         }
 
@@ -238,8 +254,10 @@ class Query {
 
         if($name && !is_int($name)) {
             $this->arguments[$name] = $valeur;
+            $this->argumentsType[$name] = $type;
         } else {
             $this->arguments[] = $valeur;
+            $this->argumentsType[] = $type;
         }
 
         return '?';
