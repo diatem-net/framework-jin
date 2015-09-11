@@ -7,6 +7,10 @@ class DefaultController{
         
     }
     
+    public function onPost($args){
+        
+    }
+    
     public function beforeRender(){
     }
     
