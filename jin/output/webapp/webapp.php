@@ -21,6 +21,7 @@ class WebApp {
         self::$routeur = new Routeur();
         
         self::$page->onInit();
+        self::$page->onPost();
         self::$page->beforeRender();
         echo self::$page->render();
         self::$page->afterRender();
