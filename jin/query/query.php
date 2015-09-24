@@ -54,6 +54,12 @@ class Query {
      *  @var boolean     Type SQL datetime
      */
     public static $SQL_DATETIME = 4;
+    
+    
+     /**
+     *  @var boolean     Type SQL date
+     */
+    public static $SQL_DATE = 5;
 
 
     /**
@@ -242,6 +248,23 @@ class Query {
                 try{
                     $convert = new \DateTime($valeur);
                     $valeur = $convert->format('Y-m-d H:i:s');
+                } catch (Exception $ex) {
+                    throw new Exception('L\'argument n\'est pas de type SQL_DATETIME (Instance de DateTime attendue ou String au format YYYY-mm-dd HH:ii:ss) (valeur : '.$valeur.')');
+                }
+            } else {
+                $valeur = $valeur->format('Y-m-d H:i:s');
+            }
+        } elseif ($type == self::$SQL_DATE) {
+            if (!is_a($valeur, 'DateTime')){
+                if(!StringTools::contains($valeur, '/')){
+                    $convert = new \DateTime($valeur);
+                    $valeur = $convert->format('Y-m-d H:i:s');
+                }else{
+                    $convert = \DateTime::createFromFormat('d/m/Y', $valeur);
+                    $valeur = $convert->format('Y-m-d H:i:s');
+                }
+                try{
+                    
                 } catch (Exception $ex) {
                     throw new Exception('L\'argument n\'est pas de type SQL_DATETIME (Instance de DateTime attendue ou String au format YYYY-mm-dd HH:ii:ss) (valeur : '.$valeur.')');
                 }
