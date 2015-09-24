@@ -34,6 +34,9 @@ class Numrange extends GlobalValidator implements ValidatorInterface{
      */
     public function isValid($valeur){
 	parent::resetErrors();
+        if(!is_numeric($valeur)){
+            return true;
+        }
 	if(!is_numeric($valeur) || $valeur < parent::getArgValue('minValue') || $valeur > parent::getArgValue('maxValue')){
 	    $eMsg = Trad::trad('numrange');
 	    $eMsg = StringTools::replaceAll($eMsg, '%minValue%', parent::getArgValue('minValue'));
