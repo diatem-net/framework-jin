@@ -34,6 +34,10 @@ class Isdateinferior extends GlobalValidator implements ValidatorInterface{
      */
     public function isValid($valeur){
 	parent::resetErrors();
+        
+        if($valeur == ''){
+            return true;
+        }
 	
 	$format = $this->getArgValue('format');
 	$dValidator = new Isdate(array('format' => $format));
