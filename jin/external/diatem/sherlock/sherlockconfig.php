@@ -63,6 +63,11 @@ class SherlockConfig extends SherlockCore {
         //Création des paramètres d'appel
         $mapping = array();
 
+        $mapping['settings']['analysis']['analyzer'] = array();
+        $mapping['settings']['analysis']['analyzer']['folding'] = array();
+        $mapping['settings']['analysis']['analyzer']['folding']['tokenizer'] = 'whitespace';
+        $mapping['settings']['analysis']['analyzer']['folding']['filter'] = array('lowercase', 'asciifolding');
+
         //Création des tokenizers pour la gestion de l'autocompletion
         $mapping['settings'] = array();
         $mapping['settings']['analysis'] = array();
@@ -89,6 +94,13 @@ class SherlockConfig extends SherlockCore {
         $mapping['settings']['analysis']['analyzer']['facetanalyzer']['type'] = 'custom';
         $mapping['settings']['analysis']['analyzer']['facetanalyzer']['tokenizer'] = 'keyword';
         $mapping['settings']['analysis']['analyzer']['facetanalyzer']['filter'] = array();
+
+        //Analyzer pour corriger les erreurs de l'analyzer "french"
+        $mapping['settings']['analysis']['analyzer']['frenchanalyzer'] = array();
+        $mapping['settings']['analysis']['analyzer']['frenchanalyzer']['type'] = 'custom';
+        $mapping['settings']['analysis']['analyzer']['frenchanalyzer']['tokenizer'] = 'letter';
+        $mapping['settings']['analysis']['analyzer']['frenchanalyzer']['pretty'] = 'true';
+        $mapping['settings']['analysis']['analyzer']['frenchanalyzer']['filter'] = array('lowercase', 'asciifolding');
 
         //Création du mapping
         $mapping['mappings'] = array();
