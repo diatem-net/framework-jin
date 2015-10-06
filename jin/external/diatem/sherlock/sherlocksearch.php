@@ -439,34 +439,49 @@ class SherlockSearch extends SherlockCore {
             unset($query['aggregations']);
         }
 
+        $queryQueryArray = array();
+        if(!empty($queryDefault)) {
+            array_push($queryQueryArray, $queryDefault);
+        }
+        if(!empty($queryAlter)) {
+            array_push($queryQueryArray,
+                array(
+                    'bool' => array(
+                        $alterMode => $queryAlter
+                    )
+                )
+            );
+        }
+
+        $queryFilterArray = array();
+        if(!empty($filterDefault)) {
+            array_push($queryFilterArray, $filterDefault);
+        }
+        if(!empty($filterAlter)) {
+            array_push($queryFilterArray,
+                array(
+                    'bool' => array(
+                        $alterMode => $filterAlter
+                    )
+                )
+            );
+        }
+
         $query['query'] = array(
             'filtered' => array(
                 'query' => array(
                     'bool' => array(
-                        $this->defaultMode => array(
-                            $queryDefault,
-                            array(
-                                'bool' => array(
-                                    $alterMode => $queryAlter
-                                )
-                            )
-                        )
+                        $this->defaultMode => $queryQueryArray
                     )
                 ),
                 'filter' => array(
                     'bool' => array(
-                        $this->defaultMode => array(
-                            $filterDefault,
-                            array(
-                                'bool' => array(
-                                    $alterMode => $filterAlter
-                                )
-                            )
-                        )
+                        $this->defaultMode => $queryFilterArray
                     )
                 )
             )
         );
+
 
         $query = ArrayTools::filterRecursive($query);
 
