@@ -158,7 +158,18 @@ class DForm {
      * @return array
      */
     public function getAllErrors(){
-        return $this->checkForm(false);
+        $errors = array();
+        foreach($this->fields AS $k => $f){
+            foreach($f['errors'] AS $e){
+                $errors[] = array('field' => $k, 'error' => $e);
+            }
+        }
+        foreach($this->attachementFields AS $k => $f){
+            foreach($f['errors'] AS $e){
+                $errors[] = array('field' => $k, 'error' => $e);
+            }
+        }
+        return $errors;
     }
 
 
