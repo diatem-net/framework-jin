@@ -21,12 +21,6 @@ class ConditionOnNumericRange implements SearchItemInterface{
      */
     private $fields;
 
-    /**
-     *
-     * @var string  Valeur de test
-     */
-    private $values;
-
 
     /** Valeur de bas de plage
      *
@@ -49,9 +43,16 @@ class ConditionOnNumericRange implements SearchItemInterface{
      */
     public function __construct($fields, $values) {
         $this->fields = $fields;
-        $this->values = $values;
-        $this->min = $this->values[0];
-        $this->max = $this->values[1];
+        if(is_int($values)) {
+            $this->min = $values;
+        } elseif(is_array($values)) {
+            if(isset($values[0])) {
+                $this->min = $values[0];
+            }
+            if(isset($values[1])) {
+                $this->max = $values[1];
+            }
+        }
     }
 
 
@@ -61,11 +62,14 @@ class ConditionOnNumericRange implements SearchItemInterface{
      */
     public function getParamArray(){
         $outArray = array();
-        foreach ($this->fields as $field){
-
+        foreach ($this->fields as $field) {
             $condArray['range'] = array();
-            $condArray['range'][$field]['gte'] = $this->min;
-            $condArray['range'][$field]['lte'] = $this->max;
+            if($this->min) {
+                $condArray['range'][$field]['gte'] = $this->min;
+            }
+            if($this->max) {
+                $condArray['range'][$field]['lte'] = $this->max;
+            }
             $outArray[] = $condArray;
         }
 
