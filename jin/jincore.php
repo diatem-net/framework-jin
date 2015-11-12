@@ -33,6 +33,12 @@ class JinCore {
      * @var string
      */
     private static $jinRootUrl;
+    
+    /**
+     * Chemin du dossier de surcharge
+     * @var string
+     */
+    private static $surchargeAbsolutePath;
 
     /** Fonction appelée automatiquement à chaque besoin d'une classe par le système
      *
@@ -89,6 +95,25 @@ class JinCore {
 	$basePath = str_replace('jin'.DIRECTORY_SEPARATOR.'jincore.php', '', $basePath);        
         
 	return $basePath;
+    }
+    
+    /**
+     * Retourne le chemin relatif (à partir de la racine du projet) du dossier de surcharge
+     */
+    public static function getSurchargeRelativePath(){
+        if(!self::$surchargeAbsolutePath){
+            self::$surchargeAbsolutePath = self::getConfigValue('surchargeAbsolutePath');
+        }
+        return self::$surchargeAbsolutePath;
+    }
+    
+    
+    /**
+     * Force JIN à utiliser un autre dossier de surcharge JIN
+     * @param type $path
+     */
+    public static function changeSurchargeRelativePath($path){
+        self::$surchargeAbsolutePath = $path;
     }
 
     /**
@@ -153,7 +178,7 @@ class JinCore {
     public static function getConfigValue($configParam) {
 	if (is_null(self::$config)) {
 	    self::$config = new IniFile(self::getJinRootPath() . 'config.ini');
-	    $spath = self::getContainerPath() . self::getConfigValue('surchargeAbsolutePath') . '/config.ini';
+	    $spath = self::getContainerPath() . self::getSurchargeRelativePath() . '/config.ini';
 	    if (file_exists($spath) && self::$config->get('surcharge') == 1) {
 		self::$config->surcharge($spath);
 	    }
