@@ -42,8 +42,7 @@ class AssetFile {
      */
     public function __construct($relativePath) {
 	$surcharge = JinCore::getContainerPath() . JinCore::getSurchargeRelativePath() . '/' . JinCore::getRelativePathAssets() . $relativePath;
-        var_dump(JinCore::getContainerPath());
-        var_dump($surcharge);
+
 	if(JinCore::getConfigValue('surcharge') && file_exists($surcharge)){
 	    //Surcharge du fichier
 	    $this->file = new File($surcharge);
