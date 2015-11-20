@@ -185,7 +185,7 @@ final class Crop extends ImageFilter implements FilterInterface{
                 $xdecay = 0;
             }else if($this->horizontalPosition == self::HORIZONTAL_RIGHT){
                 $xdecay = $startWidth - $this->width;
-            }else if($this->verticalPosition == self::HORIZONTAL_CENTER){
+            }else if($this->horizontalPosition == self::HORIZONTAL_CENTER){
                 $xdecay = ($startWidth - $this->width) / 2;
             }
             
