@@ -99,7 +99,7 @@ class Twitter
      * @throws \Exception
      */
     public function getLastTweetsContainingHashtag($hashtag, $count = 100) {
-        return $this->getLastTweetsFromQuery($hashtag, $count);
+        return $this->getLastTweetsFromQuery(trim($hashtag, '#'), $count);
     }
 
     /**
