@@ -49,6 +49,23 @@ class Instagram
     }
 
     /**
+     * Génère un token d'accès
+     * @param  string $client_id     Identifiant de l'application (voir https://www.instagram.com/developer/clients/manage/)
+     * @param  string $redirect_uri  URL de redirection           (voir https://www.instagram.com/developer/clients/manage/)
+     * @param  string $scope         Clé secrète de l'application (voir https://www.instagram.com/developer/clients/manage/)
+     */
+    public static function generateToken($client_id, $redirect_uri, $scope = 'public_content') {
+        $params = array(
+            'client_id'     => $client_id,
+            'redirect_uri'  => $redirect_uri,
+            'response_type' => 'token',
+            'scope'         => $scope
+        );
+        header('location:https://www.instagram.com/oauth/authorize/?' . http_build_query($params));
+        die;
+    }
+
+    /**
      * Effectue une requête directe sur l'API
      * @param string $query         Requête
      * @param array  $params        [optionel] Paramètres
