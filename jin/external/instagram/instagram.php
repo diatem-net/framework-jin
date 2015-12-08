@@ -79,7 +79,7 @@ class Instagram
 
     /**
      * Retourne les dernières photos contenant le tag indiqué
-     * @param string  $user_id      Tag (avec ou sans #)
+     * @param string  $user_id      Nom de l'utilisateur
      * @param integer $count        Nombre de posts à retourner
      * @return array                Tableau de tableaux associatifs contenant les données des photos
      */

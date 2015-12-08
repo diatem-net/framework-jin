@@ -68,7 +68,7 @@ class Pinterest
 
     /**
      * Retourne les deniers pins contenant le tag indiqué
-     * @param string  $hashtag      Tag (avec ou sans #)
+     * @param string  $hashtag      Nom de l'utilisateur
      * @param integer $count        Nombre de pins à retourner
      * @return array                Tableau de tableaux associatifs contenant les données des pins
      */
