@@ -15,34 +15,29 @@ class Twitter
 {
 
     /**
-     *
      * @var string  Twitter CONSUMER_KEY
      */
     private $consumer_key;
 
     /**
-     *
      * @var string  Twitter CONSUMER_SECRET
      */
     private $consumer_secret;
 
     /**
-     *
      * @var string  Twitter ACCESS TOKEN
      */
     private $access_token;
 
     /**
-     *
      * @var string  Twitter ACCESS TOKEN SECRET
      */
     private $access_token_secret;
 
     /**
-     *
      * @var TwitterOAuth Instance de la classe TwitterOAuth
      */
-    private $toa;
+    private $api;
 
 
     /**
@@ -61,7 +56,7 @@ class Twitter
         $libPath = JinCore::getJinRootPath().JinCore::getRelativeExtLibs().'twitterauth/';
         require_once $libPath.'twitteroauth/twitteroauth.php';
 
-        $this->toa = new \TwitterOAuth($this->consumer_key, $this->consumer_secret, $this->access_token, $this->access_token_secret);
+        $this->api = new \TwitterOAuth($this->consumer_key, $this->consumer_secret, $this->access_token, $this->access_token_secret);
     }
 
     /**
@@ -71,7 +66,7 @@ class Twitter
      * @return Array
      */
     public function query($query, $params = array()) {
-        return $this->toa->get($query, $params);
+        return $this->api->get($query, $params);
     }
 
     /**
