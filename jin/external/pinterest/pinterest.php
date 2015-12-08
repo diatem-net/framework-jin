@@ -23,8 +23,6 @@ class Pinterest
 
     /**
      * @var string  Pinterest ACCESS_TOKEN
-     * Pour en obtenir un : https://developers.pinterest.com/tools/access_token/
-     * Exemplt d'URL d'autorisation : https://api.pinterest.com/oauth/?response_type=token&scope=read&redirect_uri=HTTPS_REDIRECT_URI&client_id=CLIENT_ID&client_secret=CLIENT_SECRET
      */
     private $access_token;
 
@@ -41,12 +39,30 @@ class Pinterest
 
     /**
      * Constructeur
-     * @param string $client_id  Id Client. (A générer sur https://developers.pinterest.com/apps/)
+     * @param string $client_id     Identifiant de l'application
      */
     public function __construct($client_id, $access_token, $debug_mode = false) {
         $this->client_id = $client_id;
         $this->access_token = $access_token;
         $this->debug_mode = $debug_mode;
+    }
+
+    /**
+     * Génère un token d'accès
+     * @param string $client_id      Identifiant de l'application
+     * @param string $client_secret  Clé secrète de l'application
+     * @param string $redirect_uri   URL de redirection
+     * @param string $scope          [optionel] Degrés d'authorisation dont l'application à besoin (Défault : read)
+     */
+    public static function generateToken($client_id, $client_secret, $redirect_uri, $scope = 'read') {
+        $params = array(
+            'client_id'     => $client_id,
+            'redirect_uri'  => $redirect_uri,
+            'response_type' => 'token',
+            'scope'         => $scope
+        );
+        header('location:https://api.pinterest.com/oauth/?' . http_build_query($params));
+        die;
     }
 
     /**
@@ -68,23 +84,10 @@ class Pinterest
 
     /**
      * Retourne les deniers pins contenant le tag indiqué
-     * @param string  $hashtag      Nom de l'utilisateur
-     * @param integer $count        Nombre de pins à retourner
-     * @return array                Tableau de tableaux associatifs contenant les données des pins
-     */
-    // public function getLastPinsContainingHashtag($hashtag, $count = 100){
-    //     return $this->query('tags/'.trim($hashtag, '#').'/media/recent', array(
-    //         'count' => $count
-    //     ));
-    // }
-
-    /**
-     * Retourne les deniers pins contenant le tag indiqué
      * @param string  $user_id      Tag (avec ou sans #)
-     * @param integer $count        Nombre de pins à retourner
-     * @return array                Tableau de tableaux associatifs contenant les données des pins
+     * @return array                Tableau de pins
      */
-    public function getLastPinsFromUser($user_id, $count = 100){
+    public function getLastPinsFromUser($user_id){
         return $this->query('pidgets/users/'.$user_id.'/pins');
     }
 
