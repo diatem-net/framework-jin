@@ -23,9 +23,6 @@ class LinkedIn
 
     /**
      * @var string  LinkedIn ACCESS_TOKEN
-     * Pour obtenir un Authorization code : https://www.linkedin.com/uas/oauth2/authorization?response_type=code&scope=r_basicprofile&client_id=CLIENT_ID&redirect_uri=REDIRECT_URI&state=RANDOM_STRING
-     * Pour obtenir un Auth code    : LinkedIn::generateAuthCode(CLIENT_ID, REDIRECT_URI, STATE, SCOPE);
-     * Pour obtenir un Access token : $token = LinkedIn::generateToken(CODE, REDIRECT_URI, CLIENT_ID, CLIENT_SECRET);
      */
     private $access_token;
 
@@ -42,7 +39,9 @@ class LinkedIn
 
     /**
      * Constructeur
-     * @param string $client_id  Id Client. (A générer sur https://developer.linkedin.com/)
+     * @param string $client_id      Identifiant de l'application
+     * @param string $access_token   Token d'accès
+     * @param string $debug_mode     [optionel] Activer le mode debug
      */
     public function __construct($client_id, $access_token, $debug_mode = false) {
         $this->client_id = $client_id;
@@ -55,7 +54,7 @@ class LinkedIn
      * @param  string $client_id     Identifiant de l'application
      * @param  string $redirect_uri  URL de redirection
      * @param  string $state         Chaîne aléatoire à vérifier après la redirection
-     * @param  string $scope         Degrés d'authorisation dont l'application à besoin (Défault : r_basicprofile)
+     * @param  string $scope         [optionel] Degrés d'authorisation dont l'application à besoin (Défault : r_basicprofile)
      * @return string                Token d'accès, valable 60 jours
      */
     public static function generateAuthCode($client_id, $redirect_uri, $state, $scope = 'r_basicprofile rw_company_admin') {
@@ -93,9 +92,9 @@ class LinkedIn
 
     /**
      * Effectue une requête directe sur l'API
-     * @param string $query         Requête
-     * @param array  $params        [optionel] Paramètres
-     * @return Array
+     * @param  string $query         Requête
+     * @param  array  $params        [optionel] Paramètres
+     * @return array                 Tableau de données
      */
     public function query($query, $params = array()) {
         $curl = new Curl();
@@ -111,8 +110,8 @@ class LinkedIn
     /**
      * Retourne les derniers posts publiés sur la page d'une entreprise
      * @param string  $company_id   Nom de l'entreprise
-     * @param integer $count        Nombre de posts à retourner
-     * @return array                Tableau de tableaux associatifs contenant les données des posts
+     * @param integer $count        [optionel] Nombre de posts à retourner (Défault : 100)
+     * @return array                Tableau de posts
      */
     public function getLastUpdatesFromCompany($company_id, $count = 100){
         return $this->query('companies/'.$company_id.'/updates', array(

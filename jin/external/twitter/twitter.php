@@ -47,16 +47,16 @@ class Twitter
 
     /**
      * Constructeur
-     * @param string $consumer_key  Paramétrage Twitter (Consumer Key)
-     * @param string $consumer_secret	Paramétrage Twitter (Consumer secret)
-     * @param string $access_token  Paramétrage Twitter (Access Token)
-     * @param string $access_token_secret   Paramétrage Twitter (Access Token Secret)
+     * @param string $consumer_key         Paramétrage Twitter (Consumer Key)
+     * @param string $consumer_secret	   Paramétrage Twitter (Consumer secret)
+     * @param string $access_token         Paramétrage Twitter (Access Token)
+     * @param string $access_token_secret  Paramétrage Twitter (Access Token Secret)
      */
     public function __construct($consumer_key, $consumer_secret, $access_token, $access_token_secret) {
-        $this->consumer_key = $consumer_key;
-        $this->consumer_secret = $consumer_secret;
-        $this->access_token = $access_token;
-        $this->access_token_secret = $access_token_secret;
+        $this->consumer_key         = $consumer_key;
+        $this->consumer_secret      = $consumer_secret;
+        $this->access_token         = $access_token;
+        $this->access_token_secret  = $access_token_secret;
 
         $libPath = JinCore::getJinRootPath().JinCore::getRelativeExtLibs().'twitterauth/';
         require_once $libPath.'twitteroauth/twitteroauth.php';
@@ -76,9 +76,9 @@ class Twitter
 
     /**
      * Effectue une recherche sur tous les Tweets, dans un délai maximal de 21 jours et une limite de 100 résultats
-     * @param string $query         Recherche à effectuer
-     * @param int $count            [optionel] Nombre max de résultats (100 par défaut)
-     * @return Array
+     * @param  string $query         Recherche à effectuer
+     * @param  int $count            [optionel] Nombre max de résultats (100 par défaut)
+     * @return array
      * @throws \Exception
      */
     public function getLastTweetsFromQuery($query, $count = 100) {
@@ -93,9 +93,9 @@ class Twitter
 
     /**
      * Retourne la liste des derniers Tweets comportant un HashTag précis, dans un délai maximal de 21 jours et une limite de 100 résultats
-     * @param string $hashtag	    Hashtag à rechercher
-     * @param int $count	        [optionel] Nombre max de résultats (100 par défaut)
-     * @return Array
+     * @param  string $hashtag	    Hashtag à rechercher
+     * @param  int $count	        [optionel] Nombre max de résultats (100 par défaut)
+     * @return array
      * @throws \Exception
      */
     public function getLastTweetsContainingHashtag($hashtag, $count = 100) {
@@ -104,10 +104,10 @@ class Twitter
 
     /**
      * Retourne la liste des derniers Tweets d'un utilisateur
-     * @param string $screen_name   Nom de l'utilisateur
-     * @param int $with_replies     [optionel] Inclure les réponses (false par défaut)
-     * @param int $with_rt          [optionel] Inclure les retweets (false par défaut)
-     * @param int $count            [optionel] Nombre max de résultats (100 par défaut, max 200)
+     * @param  string $screen_name   Nom de l'utilisateur
+     * @param  int $with_replies     [optionel] Inclure les réponses (false par défaut)
+     * @param  int $with_rt          [optionel] Inclure les retweets (false par défaut)
+     * @param  int $count            [optionel] Nombre max de résultats (100 par défaut, max 200)
      * @return Array
      * @throws \Exception
      */
@@ -130,4 +130,5 @@ class Twitter
     public function getFollowersUserIds() {
         return $this->query('followers/ids');
     }
+
 }

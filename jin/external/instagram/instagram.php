@@ -11,7 +11,7 @@ use jin\dataformat\Json;
 
 /**
  * Méthodes d'implémentation de l'API Instagram.
- * https://instagram.com/developer/
+ * https://www.instagram.com/developer/clients/manage/
  */
 class Instagram
 {
@@ -23,7 +23,6 @@ class Instagram
 
     /**
      * @var string  Instagram ACCESS_TOKEN
-     * Pour en obtenir un : https://www.instagram.com/oauth/authorize/?client_id=CLIENT_ID&redirect_uri=REDIRECT_URI&response_type=token&scope=public_content
      */
     private $access_token;
 
@@ -40,7 +39,9 @@ class Instagram
 
     /**
      * Constructeur
-     * @param string $client_id  Id Client. (A générer sur https://instagram.com/developer/)
+     * @param string $client_id      Identifiant de l'application
+     * @param string $access_token   Token d'accès
+     * @param string $debug_mode     [optionel] Activer le mode debug
      */
     public function __construct($client_id, $access_token, $debug_mode = false) {
         $this->client_id = $client_id;
@@ -50,9 +51,9 @@ class Instagram
 
     /**
      * Génère un token d'accès
-     * @param  string $client_id     Identifiant de l'application (voir https://www.instagram.com/developer/clients/manage/)
-     * @param  string $redirect_uri  URL de redirection           (voir https://www.instagram.com/developer/clients/manage/)
-     * @param  string $scope         Clé secrète de l'application (voir https://www.instagram.com/developer/clients/manage/)
+     * @param string $client_id      Identifiant de l'application
+     * @param string $redirect_uri   URL de redirection
+     * @param string $scope          [optionel] Degrés d'authorisation dont l'application à besoin (Défault : public_content)
      */
     public static function generateToken($client_id, $redirect_uri, $scope = 'public_content') {
         $params = array(
@@ -67,9 +68,9 @@ class Instagram
 
     /**
      * Effectue une requête directe sur l'API
-     * @param string $query         Requête
-     * @param array  $params        [optionel] Paramètres
-     * @return Array
+     * @param  string $query        Requête
+     * @param  array  $params       [optionel] Paramètres
+     * @return array                Tableau de données
      */
     public function query($query, $params = array()) {
         $curl = new Curl();
@@ -84,9 +85,9 @@ class Instagram
 
     /**
      * Retourne les dernières photos contenant le tag indiqué
-     * @param string  $hashtag      Tag (avec ou sans #)
-     * @param integer $count        Nombre de posts à retourner
-     * @return array                Tableau de tableaux associatifs contenant les données des photos
+     * @param  string  $hashtag     Tag (avec ou sans #)
+     * @param  integer $count       [optionel] Nombre de posts à retourner (Défault : 100)
+     * @return array                Tableau de photos
      */
     public function getLastPicturesContainingHashtag($hashtag, $count = 100){
         return $this->query('tags/'.trim($hashtag, '#').'/media/recent', array(
@@ -96,9 +97,9 @@ class Instagram
 
     /**
      * Retourne les dernières photos contenant le tag indiqué
-     * @param string  $user_id      Nom de l'utilisateur
-     * @param integer $count        Nombre de posts à retourner
-     * @return array                Tableau de tableaux associatifs contenant les données des photos
+     * @param  string  $user_id     Nom de l'utilisateur
+     * @param  integer $count       [optionel] Nombre de posts à retourner (Défault : 100)
+     * @return array                Tableau de photos
      */
     public function getLastPicturesFromUser($user_id, $count = 100){
         return $this->query('users/'.$user_id.'/media/recent', array(
