@@ -63,6 +63,26 @@ class Facebook
     }
 
     /**
+     * Génère un token d'accès longue durée (60 jours)
+     * @param  string $client_id      Identifiant de l'application
+     * @param  string $client_secret  Clé secrète de l'application
+     * @param  string $client_secret  Clé secrète de l'application
+     * @return string                 Token d'accès valable 60 jours
+     */
+    public static function generateLongLifeToken($client_id, $client_secret, $exchange_token) {
+        $params = array(
+            'client_id'         => $client_id,
+            'client_secret'     => $client_secret,
+            'fb_exchange_token' => $exchange_token,
+            'grant_type'        => 'fb_exchange_token'
+        );
+        header('location:https://graph.facebook.com/oauth/access_token?' . http_build_query($params));
+        die;
+    }
+
+
+
+    /**
      * Retourne la liste des derniers statuts d'une page
      * @param  string $page_name    Nom de la page
      * @param  int $count           [optionel] Nombre max de résultats (Défault: 100)
