@@ -11,6 +11,7 @@ class RangeFacet implements Iterator{
     private $fieldName;
     private $facetName;
     private $renderLimit;
+    private $ranges = array();
     private $ESData = array();
     private $selectedValue = null;
     private $childFacets = null;
@@ -36,10 +37,10 @@ class RangeFacet implements Iterator{
     public function getArgArrayForAggregate(){
         $outArray = array();
         $outArray[$this->facetName] = array();
-        $outArray[$this->facetName]['terms'] = array();
-        $outArray[$this->facetName]['terms']['field'] = $this->fieldName;
-        $outArray[$this->facetName]['terms']['size'] = $this->renderLimit;
-
+        $outArray[$this->facetName]['range'] = array();
+        $outArray[$this->facetName]['range']['field'] = $this->fieldName;
+        $outArray[$this->facetName]['range']['size'] = $this->renderLimit;
+        $outArray[$this->facetName]['range']['ranges'] = $this->ranges;
         return $outArray;
     }
 
@@ -68,6 +69,17 @@ class RangeFacet implements Iterator{
                 $this->ESData[$key]['selected'] = $this->isValueSelected($d['key']);
             }
         }
+    }
+
+    public function addRange($from = null, $to = null){
+        $range = array();
+        if(!is_null($from)) {
+            $range['from'] = $from;
+        }
+        if(!is_null($to)) {
+            $range['to'] = $to;
+        }
+        $this->ranges[] = $range;
     }
 
     public function isValueSelected($value){
