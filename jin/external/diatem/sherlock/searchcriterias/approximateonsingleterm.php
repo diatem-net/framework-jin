@@ -25,17 +25,24 @@ class ApproximateOnSingleTerm implements SearchItemInterface{
     *
     * @var string  Valeur de test
     */
-    private $values;
+    private $value;
+
+    /**
+    *
+    * @var string  Écart acceptable (utilisé par l'algorithme de Levenstein)
+    */
+    private $fuzziness;
 
 
     /**	Constructeur
     *
     * @param array $fields Noms des champs sur lesquels appliquer le filtre
-    * @param string $values  Valeur de test
+    * @param string $value  Valeur de test
     */
-    public function __construct($fields, $values) {
-        $this->fields = $fields;
-        $this->values = $values;
+    public function __construct($fields, $value, $fuzziness = 'AUTO') {
+        $this->fields    = $fields;
+        $this->value    = $value;
+        $this->fuzziness = $fuzziness;
     }
 
 
@@ -48,7 +55,9 @@ class ApproximateOnSingleTerm implements SearchItemInterface{
         foreach ($this->fields as $field){
             $critArray = array();
             $critArray['fuzzy'] = array();
-            $critArray['fuzzy'][$field] = $this->values;
+            $critArray['fuzzy'][$field] = array();
+            $critArray['fuzzy'][$field]['value'] = $this->value;
+            $critArray['fuzzy'][$field]['fuzziness'] = $this->fuzziness;
             $outArray[] = $critArray;
         }
 

@@ -143,15 +143,16 @@ class SherlockSearch extends SherlockCore {
      * @param string $value         Terme recherché
      * @param string $fieldNames    Liste des champs dans lesquels effectuer la recherche. (Séparés par des virgules, sans espaces)
      * @param boolean $approximate  [optionel] Définit si la recherche doit porter sur le terme EXACT (FALSE) ou sur une approximation (TRUE). (TRUE par défaut)
-     * @param string $mode          Mode (must | should | default)
+     * @param string $mode          [optionel] Mode (must | should | default)
+     * @param integer $fuzziness    [optionel] Écart acceptable (pour les recherche approximatives uniquement)
      * @return boolean  Succes ou echec
      */
-    public function addSingleTermCriteria($value, $fieldNames, $approximate = true, $mode = null) {
+    public function addSingleTermCriteria($value, $fieldNames, $approximate = true, $mode = null, $fuzziness = 'AUTO') {
         if(!in_array($mode, array('must', 'should'))) {
             $mode = 'default';
         }
         if ($approximate) {
-            $this->criterias[$mode][] = new ApproximateOnSingleTerm(ListTools::toArray($fieldNames), $value);
+            $this->criterias[$mode][] = new ApproximateOnSingleTerm(ListTools::toArray($fieldNames), $value, $fuzziness);
         } else {
             $this->criterias[$mode][] = new AbsoluteOnSingleTerm(ListTools::toArray($fieldNames), $value);
         }
@@ -183,15 +184,16 @@ class SherlockSearch extends SherlockCore {
      * @param string $value         Phrase recherchée
      * @param string $fieldNames    Liste des champs dans lesquels effectuer la recherche. (Séparés par des virgules, sans espaces)
      * @param type $approximate     [optionel] Définit si la recherche doit porter sur le terme EXACT (FALSE) ou sur une approximation (TRUE). (TRUE par défaut)
-     * @param string $mode          Mode (must | should | default)
+     * @param string $mode          [optionel] Mode (must | should | default)
+     * @param string $slop          [optionel] Écart acceptable (pour les recherche approximatives uniquement)
      * @return boolean  Succes ou echec
      */
-    public function addPhraseCriteria($value, $fieldNames, $approximate = true, $mode = null) {
+    public function addPhraseCriteria($value, $fieldNames, $approximate = true, $mode = null, $slop = 10) {
         if(!in_array($mode, array('must', 'should'))) {
             $mode = 'default';
         }
         if ($approximate) {
-            $this->criterias[$mode][] = new ApproximateOnPhrase(ListTools::toArray($fieldNames), $value);
+            $this->criterias[$mode][] = new ApproximateOnPhrase(ListTools::toArray($fieldNames), $value, $slop);
         } else {
             $this->criterias[$mode][] = new AbsoluteOnPhrase(ListTools::toArray($fieldNames), $value);
         }
