@@ -66,7 +66,7 @@ class Facebook
      * Génère un token d'accès longue durée (60 jours)
      * @param  string $client_id      Identifiant de l'application
      * @param  string $client_secret  Clé secrète de l'application
-     * @param  string $client_secret  Clé secrète de l'application
+     * @param  string $exchange_token Token d'accès (short-life)
      * @return string                 Token d'accès valable 60 jours
      */
     public static function generateLongLifeToken($client_id, $client_secret, $exchange_token) {
@@ -77,6 +77,20 @@ class Facebook
             'grant_type'        => 'fb_exchange_token'
         );
         header('location:https://graph.facebook.com/oauth/access_token?' . http_build_query($params));
+        die;
+    }
+
+    /**
+     * Génère un token d'accès longue durée (60 jours)
+     * @param  string $account_id     Identifiant d'un compte administrateur de l'application
+     * @param  string $access_token   Token d'accès (long-life)
+     * @return string                 JSON contenant les token permanents de toutes les applications liées au compte
+     */
+    public static function generatePermanentToken($account_id, $access_token) {
+        $params = array(
+            'access_token'      => $access_token
+        );
+        header('location:https://graph.facebook.com/'.$account_id.'/accounts?' . http_build_query($params));
         die;
     }
 
