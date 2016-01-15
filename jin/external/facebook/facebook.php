@@ -107,7 +107,7 @@ class Facebook
 
         try {
             $data = (new \Facebook\FacebookRequest(
-                $this->session, 'GET', '/'.$page_name.'/posts?fields=id,created_time,message,picture'
+                $this->session, 'GET', '/'.$page_name.'/posts?fields=id,created_time,message,picture,full_picture'
             ))->execute()->getGraphObject()->getPropertyAsArray("data");
             return $data;
         } catch (\Exception $e) {
