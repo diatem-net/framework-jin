@@ -14,7 +14,8 @@ transversale et modulable.
 Quelles sont les possibilités offertes ?
 --------
 * Base de données
-    * Connexion BDD (MySql, PostgreSQL et connecteurs spécifiques CMS) (jin/db/*)
+    * Connexion BDD (MySql, Sqlite3, PostgreSQL et connecteurs spécifiques CMS) (jin/db/*)
+	* Connexion BDD NoSql (MongoDB)
     * Requêtage simplifié en bases de données (jin/query/Query)
     * Effectuer des requêtes de requêtes (jin/query/QueryOfQuery)
     * Faciliter le traitement de résultats de requêtes.  (jin/query/QueryResult)
@@ -25,16 +26,21 @@ Quelles sont les possibilités offertes ?
     * Connexion boite mail IMAP (jin/mail/MailConnector)
     * SSO (Authentification unifiée, via l'usage d'un serveur CAS) (jin/external/jasig/*)
     * Communication facilitée avec ElasticSearch. (Construction de requêtes de recherche complexes) (jin/external/diatem/sherlock/*)
+	* Utilisation d'API de partage social (Facebook, Google+, Instagram, Linkedin, Pinterest, Twitter)
 * Optimisation du développement
     * Gestion des logs (jin/log/Log)
     * Système de debug avancé (jin/log/Debug)
     * Analyse des performances (jin/log/PerfAnalyser)
 * Etendre PHP
     * Travail facilité avec le système de fichiers (jin/filesystem/*)
+	* Lecture et création rapide et facile de fichiers Csv et Excel (jin/dataformat/*)
+	* Gestion de fichiers sécurisé (jin/filesystem/PublicSecuredFile)
     * Classes facilitant le travail avec les listes, les tableaux, les numéraires, les chaînes et les objets temporels (jin/lang/*)
     * Travail facilité avec Json (jin/dataformat/JSon)
+	* Ensemble de classes permettant le retraitement d'images et l'application de filtres (jin/image/*)
 * Accélérer et faciliter les développements front-end
     * Composants d'affichage (jin/output/components/*)
+	* Moteur simplifié de routage et de rendu pour la construction d'application Web (jin/output/webapp/*)
     * Gestion de formulaires (jin/output/form/*)
     * Détection du contexte (Navigateur et Device) (jin/context/*)
     * Envoi de mails avancés (jin/mail/MailSender)
@@ -109,7 +115,4 @@ configuration standard.
 Documentation
 --------
 
-[Accès à la documentation en ligne](http://tools.diatem.net/documentation/projet/7/documentation/ "Accès à la documentation en ligne")
-
-[Télécharger la documentation au format ZIP](http://tools.diatem.net/documentation/projet/7/documentation.zip "Télécharger la documentation au format ZIP")
-
+https://github.com/diatem-net/framework-jin-documentation
