@@ -56,7 +56,7 @@ class GooglePlus
         if(!isset($result['error'])) {
             return $result;
         }
-        return $this->debug_mode ? $result : null;
+        return $this->debug_mode ? $result['error']['message'] : null;
     }
 
     /**
