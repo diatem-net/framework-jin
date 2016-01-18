@@ -39,6 +39,12 @@ class Twitter
      */
     private $api;
 
+    /**
+     *
+     * @var boolean Debug mode
+     */
+    private $debug_mode;
+
 
     /**
      * Constructeur
@@ -47,11 +53,12 @@ class Twitter
      * @param string $access_token         Paramétrage Twitter (Access Token)
      * @param string $access_token_secret  Paramétrage Twitter (Access Token Secret)
      */
-    public function __construct($consumer_key, $consumer_secret, $access_token, $access_token_secret) {
+    public function __construct($consumer_key, $consumer_secret, $access_token, $access_token_secret, $debug_mode = false) {
         $this->consumer_key         = $consumer_key;
         $this->consumer_secret      = $consumer_secret;
         $this->access_token         = $access_token;
         $this->access_token_secret  = $access_token_secret;
+        $this->debug_mode           = $debug_mode;
 
         $libPath = JinCore::getJinRootPath().JinCore::getRelativeExtLibs().'twitterauth/';
         require_once $libPath.'twitteroauth/twitteroauth.php';
@@ -66,7 +73,12 @@ class Twitter
      * @return Array
      */
     public function query($query, $params = array()) {
-        return $this->api->get($query, $params);
+        $results = $this->api->get($query, $params);
+        if(!isset($results->errors)) {
+            return $results;
+        } else {
+            return $this->debug_mode ? $results->errors[0]->message : null;
+        }
     }
 
     /**
