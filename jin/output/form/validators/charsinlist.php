@@ -36,7 +36,7 @@ class Charsinlist extends GlobalValidator implements ValidatorInterface{
     public function isValid($valeur){
 	parent::resetErrors();
 
-        if($valeur == '' || parent::getArgValue('chars') == '' || count(parent::getArgValue('chars'))){
+        if($valeur == '' || parent::getArgValue('chars') == ''){
             return true;
         }
 
