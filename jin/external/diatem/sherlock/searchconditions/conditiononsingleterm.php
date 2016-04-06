@@ -44,12 +44,13 @@ class ConditionOnSingleTerm implements SearchItemInterface{
      * @return array    Paramètres de recherche SherlockSearch
      */
     public function getParamArray(){
-        $outArray = array();
+        // Cette condition nécessite d'être englober dans un SHOULD pour la recherche multi-champs
+        $outArray = array('bool' => array('should' => array()));
         foreach ($this->fields as $field){
             $condArray = array();
             $condArray['term'] = array();
             $condArray['term'][$field] = $this->values;
-            $outArray[] = $condArray;
+            $outArray['bool']['should'][] = $condArray;
         }
 
         return $outArray;

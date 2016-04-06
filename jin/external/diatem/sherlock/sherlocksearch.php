@@ -376,13 +376,13 @@ class SherlockSearch extends SherlockCore {
         }
         if (isset($this->criterias['must']) && count($this->criterias['must']) > 0) {
             foreach ($this->criterias['must'] as $criteria) {
-                $queryMust = ArrayTools::merge($queryMust, $criteria->getParamArray());
+                $queryMust[] = $criteria->getParamArray();
             }
         }
         if (isset($this->criterias['should']) && count($this->criterias['should']) > 0) {
             foreach ($this->criterias['should'] as $criteria) {
                 $hasQueryShould = true;
-                $queryShould = ArrayTools::merge($queryShould, $criteria->getParamArray());
+                $queryShould[] = $criteria->getParamArray();
             }
         }
 
@@ -395,13 +395,13 @@ class SherlockSearch extends SherlockCore {
         }
         if (isset($this->conditions['must']) && count($this->conditions['must']) > 0) {
             foreach ($this->conditions['must'] as $condition) {
-                $filterMust = ArrayTools::merge($filterMust, $condition->getParamArray());
+                $filterMust[] = $condition->getParamArray();
             }
         }
         if (isset($this->conditions['should']) && count($this->conditions['should']) > 0) {
             foreach ($this->conditions['should'] as $condition) {
                 $hasFilterShould = true;
-                $filterShould = ArrayTools::merge($filterShould, $condition->getParamArray());
+                $filterShould[] = $condition->getParamArray();
             }
         }
 
@@ -415,7 +415,7 @@ class SherlockSearch extends SherlockCore {
         if (isset($this->facets['must']) && count($this->facets['must']) > 0) {
             foreach ($this->facets['must'] as $facet) {
                 if ($facet->getArgArrayForSearchQuery()) {
-                    $filterMust = ArrayTools::merge($filterMust, $facet->getArgArrayForSearchQuery());
+                    $filterMust[] = $facet->getArgArrayForSearchQuery();
                 }
                 $query['aggregations'] = ArrayTools::merge($query['aggregations'], $facet->getArgArrayForAggregate());
             }
@@ -424,7 +424,7 @@ class SherlockSearch extends SherlockCore {
             foreach ($this->facets['should'] as $facet) {
                 if ($facet->getArgArrayForSearchQuery()) {
                     $hasFilterShould = true;
-                    $filterShould = ArrayTools::merge($filterShould, $facet->getArgArrayForSearchQuery());
+                    $filterShould[] = $facet->getArgArrayForSearchQuery();
                 }
                 $query['aggregations'] = ArrayTools::merge($query['aggregations'], $facet->getArgArrayForAggregate());
             }
@@ -541,7 +541,7 @@ class SherlockSearch extends SherlockCore {
             return false;
         }
 
-        //Debug::dump($retour);
+        // Debug::dump($retour);
 
         foreach (array('must', 'should', 'default') as $mode) {
             if(isset($this->facets[$mode]) && count($this->facets[$mode]) > 0) {
