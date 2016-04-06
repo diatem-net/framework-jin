@@ -44,14 +44,15 @@ class AbsoluteOnSingleTerm implements SearchItemInterface{
      * @return array	Paramètres de recherche SherlockSearch
      */
     public function getParamArray(){
-       $outArray = array();
-       foreach ($this->fields as $field){
-           $critArray = array();
-           $critArray['wildcard'] = array();
-           $critArray['wildcard'][$field] = $this->values;
-           $outArray[] = $critArray;
-       }
+        // Ce critère nécessite d'être englober dans un SHOULD pour la recherche multi-champs
+        $outArray = array('bool' => array('should' => array()));
+        foreach ($this->fields as $field){
+            $critArray = array();
+            $critArray['wildcard'] = array();
+            $critArray['wildcard'][$field] = $this->values;
+            $outArray['bool']['should'][] = $critArray;
+        }
 
-       return $outArray;
+        return $outArray;
    }
 }

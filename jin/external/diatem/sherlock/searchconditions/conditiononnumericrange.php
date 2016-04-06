@@ -61,7 +61,8 @@ class ConditionOnNumericRange implements SearchItemInterface{
      * @return array    Paramètres de recherche SherlockSearch
      */
     public function getParamArray(){
-        $outArray = array();
+        // Cette condition nécessite d'être englober dans un SHOULD pour la recherche multi-champs
+        $outArray = array('bool' => array('should' => array()));
         foreach ($this->fields as $field) {
             $condArray['range'] = array();
             if($this->min) {
@@ -70,7 +71,7 @@ class ConditionOnNumericRange implements SearchItemInterface{
             if($this->max) {
                 $condArray['range'][$field]['lte'] = $this->max;
             }
-            $outArray[] = $condArray;
+            $outArray['bool']['should'][] = $condArray;
         }
 
         return $outArray;
