@@ -58,6 +58,6 @@ class ApproximateOnPhrase implements SearchItemInterface{
         $critArray['multi_match']['query'] = $this->values;
         $critArray['multi_match']['fields'] = $this->fields;
 
-        return array($critArray);
+        return $critArray;
     }
 }
