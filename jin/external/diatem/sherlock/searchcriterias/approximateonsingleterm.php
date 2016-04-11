@@ -51,14 +51,15 @@ class ApproximateOnSingleTerm implements SearchItemInterface{
     * @return array	Paramètres de recherche SherlockSearch
     */
     public function getParamArray(){
-        $outArray = array();
+        // Ce critère nécessite d'être englober dans un SHOULD pour la recherche multi-champs
+        $outArray = array('bool' => array('should' => array()));
         foreach ($this->fields as $field){
             $critArray = array();
             $critArray['fuzzy'] = array();
             $critArray['fuzzy'][$field] = array();
             $critArray['fuzzy'][$field]['value'] = $this->value;
             $critArray['fuzzy'][$field]['fuzziness'] = $this->fuzziness;
-            $outArray[] = $critArray;
+            $outArray['bool']['should'][] = $critArray;
         }
 
         return $outArray;

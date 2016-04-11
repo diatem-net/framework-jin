@@ -50,6 +50,6 @@ class ApproximateOnText implements SearchItemInterface{
         $critArray['fuzzy_like_this']['like_text'] = $this->values;
         $critArray['fuzzy_like_this']['max_query_terms'] = 60;
 
-        return array($critArray);
+        return $critArray;
     }
 }
