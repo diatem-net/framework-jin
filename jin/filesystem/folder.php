@@ -70,6 +70,10 @@ class Folder implements Iterator {
 			}
 		}
 	}
+	
+	public function count(){
+		return count($this->files);
+	}
 
 	/** 	Fonction d'itération : CURRENT
 	 * 
