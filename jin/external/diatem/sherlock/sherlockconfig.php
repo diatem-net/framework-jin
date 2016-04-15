@@ -63,11 +63,6 @@ class SherlockConfig extends SherlockCore {
         //Création des paramètres d'appel
         $mapping = array();
 
-        $mapping['settings']['analysis']['analyzer'] = array();
-        $mapping['settings']['analysis']['analyzer']['folding'] = array();
-        $mapping['settings']['analysis']['analyzer']['folding']['tokenizer'] = 'whitespace';
-        $mapping['settings']['analysis']['analyzer']['folding']['filter'] = array('lowercase', 'asciifolding');
-
         //Création des tokenizers pour la gestion de l'autocompletion
         $mapping['settings'] = array();
         $mapping['settings']['analysis'] = array();
@@ -78,7 +73,12 @@ class SherlockConfig extends SherlockCore {
         $mapping['settings']['analysis']['filter']['nGram_filter']['max_gram'] = 20;
         $mapping['settings']['analysis']['filter']['nGram_filter']['token_chars'] = array('letter', 'digit', 'punctuation', 'symbol');
 
+        //Création des analyzers
         $mapping['settings']['analysis']['analyzer'] = array();
+        $mapping['settings']['analysis']['analyzer']['default'] = array();
+        $mapping['settings']['analysis']['analyzer']['default']['tokenizer'] = 'standard';
+        $mapping['settings']['analysis']['analyzer']['default']['filter'] = array('lowercase', 'asciifolding');
+
         $mapping['settings']['analysis']['analyzer']['nGram_analyzer'] = array();
         $mapping['settings']['analysis']['analyzer']['nGram_analyzer']['type'] = 'custom';
         $mapping['settings']['analysis']['analyzer']['nGram_analyzer']['tokenizer'] = 'whitespace';
