@@ -441,8 +441,8 @@ class Yaml {
     private function typeCheck($elem){
       $types = array('!!boolean' => 'boolean', '!!int' => 'integer','!!float' => 'float','!!str' => 'string');
       foreach ($types as $type => $cast) {
-        if(isset($value['value']) && strstr($value['value'],$type)){
-          $elem = trim($value['value'],$type);
+        if(isset($elem) && preg_match("/^".$type."/",$elem)){
+          $elem = preg_replace("/^".$type."/","",$elem);
           settype($res,$cast);
           return $elem;
         }
@@ -459,17 +459,14 @@ class Yaml {
     private function handleYamlScalarType($array){
       $res = null;
       foreach ($array as $key => $value) {
-        echo $key;
         if(isset($value['value'])){
           $array[$key]['value'] = $this->typeCheck($value['value']);
-          return $array;
         }
-        if(is_array($value)){
-          $array = self::handleYamlScalarType($value);
-        }else{
-          $list = $array;
-          array_splice($list,0,1);
-          $array = self::handleYamlScalarType($list);
+        if(isset($value['children']) && is_array($value['children'])){
+          $array[$key]['children'] = self::handleYamlScalarType($value['children']);
+        }
+        if(!isset($value['key'])){
+          $array[$key]= self::handleYamlScalarType($value);
         }
       }
       return $array;
@@ -485,7 +482,7 @@ class Yaml {
       $tab2 = $this->createIndentedArray($tab,0);
       $tab3 = $this->handleYamlChars($tab2);
       $tab4 = $this->handleYamlLists($tab3);
-      //$tab5 = $this->handleYamlScalarType($tab4);
-      return $tab4;
+      $tab5 = $this->handleYamlScalarType($tab4);
+      return $tab5;
     }
 }
