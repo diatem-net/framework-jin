@@ -312,11 +312,73 @@ class Yaml {
     * @param mixed element à rechercher
     * @return mixed
     */
-    private static function recursiveSearchChildrenFromKey($array,$elem){
+    private static function recursiveSearchKey($array,$elem){
       $res = null;
       foreach ($array as $key => $value) {
         if(isset($value['key']) && $value['key'] == $elem){
           $res = $key;
+          return $res;
+        }
+        if(is_array($value)){
+          $res = self::recursiveSearchKey($value,$elem);
+        }
+      }
+      return $res;
+    }
+
+    /**
+    * Recherche récursive d'un élément dans un tableau
+    * @param array tableau
+    * @param mixed element à rechercher
+    * @return mixed
+    */
+    private static function recursiveSearchChildrenFromKey($array,$elem){
+      $res = null;
+      foreach ($array as $key => $value) {
+        if(isset($value['key']) && isset($value['children']) && $value['key'] == $elem){
+          $res = $value['children'];
+          return $res;
+        }
+        if(is_array($value)){
+          $res = self::recursiveSearchChildrenFromKey($value,$elem);
+        }
+      }
+      return $res;
+    }
+
+    /**
+    * Recherche récursive d'un élément dans un tableau et renvoi sa position
+    * @param array tableau
+    * @param mixed element à rechercher
+    * @return mixed
+    */
+    private static function recursiveSearchValueBeginningBy($array,$elem){
+      $res = null;
+      foreach ($array as $key => $value) {
+
+        if(isset($value['value']) && preg_match("/^".$elem."/",$value['value'])){
+          $res = $key;
+          return $res;
+        }
+        if(is_array($value)){
+          $res = self::recursiveSearchChildrenFromKey($value,$elem);
+        }
+      }
+      return $res;
+    }
+
+    /**
+    * Recherche récursive d'un élément dans un tableau et renvoi son tableau
+    * @param array tableau
+    * @param mixed element à rechercher
+    * @return mixed
+    */
+    private static function recursiveSearchArraybyValueBeginningBy($array,$elem){
+      $res = null;
+      foreach ($array as $key => $value) {
+
+        if(isset($value['value']) && preg_match("/^".$elem."/",$value['value'])){
+          $res = $value;
           return $res;
         }
         if(is_array($value)){
@@ -335,8 +397,10 @@ class Yaml {
       $final = array();
       foreach ($array as $key => $value) {
         $fChar = self::firstChar($value['key']);
-        if(isset($value['value'])){
+        if(isset($value['value']) && $value['key'] != '<<'){
           $fChar = self::firstChar($value['value']);
+        }else if(isset($value['value']) && $value['key'] == '<<'){
+          $fChar = '<<';
         }
         switch ($fChar) {
           case '&':
@@ -367,6 +431,15 @@ class Yaml {
           $concat = substr($concat,0,strlen($concat)-1);
           $final[$key]['value'] = $concat;
           unset($final[$key]['children']);
+          break;
+          //Si redéfinition de champ
+          case '<<':
+          $elem = '&'.trim($value['value'],'* ');
+          $ref = Yaml::recursiveSearchChildrenFromValue($array,$elem);
+          $final[$key]['key'] = trim($final[$key-1]['key'],':');
+          $final[$key]['value'] = '<<'.$value['value'];
+          unset($final[$key-1]);
+          $final[$key]['children'] = self::handleYamlChars($ref);
           break;
           //Si conservation des retour à la ligne on concatène les enfants du noeud avec '\n'
           case '|':
@@ -407,7 +480,7 @@ class Yaml {
     */
     private static function handleYamlNextList($array){
         $res = 0;
-        $res = Yaml::recursiveSearchChildrenFromKey($array,'—');
+        $res = Yaml::recursiveSearchKey($array,'—');
         if(isset($array[$res]['children'])){
           if(!isset($array[$res-1]['children'])){
             $array[$res-1]['children'] = array();
@@ -471,6 +544,43 @@ class Yaml {
       }
       return $array;
     }
+    /**
+    * Recherche récursive d'un << dans le tableau et modifie la clé
+    * @param array tableau
+    * @return mixed
+    */
+    private function handleYamlNextRedifinedKeys($array){
+      $keyR = Yaml::recursiveSearchValueBeginningBy($array,'<<');
+      $valueR = Yaml::recursiveSearchArraybyValueBeginningBy($array,'<<');
+      $i = 0;
+      //Parcours des enfants
+      if(isset($valueR['children'])){
+      foreach ($valueR['children'] as $key => $value) {
+        //Si on trouve dans le tableau une clé correspondante au élément suivant le tableau
+        if($value['key'] == $array[$keyR+$i]['key']){
+           $valueR['children'][$key]['value'] = $array[$keyR+$i]['value'] ;
+           unset($array[$keyR+$i]);
+        }
+        $i++;
+      }
+      $array[$keyR]['value'] = trim($array[$keyR]['value'],'<<');
+      $array[$keyR]['children'] = $valueR['children'];
+      $array = array_values($array);
+      }
+      return $array;
+    }
+
+    /**
+    * Recherche récursive de tout les << dans le tableau et modifie la clé
+    * @param array tableau
+    * @return mixed
+    */
+    private function handleYamlRedifinedKeys($array){
+      foreach ($array as $key => $value) {
+        $array = Yaml::handleYamlNextRedifinedKeys($array);
+      }
+      return $array;
+    }
 
     /**
     * Convertit le Yaml en Tableau
@@ -483,6 +593,8 @@ class Yaml {
       $tab3 = $this->handleYamlChars($tab2);
       $tab4 = $this->handleYamlLists($tab3);
       $tab5 = $this->handleYamlScalarType($tab4);
-      return $tab5;
+      $tab6 = $this->handleYamlRedifinedKeys($tab5);
+      return $tab6;
     }
+
 }
