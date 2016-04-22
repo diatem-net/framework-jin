@@ -126,7 +126,7 @@ class Yaml {
           $list = explode($line,'- ');
           if(isset($list[1])){
             array_push($res,array(
-              'data' => '—'.$list[1],
+              'data' => '— '.$list[1],
               'level' => $this->getIndent($value)-$this->getIndentSpaces(),
               'left' => null,
               'right' => null));
@@ -269,7 +269,7 @@ class Yaml {
         if($tabLine[0] == "---"){
           $obj['key'] = trim($tabLine[0],' ');
         }else{
-          $obj = array('key' => trim($tabLine[0],'- '));
+          $obj = array('key' => trim($tabLine[0],'-: '));
         }
         if(isset($tabLine[1])){
             $obj['value'] = trim($tabLine[1],'- ');
@@ -583,6 +583,31 @@ class Yaml {
     }
 
     /**
+    * Renvoi un tableau des tableaux(documents) Yaml
+    * @param array tableau
+    * @return mixed
+    */
+    private function handleYamlDocs($array){
+      $res = array();
+      foreach ($array as $key => $value) {
+        if($value['key'] == '---'){
+          $newArr = array();
+          $arr = $array;
+          array_splice($arr,0,1);
+            foreach ($arr as $arrKey => $arrValue) {
+              if($arrValue['key'] == '---' || $arrValue['key'] == '...'){
+
+                break;
+              }
+              array_push($newArr,$arrValue);
+            }
+            array_push($res,$newArr);
+        }
+      }
+      return $res;
+    }
+
+    /**
     * Convertit le Yaml en Tableau
     * @return array
     */
@@ -594,7 +619,8 @@ class Yaml {
       $tab4 = $this->handleYamlLists($tab3);
       $tab5 = $this->handleYamlScalarType($tab4);
       $tab6 = $this->handleYamlRedifinedKeys($tab5);
-      return $tab6;
+      $tab7 = $this->handleYamlDocs($tab6);
+      return $tab7;
     }
 
 }
