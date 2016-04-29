@@ -62,6 +62,7 @@ class Template{
         return $content;
     }
     
+    
     private function replaceMagicWords($content){
         $content = StringTools::replaceAll($content, '#magic::url#', BASE_URL);
         $content = StringTools::replaceAll($content, '#magic::root#',ROOT_PATH);

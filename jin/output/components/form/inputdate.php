@@ -7,6 +7,8 @@ namespace jin\output\components\form;
 
 use jin\output\components\form\FormComponent;
 use jin\output\components\ComponentInterface;
+use jin\lang\StringTools;
+use jin\lang\TimeTools;
 
 
 /** Composant InputDate (champ input simple)
@@ -35,4 +37,28 @@ class InputDate extends FormComponent implements ComponentInterface{
 
     return $html;
     }
+    
+    public function getValue(){
+        $valeur = parent::getValue();
+        
+        if($valeur == ''){
+            return '';
+        }
+        
+        if(!TimeTools::validateDate($valeur, 'd/m/Y')){
+            return $valeur;
+        }
+        
+        if(StringTools::contains($valeur, '/')){
+            $dt = \DateTime::createFromFormat('d/m/Y', $valeur);
+        }else{
+            $dt = new \DateTime($valeur);
+        }
+        
+        return $dt->format('d/m/Y');
+    }
+    
+    
+    
+
 }

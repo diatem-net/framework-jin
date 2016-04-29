@@ -65,13 +65,13 @@ class NumericRange implements SearchItemInterface{
     * @return array	Paramètres de recherche SherlockSearch
     */
     public function getParamArray(){
-
-        $outArray = array();
+        // Ce critère nécessite d'être englober dans un SHOULD pour la recherche multi-champs
+        $outArray = array('bool' => array('should' => array()));
         foreach ($this->fields as $field){
             $critArray['range'] = array();
             $critArray['range'][$field]['from'] = $this->min;
             $critArray['range'][$field]['to'] = $this->max;
-            $outArray[] = $critArray;
+            $outArray['bool']['should'][] = $critArray;
         }
 
         return $outArray;

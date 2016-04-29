@@ -73,7 +73,12 @@ class SherlockConfig extends SherlockCore {
         $mapping['settings']['analysis']['filter']['nGram_filter']['max_gram'] = 20;
         $mapping['settings']['analysis']['filter']['nGram_filter']['token_chars'] = array('letter', 'digit', 'punctuation', 'symbol');
 
+        //Création des analyzers
         $mapping['settings']['analysis']['analyzer'] = array();
+        $mapping['settings']['analysis']['analyzer']['default'] = array();
+        $mapping['settings']['analysis']['analyzer']['default']['tokenizer'] = 'standard';
+        $mapping['settings']['analysis']['analyzer']['default']['filter'] = array('lowercase', 'asciifolding');
+
         $mapping['settings']['analysis']['analyzer']['nGram_analyzer'] = array();
         $mapping['settings']['analysis']['analyzer']['nGram_analyzer']['type'] = 'custom';
         $mapping['settings']['analysis']['analyzer']['nGram_analyzer']['tokenizer'] = 'whitespace';
@@ -89,6 +94,13 @@ class SherlockConfig extends SherlockCore {
         $mapping['settings']['analysis']['analyzer']['facetanalyzer']['type'] = 'custom';
         $mapping['settings']['analysis']['analyzer']['facetanalyzer']['tokenizer'] = 'keyword';
         $mapping['settings']['analysis']['analyzer']['facetanalyzer']['filter'] = array();
+
+        //Analyzer pour corriger les erreurs de l'analyzer "french"
+        $mapping['settings']['analysis']['analyzer']['frenchanalyzer'] = array();
+        $mapping['settings']['analysis']['analyzer']['frenchanalyzer']['type'] = 'custom';
+        $mapping['settings']['analysis']['analyzer']['frenchanalyzer']['tokenizer'] = 'letter';
+        $mapping['settings']['analysis']['analyzer']['frenchanalyzer']['pretty'] = 'true';
+        $mapping['settings']['analysis']['analyzer']['frenchanalyzer']['filter'] = array('lowercase', 'asciifolding');
 
         //Création du mapping
         $mapping['mappings'] = array();

@@ -48,7 +48,7 @@ class DateTime extends UIComponent implements ComponentInterface{
      * @param type $format  [optionel] Format de date en sortie. (Par défaut d/m/Y h:m:s)
      * @return string
      */
-    public function getValue($format = 'd/m/Y h:m:s'){
+    public function getValue($format = 'd/m/Y H:m:s'){
 	return $this->value->format($format);
     }
     

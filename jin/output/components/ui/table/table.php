@@ -121,6 +121,12 @@ class Table extends UIComponent implements ComponentInterface {
      * @var string  Classes CSS appliquées aux éléments TR
      */
     private $tr_classes = '';
+    
+    /**
+     * 
+     * @var array   Classes CSS à appliquer aux TR, par ligne
+     */
+    private $tr_lineclasses = array();
 
     /**
      *
@@ -273,6 +279,15 @@ class Table extends UIComponent implements ComponentInterface {
             return false;
         }
     }
+    
+    
+    /**
+     * Ajoute des classes CSS associées aux balises TR, par ligne du tableau
+     * @param array $classes    Classes. array('classeligne1','classligne2');
+     */
+    public function addTrClassesByLine($classes){
+        $this->tr_lineclasses = $classes;
+    }
 
     /**
      * Ajoute une classe CSS à une colonne du composant
@@ -386,7 +401,7 @@ class Table extends UIComponent implements ComponentInterface {
      */
     private function renderLine($line, $lineNum) {
         //On génère le contenu du TR
-        $tr_content = $this->getTrTemplate();
+        $tr_content = $this->getTrTemplate($lineNum);
 
         //On génère le contenu du TD (global)
         if ($lineNum % 2 == 0) {
@@ -480,13 +495,20 @@ class Table extends UIComponent implements ComponentInterface {
      * Retourne la template d'un élément de type TR
      * @return string
      */
-    private function getTrTemplate() {
-        if ($this->tr_template) {
+    private function getTrTemplate($lineNum = null) {
+
+        if ($this->tr_template && $lineNum === null) {
+
             return $this->tr_template;
         }
         $tr = new AssetFile($this->componentName . '/tr.tpl');
         $tr_content = $tr->getContent();
-        $tr_content = StringTools::replaceAll($tr_content, '%class%', ListTools::changeDelims($this->tr_classes, ',', ' '));
+        $classes = $this->tr_classes;
+
+        if($lineNum !== null && isset($this->tr_lineclasses[$lineNum + $this->startIndex])){
+            $classes .= ' '.$this->tr_lineclasses[$lineNum + $this->startIndex];
+        }
+        $tr_content = StringTools::replaceAll($tr_content, '%class%', ListTools::changeDelims($classes, ',', ' '));
         $this->tr_template = $tr_content;
         return $this->tr_template;
     }

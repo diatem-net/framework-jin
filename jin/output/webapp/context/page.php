@@ -81,6 +81,9 @@ class Page {
         } else if (is_file($this->getRootPath() . 'index.php')) {
             //index.php view
             $this->view = new View($this->getRootPath() . 'index.php');
+        } else if (is_file($this->getRootPath() . 'view.php')) {
+            //view.php view
+            $this->view = new View($this->getRootPath() . 'view.php');
         } else {
             throw new \Exception('Vue introuvable pour la page ' . $this->code);
         }
@@ -97,6 +100,12 @@ class Page {
     
     public function onInit(){
         $this->controller->onInit();
+    }
+    
+    public function onPost(){
+        if(!empty($_POST)){
+            $this->controller->onPost($_POST);
+        }
     }
 
     public function beforeRender() {

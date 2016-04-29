@@ -24,6 +24,12 @@ class Query {
      *  @var array  Liste des arguments
      */
     private $arguments = array();
+    
+    /**
+     *
+     * @var array   Typage des arguments
+     */
+    private $argumentsType = array();
 
 
     /**
@@ -48,6 +54,12 @@ class Query {
      *  @var boolean     Type SQL datetime
      */
     public static $SQL_DATETIME = 4;
+    
+    
+     /**
+     *  @var boolean     Type SQL date
+     */
+    public static $SQL_DATE = 5;
 
 
     /**
@@ -149,9 +161,19 @@ class Query {
 
         foreach ($this->arguments as $name => $argument) {
             if(is_int($name)) {
-                $psql = StringTools::replaceFirst($psql, '\?', $argument);
+                if($this->argumentsType[$name] == self::$SQL_STRING){
+                    $psql = StringTools::replaceFirst($psql, '\?', '\''.$argument.'\'');
+                }else{
+                    $psql = StringTools::replaceFirst($psql, '\?', $argument);
+                }
+                
             } else {
-                $psql = StringTools::replaceFirst($psql, '\:'.$name, $argument);
+                if($this->argumentsType[$name] == self::$SQL_STRING){
+                    $psql = StringTools::replaceFirst($psql, '\:'.$name, '\''.$argument.'\'');
+                }else{
+                    $psql = StringTools::replaceFirst($psql, '\:'.$name, $argument);
+                }
+                
             }
         }
 
@@ -232,14 +254,33 @@ class Query {
             } else {
                 $valeur = $valeur->format('Y-m-d H:i:s');
             }
+        } elseif ($type == self::$SQL_DATE) {
+            if (!is_a($valeur, 'DateTime')){
+                if(!StringTools::contains($valeur, '/')){
+                    $convert = new \DateTime($valeur);
+                    $valeur = $convert->format('Y-m-d H:i:s');
+                }else{
+                    $convert = \DateTime::createFromFormat('d/m/Y', $valeur);
+                    $valeur = $convert->format('Y-m-d H:i:s');
+                }
+                try{
+                    
+                } catch (Exception $ex) {
+                    throw new Exception('L\'argument n\'est pas de type SQL_DATETIME (Instance de DateTime attendue ou String au format YYYY-mm-dd HH:ii:ss) (valeur : '.$valeur.')');
+                }
+            } else {
+                $valeur = $valeur->format('Y-m-d H:i:s');
+            }
         } else {
             throw new Exception('Le type ' . $type . ' n\'est pas reconnu');
         }
 
         if($name && !is_int($name)) {
             $this->arguments[$name] = $valeur;
+            $this->argumentsType[$name] = $type;
         } else {
             $this->arguments[] = $valeur;
+            $this->argumentsType[] = $type;
         }
 
         return '?';

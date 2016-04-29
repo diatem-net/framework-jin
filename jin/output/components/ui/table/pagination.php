@@ -332,6 +332,15 @@ class Pagination extends UIComponent implements ComponentInterface {
     public function getPostArgument(){
         return $this->getArgument;
     }
+    
+    
+    /**
+     * Retourne le nombre de pages
+     * @return integer
+     */
+    public function getNbPages(){
+        return $this->nbPages;
+    }
 
 
     /**

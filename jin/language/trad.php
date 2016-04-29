@@ -93,7 +93,7 @@ class Trad {
      * @return boolean	TRUE si succès
      */
     private static function loadTradFileInMemory($fileName){
-	$surcharge = JinCore::getContainerPath() . JinCore::getConfigValue('surchargeAbsolutePath') . '/' . JinCore::getRelativePathLanguage() . self::$langueCode . '/' . $fileName;
+	$surcharge = JinCore::getContainerPath() . JinCore::getSurchargeRelativePath() . '/' . JinCore::getRelativePathLanguage() . self::$langueCode . '/' . $fileName;
 
 	if(JinCore::getConfigValue('surcharge') && file_exists($surcharge)){
 	    $data = parse_ini_file($surcharge);

@@ -143,15 +143,16 @@ class SherlockSearch extends SherlockCore {
      * @param string $value         Terme recherché
      * @param string $fieldNames    Liste des champs dans lesquels effectuer la recherche. (Séparés par des virgules, sans espaces)
      * @param boolean $approximate  [optionel] Définit si la recherche doit porter sur le terme EXACT (FALSE) ou sur une approximation (TRUE). (TRUE par défaut)
-     * @param string $mode          Mode (must | should | default)
+     * @param string $mode          [optionel] Mode (must | should | default)
+     * @param integer $fuzziness    [optionel] Écart acceptable (pour les recherche approximatives uniquement)
      * @return boolean  Succes ou echec
      */
-    public function addSingleTermCriteria($value, $fieldNames, $approximate = true, $mode = null) {
+    public function addSingleTermCriteria($value, $fieldNames, $approximate = true, $mode = null, $fuzziness = 'AUTO') {
         if(!in_array($mode, array('must', 'should'))) {
             $mode = 'default';
         }
         if ($approximate) {
-            $this->criterias[$mode][] = new ApproximateOnSingleTerm(ListTools::toArray($fieldNames), $value);
+            $this->criterias[$mode][] = new ApproximateOnSingleTerm(ListTools::toArray($fieldNames), $value, $fuzziness);
         } else {
             $this->criterias[$mode][] = new AbsoluteOnSingleTerm(ListTools::toArray($fieldNames), $value);
         }
@@ -183,15 +184,16 @@ class SherlockSearch extends SherlockCore {
      * @param string $value         Phrase recherchée
      * @param string $fieldNames    Liste des champs dans lesquels effectuer la recherche. (Séparés par des virgules, sans espaces)
      * @param type $approximate     [optionel] Définit si la recherche doit porter sur le terme EXACT (FALSE) ou sur une approximation (TRUE). (TRUE par défaut)
-     * @param string $mode          Mode (must | should | default)
+     * @param string $mode          [optionel] Mode (must | should | default)
+     * @param string $slop          [optionel] Écart acceptable (pour les recherche approximatives uniquement)
      * @return boolean  Succes ou echec
      */
-    public function addPhraseCriteria($value, $fieldNames, $approximate = true, $mode = null) {
+    public function addPhraseCriteria($value, $fieldNames, $approximate = true, $mode = null, $slop = 10) {
         if(!in_array($mode, array('must', 'should'))) {
             $mode = 'default';
         }
         if ($approximate) {
-            $this->criterias[$mode][] = new ApproximateOnPhrase(ListTools::toArray($fieldNames), $value);
+            $this->criterias[$mode][] = new ApproximateOnPhrase(ListTools::toArray($fieldNames), $value, $slop);
         } else {
             $this->criterias[$mode][] = new AbsoluteOnPhrase(ListTools::toArray($fieldNames), $value);
         }
@@ -374,13 +376,13 @@ class SherlockSearch extends SherlockCore {
         }
         if (isset($this->criterias['must']) && count($this->criterias['must']) > 0) {
             foreach ($this->criterias['must'] as $criteria) {
-                $queryMust = ArrayTools::merge($queryMust, $criteria->getParamArray());
+                $queryMust[] = $criteria->getParamArray();
             }
         }
         if (isset($this->criterias['should']) && count($this->criterias['should']) > 0) {
             foreach ($this->criterias['should'] as $criteria) {
                 $hasQueryShould = true;
-                $queryShould = ArrayTools::merge($queryShould, $criteria->getParamArray());
+                $queryShould[] = $criteria->getParamArray();
             }
         }
 
@@ -393,13 +395,13 @@ class SherlockSearch extends SherlockCore {
         }
         if (isset($this->conditions['must']) && count($this->conditions['must']) > 0) {
             foreach ($this->conditions['must'] as $condition) {
-                $filterMust = ArrayTools::merge($filterMust, $condition->getParamArray());
+                $filterMust[] = $condition->getParamArray();
             }
         }
         if (isset($this->conditions['should']) && count($this->conditions['should']) > 0) {
             foreach ($this->conditions['should'] as $condition) {
                 $hasFilterShould = true;
-                $filterShould = ArrayTools::merge($filterShould, $condition->getParamArray());
+                $filterShould[] = $condition->getParamArray();
             }
         }
 
@@ -413,7 +415,7 @@ class SherlockSearch extends SherlockCore {
         if (isset($this->facets['must']) && count($this->facets['must']) > 0) {
             foreach ($this->facets['must'] as $facet) {
                 if ($facet->getArgArrayForSearchQuery()) {
-                    $filterMust = ArrayTools::merge($filterMust, $facet->getArgArrayForSearchQuery());
+                    $filterMust[] = $facet->getArgArrayForSearchQuery();
                 }
                 $query['aggregations'] = ArrayTools::merge($query['aggregations'], $facet->getArgArrayForAggregate());
             }
@@ -422,7 +424,7 @@ class SherlockSearch extends SherlockCore {
             foreach ($this->facets['should'] as $facet) {
                 if ($facet->getArgArrayForSearchQuery()) {
                     $hasFilterShould = true;
-                    $filterShould = ArrayTools::merge($filterShould, $facet->getArgArrayForSearchQuery());
+                    $filterShould[] = $facet->getArgArrayForSearchQuery();
                 }
                 $query['aggregations'] = ArrayTools::merge($query['aggregations'], $facet->getArgArrayForAggregate());
             }
@@ -439,34 +441,49 @@ class SherlockSearch extends SherlockCore {
             unset($query['aggregations']);
         }
 
+        $queryQueryArray = array();
+        if(!empty($queryDefault)) {
+            array_push($queryQueryArray, $queryDefault);
+        }
+        if(!empty($queryAlter)) {
+            array_push($queryQueryArray,
+                array(
+                    'bool' => array(
+                        $alterMode => $queryAlter
+                    )
+                )
+            );
+        }
+
+        $queryFilterArray = array();
+        if(!empty($filterDefault)) {
+            array_push($queryFilterArray, $filterDefault);
+        }
+        if(!empty($filterAlter)) {
+            array_push($queryFilterArray,
+                array(
+                    'bool' => array(
+                        $alterMode => $filterAlter
+                    )
+                )
+            );
+        }
+
         $query['query'] = array(
             'filtered' => array(
                 'query' => array(
                     'bool' => array(
-                        $this->defaultMode => array(
-                            $queryDefault,
-                            array(
-                                'bool' => array(
-                                    $alterMode => $queryAlter
-                                )
-                            )
-                        )
+                        $this->defaultMode => $queryQueryArray
                     )
                 ),
                 'filter' => array(
                     'bool' => array(
-                        $this->defaultMode => array(
-                            $filterDefault,
-                            array(
-                                'bool' => array(
-                                    $alterMode => $filterAlter
-                                )
-                            )
-                        )
+                        $this->defaultMode => $queryFilterArray
                     )
                 )
             )
         );
+
 
         $query = ArrayTools::filterRecursive($query);
 
@@ -524,7 +541,7 @@ class SherlockSearch extends SherlockCore {
             return false;
         }
 
-        //Debug::dump($retour);
+        // Debug::dump($retour);
 
         foreach (array('must', 'should', 'default') as $mode) {
             if(isset($this->facets[$mode]) && count($this->facets[$mode]) > 0) {

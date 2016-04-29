@@ -156,4 +156,16 @@ class TimeTools {
         $months = array('Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre');
         return $months[$month - 1];
     }
+    
+    
+    /**
+     * Vérifie si une date est valide
+     * @param string $date      Date
+     * @param string $format    Format
+     * @return type
+     */
+    public static function validateDate($date, $format = 'Y-m-d H:i:s'){
+        $d = \DateTime::createFromFormat($format, $date);
+        return $d && $d->format($format) == $date;
+    }
 }

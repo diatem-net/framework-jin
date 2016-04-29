@@ -72,7 +72,15 @@ class DbConnexion {
         self::$cnxHandler = new SqLite3($fileName);
         return self::$cnxHandler->connect();
     }
-
+    
+    /**	Initialise automatiquement une connexion sur un site géré avec Prestashop 
+     */
+    public static function connectWithPrestashop(){
+        include_once JinCore::getContainerPath().'config/settings.inc.php';
+        
+        self::$cnxHandler = new MySql(_DB_SERVER_, _DB_USER_, _DB_PASSWD_, 5432, _DB_NAME_);
+	return self::$cnxHandler->connect();
+    }
     
     /**	Initialise une transaction
      * 
