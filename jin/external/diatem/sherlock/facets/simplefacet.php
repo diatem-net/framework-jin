@@ -46,12 +46,16 @@ class SimpleFacet implements Iterator{
     public function getArgArrayForSearchQuery(){
         if($this->selectedValue){
             if(is_array($this->selectedValue)){
-                $fullCond = array();
+                $fullCond = array(
+                    'bool' => array(
+                        'should' => array()
+                    )
+                );
                 foreach($this->selectedValue as $value){
                     $condition = new ConditionOnSingleTerm(array($this->fieldName), $value);
-                    $fullCond = ArrayTools::merge($fullCond, $condition->getParamArray());
+                    $fullCond['bool']['should'][] = $condition->getParamArray()['bool']['should'][0];
                 }
-                return $fullCond;
+                return (object)$fullCond;
             }else{
                 $condition = new ConditionOnSingleTerm(array($this->fieldName), $this->selectedValue);
                 return $condition->getParamArray();
