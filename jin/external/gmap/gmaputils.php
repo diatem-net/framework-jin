@@ -12,11 +12,16 @@ class GMapUtils {
     /**
      * Permet d'obtenir les coordonnées GPS d'une adresse
      * @param string $adress  Adresse à géolocaliser.
+	 * @param string $apiKey Clé Api Google
      * @return array    array('latitude' => 0, 'longitude' => 0)
      * @throws \Exception
      */
-    public static function geolocalize($adress) {
-        $json = file_get_contents('http://maps.google.com/maps/api/geocode/json?address=' . urlencode($adress) . '&sensor=false');
+    public static function geolocalize($adress, $apiKey = null) {
+		$url = 'https://maps.google.com/maps/api/geocode/json?address=' . urlencode($adress) . '&sensor=false';
+		if($apiKey){
+			$url .= '&key='.$apiKey;
+		}
+        $json = file_get_contents($url);
         $json = json_decode($json);
 
     

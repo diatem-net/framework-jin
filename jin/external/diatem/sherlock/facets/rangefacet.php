@@ -47,17 +47,20 @@ class RangeFacet implements Iterator{
     public function getArgArrayForSearchQuery(){
         if($this->selectedValue && is_array($this->selectedValue)){
             if(is_array($this->selectedValue[0])){
-                $fullCond = array();
+                $fullCond = array(
+                    'bool' => array(
+                        'should' => array()
+                    )
+                );
                 foreach($this->selectedValue as $value){
                     $condition = new ConditionOnNumericRange(array($this->fieldName), $value);
-                    $fullCond = ArrayTools::merge($fullCond, $condition->getParamArray());
+                    $fullCond['bool']['should'][] = $condition->getParamArray()['bool']['should'][0];
                 }
                 return $fullCond;
             }else{
                 $condition = new ConditionOnNumericRange(array($this->fieldName), $this->selectedValue);
                 return $condition->getParamArray();
             }
-
         }
         return null;
     }
