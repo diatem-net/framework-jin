@@ -105,6 +105,8 @@ class Table extends UIComponent implements ComponentInterface {
      * @var string  Template des élément TBODY
      */
     private $tbody_template;
+	
+
 
 
     //--------------------------------------------------------------------------
@@ -157,6 +159,19 @@ class Table extends UIComponent implements ComponentInterface {
      * @var string  Classes CSS appliquées par colonnes
      */
     private $col_classes = '';
+	
+	
+	//--------------------------------------------------------------------------
+    //ATTRIBUTS APPLIQUABLES AUX ELEMENTS
+
+	
+	/**
+	 *
+	 * @var array	Attributs appliqués aux TR. array(array('attr1NameLigne1' => 'val', 'attr2NameLigne2' => 'val'), array('attr1NameLigne2' => 'val'))
+	 */
+	private $tr_attributes = array();
+	
+	
 
     /**
      * Constructeur
@@ -288,6 +303,14 @@ class Table extends UIComponent implements ComponentInterface {
     public function addTrClassesByLine($classes){
         $this->tr_lineclasses = $classes;
     }
+	
+	/**
+	 * Ajoute des attributs associés aux vbalise TR, par ligne.
+	 * @param array $attributesArray	Tableau d'attributs. array(array('attr1NameLigne1' => 'val', 'attr2NameLigne2' => 'val'), array('attr1NameLigne2' => 'val'))
+	 */
+	public function addAttributeByLine($attributesArray){
+		$this->tr_attributes = $attributesArray;
+	}
 
     /**
      * Ajoute une classe CSS à une colonne du composant
@@ -509,6 +532,16 @@ class Table extends UIComponent implements ComponentInterface {
             $classes .= ' '.$this->tr_lineclasses[$lineNum + $this->startIndex];
         }
         $tr_content = StringTools::replaceAll($tr_content, '%class%', ListTools::changeDelims($classes, ',', ' '));
+		
+		//Attributs
+		$attributs = '';
+		if(isset($this->tr_attributes[$lineNum])){
+			foreach($this->tr_attributes[$lineNum] AS $attrKey => $attrValue){
+				$attributs .= ' '.$attrKey.'="'.$attrValue.'"';
+			}
+		}
+		$tr_content = StringTools::replaceAll($tr_content, '%attributes%', $attributs);
+		
         $this->tr_template = $tr_content;
         return $this->tr_template;
     }

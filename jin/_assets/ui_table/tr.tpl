@@ -1,1 +1,1 @@
-<tr class="%class%">%items%</tr>
+<tr class="%class%" %attributes%>%items%</tr>
