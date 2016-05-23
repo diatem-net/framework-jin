@@ -1,0 +1,2 @@
+<link rel="stylesheet" href="%jinurl%_extlibs/colorpicker/css/colorpicker.css" type="text/css" />
+<link rel="stylesheet" media="screen" type="text/css" href="%jinurl%_extlibs/colorpicker/css/layout.css" />
