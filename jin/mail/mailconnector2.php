@@ -128,6 +128,12 @@ class MailConnector2 {
 		return $this->boite->getMessages();
 	}
 
-
+	/**
+	 * Supprime un mail
+	 * @param integer $id
+	 */
+	public function deleteMail($id){
+		$this->boite->deleteMessage($id);
+	}
 
 }
