@@ -10,6 +10,7 @@ namespace jin\mail;
  * 	@auteur		Loïc Gerard
  * 	@version	alpha
  * 	@check
+ * @deprecated	Use jin\mail\MailConnector2 instead
  */
 class MailConnector {
 
