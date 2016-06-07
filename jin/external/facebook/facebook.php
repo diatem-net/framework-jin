@@ -123,17 +123,37 @@ class Facebook
 
 
     /**
-     * Retourne la liste des derniers statuts d'une page
+     * Retourne la liste des derniers statuts d'une page (inclut les posts)
      * @param  string $page_name    Nom de la page
      * @param  int $count           [optionel] Nombre max de résultats (Défault: 100)
      * @return array                Tableau de statuts
-     * @return array
      */
-    public function getLastStatusesFromPage($page_name, $count = 100) {
+    public function getLastStatusesFromPage($page_name, $count = 100, $fields = 'id,created_time,message,picture,full_picture') {
 
         try {
             $data = (new \Facebook\FacebookRequest(
-                $this->session, 'GET', '/'.$page_name.'/posts?fields=id,created_time,message,picture,full_picture'
+                $this->session, 'GET', '/'.$page_name.'/feed?fields='.$fields.'&limit='.$count
+            ))->execute()->getGraphObject()->getPropertyAsArray("data");
+            return $data;
+        } catch (\Exception $e) {
+            return $this->debug_mode ? $e->getMessage() : null;
+        }
+        return null;
+    }
+
+
+
+    /**
+     * Retourne la liste des derniers posts d'une page
+     * @param  string $page_name    Nom de la page
+     * @param  int $count           [optionel] Nombre max de résultats (Défault: 100)
+     * @return array                Tableau de posts
+     */
+    public function getLastPostsFromPage($page_name, $count = 100, $fields = 'id,created_time,message,picture,full_picture') {
+
+        try {
+            $data = (new \Facebook\FacebookRequest(
+                $this->session, 'GET', '/'.$page_name.'/posts?fields='.$fields.'&limit='.$count
             ))->execute()->getGraphObject()->getPropertyAsArray("data");
             return $data;
         } catch (\Exception $e) {
