@@ -124,8 +124,8 @@ class MailConnector2 {
 	/** Récupère tous les emails
 	 * 	@return		array				Tableau d'emails(pk,vu,sujet,expediteur,date,message,listPJ)
 	 */
-	public function getEmails() {
-		return $this->boite->getMessages();
+	public function getEmails($saveImageFilesInFolder = null) {
+		return $this->boite->getMessages(true, $saveImageFilesInFolder);
 	}
 
 	/**
@@ -135,5 +135,10 @@ class MailConnector2 {
 	public function deleteMail($id){
 		$this->boite->deleteMessage($id);
 	}
+	
+	public function getAttachment($id, $num = 0){
+		return $this->boite->getAttachment($id, $num);
+	}
+	
 
 }
