@@ -8,7 +8,13 @@
  * @license    GPLv3 (http://www.gnu.org/licenses/gpl-3.0.html)
  * @author     Tobias Zeising <tobias.zeising@aditu.de>
  */
+
+use jin\JinCore;
+use jin\lang\StringTools;
+ 
 class Imap {
+	 
+	 
     
     /**
      * imap connection
@@ -148,11 +154,11 @@ class Imap {
      * @return array messages
      * @param $withbody without body
      */
-    public function getMessages($withbody = true) {
+    public function getMessages($withbody = true, $saveImageFilesInFolder = null) {
         $count = $this->countMessages();
         $emails = array();
         for($i=1;$i<=$count;$i++) {
-            $emails[]= $this->formatMessage($i, $withbody);
+            $emails[]= $this->formatMessage($i, $withbody, $saveImageFilesInFolder);
         }
 
         // sort emails descending by date
@@ -178,16 +184,17 @@ class Imap {
      * @param $id
      * @param $withbody without body
      */
-    public function getMessage($id, $withbody = true) {
-        return $this->formatMessage($id, $withbody);
+    public function getMessage($id, $withbody = true,  $saveImageFilesInFolder = null) {
+        return $this->formatMessage($id, $withbody, $saveImageFilesInFolder);
     }
+	
     
     /**
      * @param $id
      * @param bool $withbody
      * @return array
      */
-    protected function formatMessage($id, $withbody=true){
+    protected function formatMessage($id, $withbody=true, $saveImageFilesInFolder = null){
         $header = imap_headerinfo($this->imap, $id);
 
         // fetch unique uid
@@ -220,6 +227,50 @@ class Imap {
             $email['body'] = $body['body'];
             $email['html'] = $body['html'];
         }
+		
+		if($saveImageFilesInFolder && $withbody){
+			$images = array();
+			include_once(JinCore::getJinRootPath().JinCore::getRelativeExtLibs().'simplehtmldom_1_5/simple_html_dom.php');
+
+			$html = str_get_html($email['body']);
+			
+			$img_tag = $html->find("img");
+			foreach($img_tag AS $img){
+				$parts = StringTools::explode($img->attr['src'], '@');
+				$parts = StringTools::explode($parts[0], ':');
+				$parts = StringTools::explode($parts[1], '.');
+				$ext = $parts[1];
+				$num = intval(StringTools::replaceAll($parts[0], 'image', ''));
+				
+				$images[] = array(
+					'bodysrc' => $img->attr['src'],
+					'html' => $img->outertext,
+					'num' => $num,
+					'ext' => $ext,
+					'file' => null
+				);
+			}
+			
+			$decode = imap_fetchbody($this->imap, $id , "");    
+			$no_of_occurences = substr_count($decode,"Content-Transfer-Encoding: base64");//to get the no of images
+			
+			$intStatic = 2;//to initialize the mail body section
+
+			for($i = 0; $i < $no_of_occurences; $i++){  
+				$strChange = strval($intStatic + $i);
+				$decode = imap_fetchbody($this->imap, $id, $strChange); //to get the base64 encoded string for the image
+				$data = base64_decode($decode);
+				$nfo = $images[$i];
+				$fName = time() . "_" . $strChange . '_' . $nfo['num'] . '.' . $nfo['ext'];
+				$file = $saveImageFilesInFolder.$fName;
+
+				$success = file_put_contents($file, $data);		//creates the physical image    
+				$images[$i]['file'] = $fName;
+			}
+			
+			$email['bodyimgs'] = $images;
+		}
+		
 
         // get attachments
         $mailStruct = imap_fetchstructure($this->imap, $id);
