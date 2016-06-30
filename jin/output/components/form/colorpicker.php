@@ -31,6 +31,7 @@ class ColorPicker extends FormComponent implements ComponentInterface {
 	 * @return type
 	 */
 	public function render() {
+		$html = '';
 		if(!self::$isJsLoaded){
             $html = self::loadWysiwygJs(); 
         }               
