@@ -19,7 +19,7 @@ class Routeur{
     }
     
     public function __construct() {
-        if(!Request::getArgumentValue(self::$rootArgumentName, true)){
+        if(!Request::getArgumentValue(self::$rootArgumentName, true) || Request::getArgumentValue(self::$rootArgumentName, true) == 'index.html'){
             $this->rootToIndex();
         }else{
             if(is_dir(WebApp::getPagesFolder().Request::getArgumentValue(self::$rootArgumentName))){
