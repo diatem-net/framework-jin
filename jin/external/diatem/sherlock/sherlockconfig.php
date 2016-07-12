@@ -95,12 +95,10 @@ class SherlockConfig extends SherlockCore {
         $mapping['settings']['analysis']['analyzer']['facetanalyzer']['tokenizer'] = 'keyword';
         $mapping['settings']['analysis']['analyzer']['facetanalyzer']['filter'] = array();
 
-        //Analyzer pour corriger les erreurs de l'analyzer "french"
-        $mapping['settings']['analysis']['analyzer']['frenchanalyzer'] = array();
-        $mapping['settings']['analysis']['analyzer']['frenchanalyzer']['type'] = 'custom';
-        $mapping['settings']['analysis']['analyzer']['frenchanalyzer']['tokenizer'] = 'letter';
-        $mapping['settings']['analysis']['analyzer']['frenchanalyzer']['pretty'] = 'true';
-        $mapping['settings']['analysis']['analyzer']['frenchanalyzer']['filter'] = array('lowercase', 'asciifolding');
+        //Analyzer "french" sans stopwords
+        $mapping['settings']['analysis']['analyzer']['french_no_stopwords'] = array();
+        $mapping['settings']['analysis']['analyzer']['french_no_stopwords']['type'] = 'french';
+        $mapping['settings']['analysis']['analyzer']['french_no_stopwords']['stopwords'] = '_none_';
 
         //Création du mapping
         $mapping['mappings'] = array();
