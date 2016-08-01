@@ -227,7 +227,7 @@ class Query {
      */
     public function argument($valeur, $type, $name = null) {
         if ($type == self::$SQL_BOOL) {
-            if (!is_bool($valeur) AND $valeur != 0 AND $valeur != 1) {
+            if (!is_bool($valeur) AND $valeur != 0 AND $valeur != 1 AND $valeur !== null) {
                 throw new Exception('L\'argument n\'est pas de type SQL_BOOL (valeur : '.$valeur.')');
             }
             if ($valeur) {
@@ -236,15 +236,15 @@ class Query {
                 $valeur = 'FALSE';
             }
         } elseif ($type == self::$SQL_NUMERIC) {
-            if (!is_numeric($valeur)) {
+            if (!is_numeric($valeur) AND $valeur !== null) {
                 throw new Exception('L\'argument n\'est pas de type SQL_NUMERIC (valeur : '.$valeur.')');
             }
         } elseif ($type == self::$SQL_STRING) {
-            if (!is_string($valeur) && !is_numeric($valeur)) {
+            if (!is_string($valeur) && !is_numeric($valeur) AND $valeur !== null) {
                 throw new Exception('L\'argument n\'est pas de type SQL_STRING (valeur : '.$valeur.')');
             }
         } elseif ($type == self::$SQL_DATETIME) {
-            if (!is_a($valeur, 'DateTime')){
+            if (!is_a($valeur, 'DateTime') AND $valeur !== null){
                 try{
                     $convert = new \DateTime($valeur);
                     $valeur = $convert->format('Y-m-d H:i:s');
@@ -255,7 +255,7 @@ class Query {
                 $valeur = $valeur->format('Y-m-d H:i:s');
             }
         } elseif ($type == self::$SQL_DATE) {
-            if (!is_a($valeur, 'DateTime')){
+            if (!is_a($valeur, 'DateTime') AND $valeur !== null){
                 if(!StringTools::contains($valeur, '/')){
                     $convert = new \DateTime($valeur);
                     $valeur = $convert->format('Y-m-d H:i:s');
