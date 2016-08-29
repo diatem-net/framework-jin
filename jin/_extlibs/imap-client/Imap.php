@@ -746,17 +746,20 @@ class Imap {
 		return array('body' => $body, 'html' => $html);
 	}
 
+	
 	/**
-	 * convert to utf8 if necessary.
+	 * convert to utf8 if necessary. (fixed)
 	 *
 	 * @return true or false
 	 * @param $string utf8 encoded string
 	 */
-	function convertToUtf8($str) {
-		if (mb_detect_encoding($str, "UTF-8, ISO-8859-1, GBK") != "UTF-8")
-			$str = utf8_encode($str);
-		$str = iconv('UTF-8', 'UTF-8//IGNORE', $str);
-		return $str;
+	function convertToUtf8($text) {
+		$encoding = mb_detect_encoding($text, mb_detect_order(), false);
+		if ($encoding == "UTF-8") {
+			$text = mb_convert_encoding($text, 'UTF-8', 'UTF-8');
+		}
+		$out = iconv(mb_detect_encoding($text, mb_detect_order(), false), "UTF-8//IGNORE", $text);
+		return $out;
 	}
 
 	/**
