@@ -754,9 +754,11 @@ class Imap {
 	 * @param $string utf8 encoded string
 	 */
 	function convertToUtf8($text) {
+		
 		$encoding = mb_detect_encoding($text, mb_detect_order(), false);
+		
 		if ($encoding == "UTF-8") {
-			$text = mb_convert_encoding($text, 'UTF-8', 'UTF-8');
+			return utf8_encode($text);
 		}
 		if (!$encoding) {
 			return utf8_encode($text);
@@ -764,6 +766,72 @@ class Imap {
 		$out = iconv(mb_detect_encoding($text, mb_detect_order(), true), "UTF-8//IGNORE", $text);
 		return $out;
 	}
+	
+	
+	function detect_encoding($str) {
+    $win = 0;
+    $koi = 0;
+
+    for($i=0; $i<strlen($str); $i++) {
+      if( ord($str[$i]) >224 && ord($str[$i]) < 255) $win++;
+      if( ord($str[$i]) >192 && ord($str[$i]) < 223) $koi++;
+    }
+
+    if( $win < $koi ) {
+      return 1;
+    } else return 0;
+
+  }
+
+  // recodes koi to win
+  function koi_to_win($string) {
+
+    $kw = array(128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183,  184, 185, 186, 187, 188, 189, 190, 191, 254, 224, 225, 246, 228, 229, 244, 227, 245, 232, 233, 234, 235, 236, 237, 238, 239, 255, 240, 241, 242, 243, 230, 226, 252, 251, 231, 248, 253, 249, 247, 250, 222, 192, 193, 214, 196, 197, 212, 195, 213, 200, 201, 202, 203, 204, 205, 206, 207, 223, 208, 209, 210, 211, 198, 194, 220, 219, 199, 216, 221, 217, 215, 218);
+    $wk = array(128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183,  184, 185, 186, 187, 188, 189, 190, 191, 225, 226, 247, 231, 228, 229, 246, 250, 233, 234, 235, 236, 237, 238, 239, 240, 242,  243, 244, 245, 230, 232, 227, 254, 251, 253, 255, 249, 248, 252, 224, 241, 193, 194, 215, 199, 196, 197, 214, 218, 201, 202, 203, 204, 205, 206, 207, 208, 210, 211, 212, 213, 198, 200, 195, 222, 219, 221, 223, 217, 216, 220, 192, 209);
+
+    $end = strlen($string);
+    $pos = 0;
+    do {
+      $c = ord($string[$pos]);
+      if ($c>128) {
+        $string[$pos] = chr($kw[$c-128]);
+      }
+
+    } while (++$pos < $end);
+
+    return $string;
+  }
+
+  function recode($str) {
+
+    $enc = $this->detect_encoding($str);
+    if ($enc==1) {
+      $str = $this->koi_to_win($str);
+    }
+
+    return $str;
+  }
+	
+	function convert_to ( $source, $target_encoding )
+    {
+    // detect the character encoding of the incoming file
+    $encoding = mb_detect_encoding( $source, "auto" );
+       
+    // escape all of the question marks so we can remove artifacts from
+    // the unicode conversion process
+    $target = str_replace( "?", "[question_mark]", $source );
+       
+    // convert the string to the target encoding
+    $target = mb_convert_encoding( $target, $target_encoding, $encoding);
+       
+    // remove any question marks that have been introduced because of illegal characters
+    $target = str_replace( "?", "", $target );
+       
+    // replace the token string "[question_mark]" with the symbol "?"
+    $target = str_replace( "[question_mark]", "?", $target );
+   
+    return $target;
+    }
 
 	/**
 	 * returns a part with a given mimetype
