@@ -45,11 +45,14 @@ class SherlockConfig extends SherlockCore {
     *	XML il faudra réinitialiser à nouveau l'espace de nom et réindexer toutes
     *	les données.
     *
-    * @param string $xmlConfigFilePath	Chemin ou absolu du fichier XML de configuration.
+    * @param string  $xmlConfigFilePath  Chemin ou absolu du fichier XML de configuration.
+    * @param boolean $flush              Suppression des données existantes ?
+    * @param array   $synonyms           Tableau de synonymes à utiliser (format: array('foo,bar', 'baz,qux'))
+    *
     * @return	boolean	Succès ou échec de l'initialisation
     *  Se référer à la documentation pour connaitre la syntaxe à respecter.
     */
-    public function initializeApplication($xmlConfigFilePath, $flush = true) {
+    public function initializeApplication($xmlConfigFilePath, $flush = true, $synonyms = array()) {
         if($flush) {
             //Suppression des données existantes
             parent::callMethod($this->sherlock->getAppzCode() . '/', null, 'DELETE');
@@ -153,6 +156,22 @@ class SherlockConfig extends SherlockCore {
                 )
             )
         );
+
+        //Gestion des synonymes
+        if (count($synonyms) > 0) {
+            $mapping['settings']['analysis']['filter']['french_synonyms'] = array(
+                'type'     => 'synonym',
+                'synonyms' => $synonyms
+            );
+            $mapping['settings']['analysis']['analyzer']['french_analyzer']['filter'] = array(
+                'french_elision',
+                'lowercase',
+                'asciifolding',
+                'french_synonyms',
+                'french_stop',
+                'french_stemmer'
+            );
+        }
 
         //Création du mapping
         $mapping['mappings'] = array();
