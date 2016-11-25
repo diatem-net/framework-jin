@@ -99,6 +99,10 @@ class SherlockConfig extends SherlockCore {
                     'french_stemmer' => array(
                         'type' => 'stemmer',
                         'language' => 'light_french'
+                    ),
+                    'french_snowball' => array(
+                        'type' => 'snowball',
+                        'language' => 'French'
                     )
 
                 ),
@@ -148,6 +152,7 @@ class SherlockConfig extends SherlockCore {
                             'french_elision',
                             'lowercase',
                             'asciifolding',
+                            'french_snowball',
                             'french_stop',
                             'french_stemmer'
                         )
@@ -168,6 +173,7 @@ class SherlockConfig extends SherlockCore {
                 'lowercase',
                 'asciifolding',
                 'french_synonyms',
+                'french_snowball',
                 'french_stop',
                 'french_stemmer'
             );
