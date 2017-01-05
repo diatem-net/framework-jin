@@ -147,7 +147,7 @@ class SherlockConfig extends SherlockCore {
 
                     // Analyzer français amélioré
                     'french_analyzer' => array(
-                        'tokenizer' => 'standard',
+                        'tokenizer' => 'whitespace',
                         'filter' => array(
                             'french_elision',
                             'lowercase',
