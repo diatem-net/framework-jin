@@ -312,7 +312,7 @@ class Pagination extends UIComponent implements ComponentInterface {
     * @return int
     */
     public function getCurrentPage(){
-        return $this->currentPage = $page;
+        return $this->currentPage;
     }
 
 
