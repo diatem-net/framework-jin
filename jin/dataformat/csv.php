@@ -29,6 +29,12 @@ class Csv {
 	private $useHeaders = true;
 	
 	/**
+	 * Définit si on utilise un tableau associatif ou non
+	 * @var boolean
+	 */
+	private $useAssociativeArray = false;
+	
+	/**
 	 * Caractère pour protéger les champs
 	 * @var string
 	 */
@@ -44,12 +50,14 @@ class Csv {
 	/**
 	 * Définit les données à écrire à partir d'un tableau de tableaux associatifs.
 	 * Ex. array(array('id'=>1,'col'=>'valeur1'),array('id'=>2,'col'=>'valeur2'))
-	 * @param array $associativeArray
+	 * @param array $array ou associativeArray
 	 * @param boolean $useHeaders Affiche les en-tête de colonne ou non
+	 * @param boolean $useAssociativeArray Usage d'un tableau associatif ou non
 	 */
-	public function populateWithArray($associativeArray, $useHeaders = true) {
+	public function populateWithArray($associativeArray, $useHeaders = true, $useAssociativeArray = true) {
 		$this->data = $associativeArray;
 		$this->useHeaders = $useHeaders;
+		$this->useAssociativeArray = $useAssociativeArray;
 	}
 
 	/**
@@ -213,14 +221,23 @@ class Csv {
 	 */
 	private function writeDataInIO($fp) {
 		// Écriture des données
-		foreach ($this->data as $donnee) {
-			foreach ($donnee as &$champ) {
-				$champ = (is_string($champ)) ?
-						iconv("UTF-8", "Windows-1252//TRANSLIT", $champ) : $champ;
+		if($this->useAssociativeArray){
+			foreach ($this->data as $donnee) {
+				foreach ($donnee as &$champ) {
+					$champ = (is_string($champ)) ?
+							iconv("UTF-8", "Windows-1252//TRANSLIT", $champ) : $champ;
+				}
+				$this->fputcsv($fp, $donnee, ';', $this->enclosures);
+				//fputcsv($fp, $donnee, ';', $this->enclosures);
 			}
-			$this->fputcsv($fp, $donnee, ';', $this->enclosures);
-			//fputcsv($fp, $donnee, ';', $this->enclosures);
+		}else{
+			for($i = 0; $i < count($this->data); $i++){
+				for($j = 0; $j < count($this->data[$i]); $j++){
+					$this->fputcsv($fp, $this->data[$i][$j], ';', $this->enclosures);
+				}
+			}
 		}
+		
 	}
 
 }
