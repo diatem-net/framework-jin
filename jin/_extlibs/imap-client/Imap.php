@@ -275,22 +275,24 @@ class Imap {
 
 			$html = str_get_html($email['body']);
 
-			$img_tag = $html->find("img");
-			foreach ($img_tag AS $img) {
-				$parts = StringTools::explode($img->attr['src'], '@');
-				$parts = StringTools::explode($parts[0], ':');
-				$parts = StringTools::explode($parts[1], '.');
-				$ext = $parts[1];
-				$num = intval(StringTools::replaceAll($parts[0], 'image', ''));
-				$fname = $parts[0] . '.' . $parts[1];
-				$images[] = array(
-					'bodysrc' => $img->attr['src'],
-					'html' => $img->outertext,
-					'num' => $num,
-					'ext' => $ext,
-					'file' => null,
-					'name' => $fname
-				);
+			if(is_object($html)){
+				$img_tag = $html->find("img");
+				foreach ($img_tag AS $img) {
+					$parts = StringTools::explode($img->attr['src'], '@');
+					$parts = StringTools::explode($parts[0], ':');
+					$parts = StringTools::explode($parts[1], '.');
+					$ext = $parts[1];
+					$num = intval(StringTools::replaceAll($parts[0], 'image', ''));
+					$fname = $parts[0] . '.' . $parts[1];
+					$images[] = array(
+						'bodysrc' => $img->attr['src'],
+						'html' => $img->outertext,
+						'num' => $num,
+						'ext' => $ext,
+						'file' => null,
+						'name' => $fname
+					);
+				}
 			}
 
 			//SPE ICI
