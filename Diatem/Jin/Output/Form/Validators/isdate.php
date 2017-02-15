@@ -1,0 +1,66 @@
+<?php
+
+/**
+ * Jin Framework
+ * Diatem
+ */
+
+namespace Diatem\Jin\Output\Form\Validators;
+
+use Diatem\Jin\Output\Form\Validators\ValidatorInterface;
+use Diatem\Jin\Output\Form\Validators\GlobalValidator;
+use Diatem\Jin\Language\Trad;
+use Diatem\Jin\Lang\StringTools;
+
+/** Validateur : teste si une valeur est un format de date valide
+ *
+ * 	@auteur		Loïc Gerard
+ * 	@version	0.0.1
+ * 	@check
+ */
+class Isdate extends GlobalValidator implements ValidatorInterface
+{
+    /**
+     * Constructeur
+     * @param type $args    Tableau d'arguments. (argument format requis : donne le format de date attendu. Ex : d/m/Y)
+     */
+    public function __construct($args)
+    {
+        parent::__construct($args, array('format'));
+    }
+
+    /**
+     * Teste la validité
+     * @param mixed $valeur Valeur à tester
+     * @return boolean
+     */
+    public function isValid($valeur)
+    {
+        parent::resetErrors();
+
+        if ($valeur == '') {
+            return true;
+        }
+
+        $format = $this->getArgValue('format');
+        $d = \DateTime::createFromFormat($format, $valeur);
+        $res =  $d && $d->format($format) == $valeur;
+
+        if (!$res) {
+            $eMsg = Trad::trad('isdate');
+            $eMsg = StringTools::replaceAll($eMsg, '%format%', parent::getArgValue('format'));
+            parent::addError($eMsg);
+        }
+        return $res;
+    }
+
+
+    /**
+     * Priorité NIV1 du validateur
+     * @return boolean
+     */
+    public function isPrior()
+    {
+        return false;
+    }
+}
