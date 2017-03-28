@@ -291,21 +291,18 @@ class Excel {
     
     /**
      * Retourne le numéro de colonne au format Excel (AA, AD, AB...)
-     * @param integer $i    Index de la colonne
+     * @param integer $num    Index de la colonne
      * @return string
      */
-    private static function getAlphaColumnFromIndex($i){
-        $i++;
-        $ci = NumberTools::floor($i/27);
-        $string = '';
-        $remaining = $i - ($ci * 26);
-        if($ci > 0){
-            $string = self::$alphabet[$ci-1];
-        }
-        if($remaining > 0){
-            $string = $string.self::$alphabet[$remaining-1];
-        }
-        
-        return $string;
+    private static function getAlphaColumnFromIndex($num){
+		$numeric = $num % 26;
+		$letter = chr(65 + $numeric);
+		$num2 = intval($num / 26);
+		if ($num2 > 0) {
+			return self::getAlphaColumnFromIndex($num2 - 1) . $letter;
+		} else {
+			return $letter;
+		}
+		
     }
 }
