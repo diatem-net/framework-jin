@@ -38,15 +38,20 @@ class Curl {
 	 * @param string        $contentType        [optionel] Header 'Content-type'. Par d�faut : application/json
 	 * @param array         $headers            [optionel] Headers additionnels. (Sous la forme d'un tableau cl�/valeur)
 	 * @param string        $outputTraceFile    [optionel] Si renseign� : effectue une trace des flux r�seaux dans le fichier ainsi d�termin�. (Chemin absolu du fichier)
+         * @param boolean       $followLocation     [optionel] Autorise CURL a suivre les redirections (False par défaut)
 	 * @return boolean
 	 * @throws \Exception
 	 */
-	public static function call($url, $args = null, $requestType = 'POST', $throwError = true, $httpAuthUser = null, $httpAuthPassword = null, $contentType = null, $headers = array(), $outputTraceFile = null) {
+	public static function call($url, $args = null, $requestType = 'POST', $throwError = true, $httpAuthUser = null, $httpAuthPassword = null, $contentType = null, $headers = array(), $outputTraceFile = null, $followLocation = false) {
 
 		$curl = curl_init();
 		curl_setopt($curl, CURLOPT_URL, $url);
 		curl_setopt($curl, CURLOPT_COOKIESESSION, true);
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+
+		if ($followLocation) {
+			curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
+		}
 
 		//Set headers
 		$h = array();
