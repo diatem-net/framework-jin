@@ -68,7 +68,7 @@ class Csv {
 	public function populateWithQueryResult(QueryResult $queryResult, $useHeaders = true) {
 		$this->data = $queryResult->getDatasInArray(true, true);
 		$this->useHeaders = $useHeaders;
-		
+		$this->useAssociativeArray = true;
 	}
 
 	/**
