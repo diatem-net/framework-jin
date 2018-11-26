@@ -45,11 +45,14 @@ class SherlockConfig extends SherlockCore {
     *	XML il faudra réinitialiser à nouveau l'espace de nom et réindexer toutes
     *	les données.
     *
-    * @param string $xmlConfigFilePath	Chemin ou absolu du fichier XML de configuration.
+    * @param string  $xmlConfigFilePath  Chemin ou absolu du fichier XML de configuration.
+    * @param boolean $flush              Suppression des données existantes ?
+    * @param array   $synonyms           Tableau de synonymes à utiliser (format: array('foo,bar', 'baz,qux'))
+    *
     * @return	boolean	Succès ou échec de l'initialisation
     *  Se référer à la documentation pour connaitre la syntaxe à respecter.
     */
-    public function initializeApplication($xmlConfigFilePath, $flush = true) {
+    public function initializeApplication($xmlConfigFilePath, $flush = true, $synonyms = array()) {
         if($flush) {
             //Suppression des données existantes
             parent::callMethod($this->sherlock->getAppzCode() . '/', null, 'DELETE');
@@ -62,45 +65,119 @@ class SherlockConfig extends SherlockCore {
 
         //Création des paramètres d'appel
         $mapping = array();
+        $mapping['settings'] = array(
+            'analysis' => array(
+                'filter' => array(
 
-        //Création des tokenizers pour la gestion de l'autocompletion
-        $mapping['settings'] = array();
-        $mapping['settings']['analysis'] = array();
-        $mapping['settings']['analysis']['filter'] = array();
-        $mapping['settings']['analysis']['filter']['nGram_filter'] = array();
-        $mapping['settings']['analysis']['filter']['nGram_filter']['type'] = 'nGram';
-        $mapping['settings']['analysis']['filter']['nGram_filter']['min_gram'] = 2;
-        $mapping['settings']['analysis']['filter']['nGram_filter']['max_gram'] = 20;
-        $mapping['settings']['analysis']['filter']['nGram_filter']['token_chars'] = array('letter', 'digit', 'punctuation', 'symbol');
+                    // Tokenizer pour la gestion de l'autocompletion
+                    'nGram_filter' => array(
+                        'type' => 'nGram',
+                        'min_gram' => 2,
+                        'max_gram' => 20,
+                        'token_chars' => array(
+                            'letter',
+                            'digit',
+                            'punctuation',
+                            'symbol'
+                        )
+                    ),
 
-        //Création des analyzers
-        $mapping['settings']['analysis']['analyzer'] = array();
-        $mapping['settings']['analysis']['analyzer']['default'] = array();
-        $mapping['settings']['analysis']['analyzer']['default']['tokenizer'] = 'standard';
-        $mapping['settings']['analysis']['analyzer']['default']['filter'] = array('lowercase', 'asciifolding');
+                    // Reprise des filters pour french_analyzer
+                    'french_elision' => array(
+                        'type' => 'elision',
+                        'articles_case' => true,
+                        'articles'=> array(
+                            'l', 'm', 't', 'qu', 'n', 's',
+                            'j', 'd', 'c', 'jusqu', 'quoiqu',
+                            'lorsqu', 'puisqu'
+                        )
+                    ),
+                    'french_stop' => array(
+                        'type' => 'stop',
+                        'stopwords' => '_none_'
+                    ),
+                    'french_stemmer' => array(
+                        'type' => 'stemmer',
+                        'language' => 'light_french'
+                    ),
+                    'french_snowball' => array(
+                        'type' => 'snowball',
+                        'language' => 'French'
+                    )
 
-        $mapping['settings']['analysis']['analyzer']['nGram_analyzer'] = array();
-        $mapping['settings']['analysis']['analyzer']['nGram_analyzer']['type'] = 'custom';
-        $mapping['settings']['analysis']['analyzer']['nGram_analyzer']['tokenizer'] = 'whitespace';
-        $mapping['settings']['analysis']['analyzer']['nGram_analyzer']['filter'] = array('lowercase', 'asciifolding', 'nGram_filter');
+                ),
+                'analyzer' => array(
 
-        $mapping['settings']['analysis']['analyzer']['whitespace_analyzer'] = array();
-        $mapping['settings']['analysis']['analyzer']['whitespace_analyzer']['type'] = 'custom';
-        $mapping['settings']['analysis']['analyzer']['whitespace_analyzer']['tokenizer'] = 'whitespace';
-        $mapping['settings']['analysis']['analyzer']['whitespace_analyzer']['filter'] = array('lowercase', 'asciifolding');
+                    // Analyzer par défaut
+                    'default' => array(
+                        'tokenizer' => 'standard',
+                        'filter' => array(
+                            'lowercase',
+                            'asciifolding'
+                        )
+                    ),
 
-        //Analyzer pour les recherches sur des données destinées à des facets
-        $mapping['settings']['analysis']['analyzer']['facetanalyzer'] = array();
-        $mapping['settings']['analysis']['analyzer']['facetanalyzer']['type'] = 'custom';
-        $mapping['settings']['analysis']['analyzer']['facetanalyzer']['tokenizer'] = 'keyword';
-        $mapping['settings']['analysis']['analyzer']['facetanalyzer']['filter'] = array();
+                    // Analyzer pour l'autocomplétion
+                    'nGram_analyzer' => array(
+                        'type' => 'custom',
+                        'tokenizer' => 'whitespace',
+                        'filter' => array(
+                            'lowercase',
+                            'asciifolding',
+                            'nGram_filter'
+                        )
+                    ),
 
-        //Analyzer pour corriger les erreurs de l'analyzer "french"
-        $mapping['settings']['analysis']['analyzer']['frenchanalyzer'] = array();
-        $mapping['settings']['analysis']['analyzer']['frenchanalyzer']['type'] = 'custom';
-        $mapping['settings']['analysis']['analyzer']['frenchanalyzer']['tokenizer'] = 'letter';
-        $mapping['settings']['analysis']['analyzer']['frenchanalyzer']['pretty'] = 'true';
-        $mapping['settings']['analysis']['analyzer']['frenchanalyzer']['filter'] = array('lowercase', 'asciifolding');
+                    // ???
+                    'whitespace_analyzer' => array(
+                        'type' => 'custom',
+                        'tokenizer' => 'whitespace',
+                        'filter' => array(
+                            'lowercase',
+                            'asciifolding'
+                        )
+                    ),
+
+                    // Analyzer pour les facettes
+                    'facet_analyzer' => array(
+                        'type' => 'custom',
+                        'tokenizer' => 'keyword',
+                        'filter' => array()
+                    ),
+
+                    // Analyzer français amélioré
+                    'french_analyzer' => array(
+                        'tokenizer' => 'whitespace',
+                        'filter' => array(
+                            'french_elision',
+                            'lowercase',
+                            'asciifolding',
+                            'french_snowball',
+                            'french_stop',
+                            'french_stemmer'
+                        )
+                    )
+
+                )
+            )
+        );
+
+        //Gestion des synonymes
+        if (count($synonyms) > 0) {
+            $mapping['settings']['analysis']['filter']['french_synonyms'] = array(
+                'type'     => 'synonym',
+                'synonyms' => $synonyms
+            );
+            $mapping['settings']['analysis']['analyzer']['french_analyzer']['filter'] = array(
+                'french_elision',
+                'lowercase',
+                'asciifolding',
+                'french_synonyms',
+                'french_snowball',
+                'french_stop',
+                'french_stemmer'
+            );
+        }
 
         //Création du mapping
         $mapping['mappings'] = array();

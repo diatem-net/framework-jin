@@ -168,4 +168,36 @@ class TimeTools {
         $d = \DateTime::createFromFormat($format, $date);
         return $d && $d->format($format) == $date;
     }
+
+
+    /**
+     * Modifie un objet DateTime en y ajoutant N jours ouvrés
+     * @param DateTime  $date    Date
+     * @param int       $nb      Nombre de jours ouvrés à ajouter
+     * @return DateTime
+     */
+    public static function dateAddWorkDays(\DateTime $date, $nb){
+        $t = $date->getTimestamp();
+
+        // loop for X days
+        for($i=0; $i<$nb; $i++){
+            // add 1 day to timestamp
+            $addDay = 86400;
+
+            // get what day it is next day
+            $nextDay = date('w', ($t+$addDay));
+
+            // if it's Saturday or Sunday get $i-1
+            if($nextDay == 0 || $nextDay == 6) {
+                $i--;
+            }
+
+            // modify timestamp, add 1 day
+            $t = $t+$addDay;
+        }
+
+        $date->setTimestamp($t);
+
+        return $date;
+    }
 }

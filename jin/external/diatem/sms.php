@@ -6,7 +6,7 @@
 
 namespace jin\external\diatem;
 
-use jin\webservice\WSClient;
+use jin\com\webservice\WSClient;
 use jin\JinCore;
 
 /** Envoi d'un SMS via le serveur de SMS Diatem

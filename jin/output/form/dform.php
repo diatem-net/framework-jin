@@ -554,6 +554,19 @@ class DForm {
         }
     }
 
+	
+	/**
+	 * Supprime toutes les erreurs
+	 */
+	public function clearAllErrors() {
+		 foreach ($this->fields as $fieldName => $v) {
+            $this->fields[$fieldName]['errors'] = array();
+        }
+        foreach ($this->attachementFields as $fieldName => $v) {
+            $this->fields[$fieldName]['errors'] = array();
+        }
+
+	}
 
     /**
     * Retourne les données du formulaire à des fins de debug
