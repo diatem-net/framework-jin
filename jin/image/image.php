@@ -445,7 +445,7 @@ class Image
     protected function setTmpFile($tmpFile, $typeFile){
         $this->path = $tmpFile;
         $this->file = new File($this->path);
-        $this->extension = $typeFile;
+        $this->extension = strtolower($typeFile);
 
         if($this->extension == 'jpeg') {
             $this->extension = 'jpg';
