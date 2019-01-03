@@ -35,7 +35,7 @@ class ReCaptchavalidator extends GlobalValidator implements ValidatorInterface{
      * @return boolean
      */
   public function isValid($valeur){
-
+	$valeur = $_POST['g-recaptcha-response'];
     $config = new IniFile(JinCore::getJinRootPath().JinCore::getRelativePathAssets().'recaptcha/config.ini');
     $sfile = JinCore::getContainerPath() . JinCore::getSurchargeRelativePath() . '/' . JinCore::getRelativePathAssets().'recaptcha/config.ini';
     if(is_file($sfile)){
